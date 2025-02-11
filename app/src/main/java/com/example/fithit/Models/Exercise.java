@@ -1,47 +1,65 @@
 package com.example.fithit.Models;
 
+import com.example.fithit.Enums.DifficultyLevel;
 import com.example.fithit.Enums.MuscleGroup;
 
 import java.util.List;
 
 public class Exercise {
-    private int id;
-    private String name;
+    private int exerciseId;
+    private String exerciseName;
     private String description;
     private List<Equipment> requiredEquipment;
-    private int defaultDuration;
-    private int defaultReps;
-    private int defaultSets;
+
+    private DifficultyLevel difficultyLevel;
+
+    public int getDurationInMinutes() {
+        return durationInMinutes;
+    }
+
+    public void setDurationInMinutes(int durationInMinutes) {
+        this.durationInMinutes = durationInMinutes;
+    }
+
+    public DifficultyLevel getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
+    public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
+        this.difficultyLevel = difficultyLevel;
+    }
+
+    private int durationInMinutes;
+
+    // private String imageUrl;
     // private String videoUrl;
     private List<String> instructions;
     private MuscleGroup targetMuscle;
 
-    public Exercise(int id, String name, String description, List<Equipment> requiredEquipment, int defaultDuration, int defaultReps, int defaultSets, List<String> instructions, MuscleGroup targetMuscle) {
-        this.id = id;
-        this.name = name;
+    public Exercise(int exerciseId, String exerciseName, String description, List<Equipment> requiredEquipment, int defaultDuration, int defaultReps, int defaultSets, List<String> instructions, MuscleGroup targetMuscle) {
+        this.exerciseId = exerciseId;
+        this.exerciseName = exerciseName;
         this.description = description;
         this.requiredEquipment = requiredEquipment;
-        this.defaultDuration = defaultDuration;
-        this.defaultReps = defaultReps;
-        this.defaultSets = defaultSets;
+        this.durationInMinutes = defaultDuration;
         this.instructions = instructions;
         this.targetMuscle = targetMuscle;
     }
 
-    public int getId() {
-        return id;
+    public int getExerciseId() {
+        return exerciseId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setExerciseId(int exerciseId) {
+        this.exerciseId = exerciseId;
     }
 
-    public String getName() {
-        return name;
+    public String getExerciseName() {
+        return exerciseName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setExerciseName(String exerciseName) {
+        this.exerciseName = exerciseName;
     }
 
     public String getDescription() {
@@ -60,30 +78,13 @@ public class Exercise {
         this.requiredEquipment = requiredEquipment;
     }
 
-    public int getDefaultDuration() {
-        return defaultDuration;
+    public int getDuration() {
+        return durationInMinutes;
     }
 
-    public void setDefaultDuration(int defaultDuration) {
-        this.defaultDuration = defaultDuration;
+    public void setDuration(int duration) {
+        this.durationInMinutes = duration;
     }
-
-    public int getDefaultReps() {
-        return defaultReps;
-    }
-
-    public void setDefaultReps(int defaultReps) {
-        this.defaultReps = defaultReps;
-    }
-
-    public int getDefaultSets() {
-        return defaultSets;
-    }
-
-    public void setDefaultSets(int defaultSets) {
-        this.defaultSets = defaultSets;
-    }
-
     public MuscleGroup getTargetMuscle() {
         return targetMuscle;
     }
@@ -98,5 +99,9 @@ public class Exercise {
 
     public void setInstructions(List<String> instructions) {
         this.instructions = instructions;
+    }
+
+
+    public static Object getMuscleGroup(Object o) {
     }
 }

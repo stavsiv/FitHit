@@ -5,14 +5,14 @@ import com.example.fithit.Enums.DifficultyLevel;
 import java.util.List;
 
 public class User {
-    private int id;
-    private String name;
+    private int userId;
+    private String userName;
     private int level;
     private DifficultyLevel currentDifficulty;
     private int totalWorkouts;
     private List<Equipment> userEquipment;
     private UserGoals currentGoals;
-    private List<WorkoutHistory> history;
+    private List<WorkoutBank> history;
     private List<Metric> metrics;
 
 
@@ -24,9 +24,9 @@ public class User {
         this.currentDifficulty = currentDifficulty;
     }
 
-    public User(int id, String name, int level, int totalWorkouts, List<Equipment> userEquipment, UserGoals currentGoals, List<WorkoutHistory> history, List<Metric> metrics) {
-        this.id = id;
-        this.name = name;
+    public User(int userId, String name, int level, int totalWorkouts, List<Equipment> userEquipment, UserGoals currentGoals, List<WorkoutBank> history, List<Metric> metrics) {
+        this.userId = userId;
+        this.userName = name;
         this.level = level;
         this.currentDifficulty = DifficultyLevel.BEGINNER;
         this.userEquipment = userEquipment;
@@ -35,20 +35,20 @@ public class User {
         this.metrics = metrics;
     }
 
-    public int getId() {
-        return id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getName() {
-        return name;
+        return userName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.userName = name;
     }
 
     public int getLevel() {
@@ -83,11 +83,11 @@ public class User {
         this.userEquipment = userEquipment;
     }
 
-    public List<WorkoutHistory> getHistory() {
+    public List<WorkoutBank> getHistory() {
         return history;
     }
 
-    public void setHistory(List<WorkoutHistory> history) {
+    public void setHistory(List<WorkoutBank> history) {
         this.history = history;
     }
 

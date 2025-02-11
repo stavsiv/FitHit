@@ -4,32 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Equipment {
-    private int id;
-    private String name;
+    private int equipmentId;
+    private String equipmentName;
     private String description;
     private String imageResource;
 
-    public Equipment(String name, int id, String description, String imageResource) {
-        this.name = name;
-        this.id = id;
+    public Equipment(String equipmentName, int equipmentId, String description, String imageResource) {
+        this.equipmentName = equipmentName;
+        this.equipmentId = equipmentId;
         this.description = description;
         this.imageResource = imageResource;
     }
 
-    public int getId() {
-        return id;
+    public int getEquipmentId() {
+        return equipmentId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setEquipmentId(int equipmentId) {
+        this.equipmentId = equipmentId;
     }
 
-    public String getName() {
-        return name;
+    public String getEquipmentName() {
+        return equipmentName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEquipmentName(String equipmentName) {
+        this.equipmentName = equipmentName;
     }
 
     public String getDescription() {

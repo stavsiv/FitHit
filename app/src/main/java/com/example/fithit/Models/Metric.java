@@ -5,15 +5,15 @@ import com.example.fithit.Enums.MetricType;
 import java.util.Date;
 
 public class Metric {
-    private int id;
+    private int metricId;
     private int userId;
     private MetricType type;
     private double value;
     private Date measurementDate;
     private String notes;
 
-    public Metric(int id, int userId, MetricType type, double value, Date measurementDate, String notes) {
-        this.id = id;
+    public Metric(int metricId, int userId, MetricType type, double value, Date measurementDate, String notes) {
+        this.metricId = metricId;
         this.userId = userId;
         this.type = type;
         this.value = value;
@@ -21,12 +21,12 @@ public class Metric {
         this.notes = notes;
     }
 
-    public int getId() {
-        return id;
+    public int getMetricId() {
+        return metricId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMetricId(int metricId) {
+        this.metricId = metricId;
     }
 
     public int getUserId() {
