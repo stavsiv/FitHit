@@ -1,6 +1,7 @@
 package com.example.fithit.Activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,8 +14,9 @@ import androidx.navigation.Navigation;
 
 import com.example.fithit.FirebaseManagment.FirebaseManager;
 import com.example.fithit.R;
-
 import com.example.fithit.Models.User;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -39,22 +41,22 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
     }
+
     public FirebaseAuth getFirebaseAuth() {
         return mAuth;
     }
 
-    public void login(String email, String password, View view) {
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(view).navigate(R.id.action_fragmentLogin_to_fragmentMain);
-            } else {
-                Toast.makeText(this, "Login failed: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-            }        });
+    public Task<AuthResult> login(String email, String password, View view) {
+        return mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+                        Navigation.findNavController(view).navigate(R.id.action_fragmentLogin_to_fragmentMain);
+                        Log.d("Login", "Navigating to Main Fragment");
+                    } else {
+                        Toast.makeText(this, "Login failed: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     public void register(String email, String password1, String password2, String username,
@@ -146,13 +148,15 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+
     private boolean isValidPassword(String password) {
         if (password.length() < 8) return false;
 
-        if (!password.matches(".[A-Z].")) return false;
+        if (!password.matches(".*[A-Z].*")) return false;
 
-        return password.matches(".[^a-zA-Z0-9].");
+        return password.matches(".*[^a-zA-Z0-9].*");
     }
+
     public void addDataToDatabase(String email, String username, String phone,
                                   int age, double weight, boolean wantReminders) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");

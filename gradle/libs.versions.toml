@@ -12,6 +12,7 @@ constraintlayout = "2.2.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.2.0"
 firebaseDatabase = "21.0.0"
+materialVersion = "1.11.0"
 mpandroidchart = "v3.1.0"
 recyclerview = "1.2.1"
 navigationFragment = "2.8.7"
@@ -29,6 +30,7 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+material-v1110 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }

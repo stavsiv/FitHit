@@ -142,6 +142,26 @@ public class FirebaseManager {
 //                });
 //    }
 
+    public void getUserData(String userId, ValueEventListener listener) {
+        dbRef.child(USERS_NODE).child(userId).addValueEventListener(listener);
+    }
+
+    public Task<List<Equipment>> getUserEquipment(String userId) {
+        return dbRef.child(USERS_NODE).child(userId).child("equipment").get()
+                .continueWith(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    List<Equipment> equipmentList = new ArrayList<>();
+                    for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                        Equipment equipment = snapshot.getValue(Equipment.class);
+                        if (equipment != null) {
+                            equipmentList.add(equipment);
+                        }
+                    }
+                    return equipmentList;
+                });
+    }
     public Task<Void> updateUserProfile(String userId, String username, String phone,
                                         int age, double weight, boolean wantReminders) {
         if (userId == null) {
@@ -179,27 +199,6 @@ public class FirebaseManager {
         }
         return dbRef.child(USERS_NODE).child(userId)
                 .child("equipment").child(equipmentId).setValue(true);
-    }
-
-    public Task<List<Equipment>> getUserEquipment(String userId) {
-        if (userId == null) {
-            return Tasks.forException(new Exception("User ID cannot be null"));
-        }
-
-        return dbRef.child(USERS_NODE).child(userId).child("equipment").get()
-                .continueWith(task -> {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    List<Equipment> equipmentList = new ArrayList<>();
-                    for (DataSnapshot snapshot : task.getResult().getChildren()) {
-                        Equipment equipment = snapshot.getValue(Equipment.class);
-                        if (equipment != null) {
-                            equipmentList.add(equipment);
-                        }
-                    }
-                    return equipmentList;
-                });
     }
 
     public Task<Void> addExercise(Exercise exercise) {
