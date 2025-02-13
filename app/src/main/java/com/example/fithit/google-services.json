@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "531884747841",
+    "project_id": "fithitapp25",
+    "storage_bucket": "fithitapp25.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531884747841:android:439c3f7a7d82c082016ac0",
+        "android_client_info": {
+          "package_name": "com.example.fithit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlMLybXvHIB1ksoi81cJy6lOGUpGcPgM0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -101,7 +101,10 @@ public class Exercise {
         this.instructions = instructions;
     }
 
-
-    public static Object getMuscleGroup(Object o) {
-    }
+//    public boolean getMuscleGroup() {
+//    }
+//
+//    /*
+//     public static Object getMuscleGroup(Object o) {
+//    }*/
 }

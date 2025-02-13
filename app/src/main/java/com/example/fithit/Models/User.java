@@ -15,6 +15,9 @@ public class User {
     private List<WorkoutBank> history;
     private List<Metric> metrics;
 
+    public User(String email, String phone) {
+    }
+
 
     public DifficultyLevel getCurrentDifficulty() {
         return currentDifficulty;
@@ -99,10 +102,6 @@ public class User {
         this.metrics = metrics;
     }
 
-    public boolean hasRequiredEquipment(Workout workout) {
-        return userEquipment.containsAll(workout.getRequiredEquipment());
-    }
-
     public void calculateNextLevel() {
         int newLevel = totalWorkouts / 10 + 1;
         if (newLevel > this.level) {
@@ -112,11 +111,9 @@ public class User {
     }
 
         public void updateDifficultyLevel() {
-            if (this.level >= 1 && this.level <= 3) {
+            if (this.level >= 1 && this.level <= 4) {
                 this.currentDifficulty = DifficultyLevel.BEGINNER;
-            } else if (this.level >= 4 && this.level <= 6) {
-                this.currentDifficulty = DifficultyLevel.INTERMEDIATE;
-            } else if (this.level >= 7 && this.level <= 9) {
+            } else if (this.level >= 5 && this.level <= 9) {
                 this.currentDifficulty = DifficultyLevel.ADVANCED;
             } else if (this.level >= 10) {
                 this.currentDifficulty = DifficultyLevel.EXPERT;
