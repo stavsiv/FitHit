@@ -2,11 +2,16 @@ package com.example.fithit.Models;
 
 import com.example.fithit.Enums.DifficultyLevel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
-    private int userId;
+    private String email;
     private String userName;
+    private String phone;
+    private int age;
+    private double weight;
+    private boolean wantReminders;
     private int level;
     private DifficultyLevel currentDifficulty;
     private int totalWorkouts;
@@ -15,10 +20,21 @@ public class User {
     private List<WorkoutBank> history;
     private List<Metric> metrics;
 
-    public User(String email, String phone) {
+    public User(String email, String userName, String phone, int age, double weight, boolean wantReminders) {
+        this.email = email;
+        this.userName = userName;
+        this.phone = phone;
+        this.age = age;
+        this.weight = weight;
+        this.wantReminders = wantReminders;
+        this.level = 1;  // Starting level for new users
+        this.currentDifficulty = DifficultyLevel.BEGINNER;
+        this.totalWorkouts = 0;
+        this.userEquipment = new ArrayList<>();
+        this.currentGoals = new UserGoals();
+        this.history = new ArrayList<>();
+        this.metrics = new ArrayList<>();
     }
-
-
     public DifficultyLevel getCurrentDifficulty() {
         return currentDifficulty;
     }
@@ -27,31 +43,71 @@ public class User {
         this.currentDifficulty = currentDifficulty;
     }
 
-    public User(int userId, String name, int level, int totalWorkouts, List<Equipment> userEquipment, UserGoals currentGoals, List<WorkoutBank> history, List<Metric> metrics) {
-        this.userId = userId;
-        this.userName = name;
-        this.level = level;
-        this.currentDifficulty = DifficultyLevel.BEGINNER;
-        this.userEquipment = userEquipment;
-        this.currentGoals = currentGoals;
-        this.history = history;
-        this.metrics = metrics;
+    public void calculateNextLevel() {
+        int newLevel = totalWorkouts / 10 + 1;
+        if (newLevel > this.level) {
+            setLevel(newLevel);
+            updateDifficultyLevel();
+        }
     }
 
-    public int getUserId() {
-        return userId;
+    public void updateDifficultyLevel() {
+        if (this.level >= 1 && this.level <= 4) {
+            this.currentDifficulty = DifficultyLevel.BEGINNER;
+        } else if (this.level >= 5 && this.level <= 9) {
+            this.currentDifficulty = DifficultyLevel.ADVANCED;
+        } else if (this.level >= 10) {
+            this.currentDifficulty = DifficultyLevel.EXPERT;
+        }
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    //get and set
+    public String getEmail() {
+        return email;
     }
 
-    public String getName() {
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getUserName() {
         return userName;
     }
 
-    public void setName(String name) {
-        this.userName = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public boolean isWantReminders() {
+        return wantReminders;
+    }
+
+    public void setWantReminders(boolean wantReminders) {
+        this.wantReminders = wantReminders;
     }
 
     public int getLevel() {
@@ -70,20 +126,20 @@ public class User {
         this.totalWorkouts = totalWorkouts;
     }
 
-    public UserGoals getCurrentGoals() {
-        return currentGoals;
-    }
-
-    public void setCurrentGoals(UserGoals currentGoals) {
-        this.currentGoals = currentGoals;
-    }
-
     public List<Equipment> getUserEquipment() {
         return userEquipment;
     }
 
     public void setUserEquipment(List<Equipment> userEquipment) {
         this.userEquipment = userEquipment;
+    }
+
+    public UserGoals getCurrentGoals() {
+        return currentGoals;
+    }
+
+    public void setCurrentGoals(UserGoals currentGoals) {
+        this.currentGoals = currentGoals;
     }
 
     public List<WorkoutBank> getHistory() {
@@ -101,25 +157,4 @@ public class User {
     public void setMetrics(List<Metric> metrics) {
         this.metrics = metrics;
     }
-
-    public void calculateNextLevel() {
-        int newLevel = totalWorkouts / 10 + 1;
-        if (newLevel > this.level) {
-            setLevel(newLevel);
-            updateDifficultyLevel();
-        }
-    }
-
-        public void updateDifficultyLevel() {
-            if (this.level >= 1 && this.level <= 4) {
-                this.currentDifficulty = DifficultyLevel.BEGINNER;
-            } else if (this.level >= 5 && this.level <= 9) {
-                this.currentDifficulty = DifficultyLevel.ADVANCED;
-            } else if (this.level >= 10) {
-                this.currentDifficulty = DifficultyLevel.EXPERT;
-            }
-        }
-
-    }
-
-
+}

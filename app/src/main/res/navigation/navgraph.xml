@@ -40,5 +40,8 @@
         android:name="com.example.fithit.Fragments.FragmentMain"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_fragmentMain_to_fragmentPersonalArea"
+            app:destination="@id/fragmentPersonalArea" />
     </fragment>
 </navigation>

@@ -1,5 +1,6 @@
 package com.example.fithit.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,8 +39,10 @@ public class FragmentLogin extends Fragment {
             if (mainActivity != null) {
                 mainActivity.login(email, password, view);
             } else {
-                Toast.makeText(getContext(), "Error: Activity not found", Toast.LENGTH_SHORT).show();
-            }
+                Context context = getContext();
+                if (context != null) {
+                    Toast.makeText(context, "Error: Activity not found", Toast.LENGTH_SHORT).show();
+                }            }
         });
 
         registerButton.setOnClickListener(v -> Navigation.findNavController(view).navigate(R.id.action_fragmentLogin_to_fragmentRegister));
