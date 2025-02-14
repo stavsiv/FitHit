@@ -2,6 +2,7 @@ package com.example.fithit.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,8 @@ import androidx.navigation.Navigation;
 import com.example.fithit.R;
 import com.example.fithit.Activities.MainActivity;
 
-
 public class FragmentLogin extends Fragment {
+    private View rootView;
 
     public FragmentLogin() {
         // Required empty public constructor
@@ -24,29 +25,61 @@ public class FragmentLogin extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        rootView = inflater.inflate(R.layout.fragment_login, container, false);
 
-        EditText emailEditText = view.findViewById(R.id.emailEditText);
-        EditText passwordEditText = view.findViewById(R.id.passwordEditText);
-        Button loginButton = view.findViewById(R.id.buttonLoginToFriends);
-        Button registerButton = view.findViewById(R.id.buttonLoginToRegister);
+        EditText emailEditText = rootView.findViewById(R.id.emailEditText);
+        EditText passwordEditText = rootView.findViewById(R.id.passwordEditText);
+        Button loginButton = rootView.findViewById(R.id.buttonLoginMain);
+        Button registerButton = rootView.findViewById(R.id.buttonLoginToRegister);
 
         loginButton.setOnClickListener(v -> {
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
 
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(requireContext(), "Email and password cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             MainActivity mainActivity = (MainActivity) getActivity();
             if (mainActivity != null) {
-                mainActivity.login(email, password, view);
+                mainActivity.login(email, password, rootView)
+                        .addOnSuccessListener(authResult -> navigateToMainFragment())
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(requireContext(),
+                                    "Login failed: " + e.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                            Log.e("Login", "Login failed", e);
+                        });
             } else {
-                Context context = getContext();
-                if (context != null) {
-                    Toast.makeText(context, "Error: Activity not found", Toast.LENGTH_SHORT).show();
-                }            }
+                Log.e("FragmentLogin", "MainActivity is null");
+                Toast.makeText(requireContext(), "Error: Activity not found", Toast.LENGTH_SHORT).show();
+            }
         });
 
-        registerButton.setOnClickListener(v -> Navigation.findNavController(view).navigate(R.id.action_fragmentLogin_to_fragmentRegister));
+        registerButton.setOnClickListener(v -> {
+            if (rootView != null) {
+                Navigation.findNavController(rootView).navigate(R.id.action_fragmentLogin_to_fragmentRegister);
+            } else {
+                Log.e("Navigation", "rootView is null, cannot navigate to register fragment");
+            }
+        });
 
-        return view;
+        return rootView;
+    }
+
+    private void navigateToMainFragment() {
+        if (rootView != null) {
+            try {
+                Navigation.findNavController(rootView).navigate(R.id.action_fragmentLogin_to_fragmentMain);
+            } catch (Exception e) {
+                Log.e("Navigation", "Failed to navigate to main fragment", e);
+                Toast.makeText(requireContext(),
+                        "Failed to navigate: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Log.e("Navigation", "rootView is null, cannot navigate");
+        }
     }
 }
