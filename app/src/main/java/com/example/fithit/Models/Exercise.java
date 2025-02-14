@@ -1,110 +1,103 @@
 package com.example.fithit.Models;
 
 import com.example.fithit.Enums.DifficultyLevel;
+import com.example.fithit.Enums.EquipmentType;
+import com.example.fithit.Enums.ExerciseType;
 import com.example.fithit.Enums.MuscleGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Exercise {
     private int exerciseId;
     private String exerciseName;
+    private ExerciseType exerciseType;
     private String description;
-    private List<Equipment> requiredEquipment;
-
+    private List<EquipmentType> requiredEquipmentTypes;
     private DifficultyLevel difficultyLevel;
-
-    public int getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(int durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
-    public DifficultyLevel getDifficultyLevel() {
-        return difficultyLevel;
-    }
-
-    public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
-        this.difficultyLevel = difficultyLevel;
-    }
-
     private int durationInMinutes;
-
-    // private String imageUrl;
-    // private String videoUrl;
     private List<String> instructions;
     private MuscleGroup targetMuscle;
 
-    public Exercise(int exerciseId, String exerciseName, String description, List<Equipment> requiredEquipment, int defaultDuration, int defaultReps, int defaultSets, List<String> instructions, MuscleGroup targetMuscle) {
+    public Exercise(int exerciseId,
+                    String exerciseName,
+                    ExerciseType exerciseType,
+                    String description,
+                    List<EquipmentType> requiredEquipmentTypes,
+                    DifficultyLevel difficultyLevel,
+                    int durationInMinutes,
+                    List<String> instructions,
+                    MuscleGroup targetMuscle) {
         this.exerciseId = exerciseId;
         this.exerciseName = exerciseName;
+        this.exerciseType = exerciseType;
         this.description = description;
-        this.requiredEquipment = requiredEquipment;
-        this.durationInMinutes = defaultDuration;
+        this.requiredEquipmentTypes = requiredEquipmentTypes;
+        this.difficultyLevel = difficultyLevel;
+        this.durationInMinutes = durationInMinutes;
         this.instructions = instructions;
         this.targetMuscle = targetMuscle;
     }
 
+    // Getters
     public int getExerciseId() {
         return exerciseId;
-    }
-
-    public void setExerciseId(int exerciseId) {
-        this.exerciseId = exerciseId;
     }
 
     public String getExerciseName() {
         return exerciseName;
     }
 
-    public void setExerciseName(String exerciseName) {
-        this.exerciseName = exerciseName;
+    public ExerciseType getExerciseType() {
+        return exerciseType;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public List<EquipmentType> getRequiredEquipmentTypes() {
+        return new ArrayList<>(requiredEquipmentTypes);
     }
 
-    public List<Equipment> getRequiredEquipment() {
-        return requiredEquipment;
+    public DifficultyLevel getDifficultyLevel() {
+        return difficultyLevel;
     }
 
-    public void setRequiredEquipment(List<Equipment> requiredEquipment) {
-        this.requiredEquipment = requiredEquipment;
-    }
-
-    public int getDuration() {
+    public int getDurationInMinutes() {
         return durationInMinutes;
     }
 
-    public void setDuration(int duration) {
-        this.durationInMinutes = duration;
+    public List<String> getInstructions() {
+        return new ArrayList<>(instructions);
     }
+
     public MuscleGroup getTargetMuscle() {
         return targetMuscle;
     }
 
-    public void setTargetMuscle(MuscleGroup targetMuscle) {
-        this.targetMuscle = targetMuscle;
+    // Helper method to convert EquipmentTypes to Equipment objects
+    public List<Equipment> getRequiredEquipment() {
+        List<Equipment> equipmentList = new ArrayList<>();
+        for (EquipmentType type : requiredEquipmentTypes) {
+            equipmentList.add(new Equipment(type));
+        }
+        return equipmentList;
     }
 
-    public List<String> getInstructions() {
-        return instructions;
+    public boolean canPerformWithEquipment(List<EquipmentType> availableEquipment) {
+        if (this.requiredEquipmentTypes.isEmpty()) {
+            return true;
+        }
+        return availableEquipment.containsAll(this.requiredEquipmentTypes);
     }
-
-    public void setInstructions(List<String> instructions) {
-        this.instructions = instructions;
+    @Override
+    public String toString() {
+        return "Exercise{" +
+                "name='" + exerciseName + '\'' +
+                ", type=" + exerciseType.getExerciseTypeName() +
+                ", difficulty=" + difficultyLevel +
+                ", duration=" + durationInMinutes + " minutes" +
+                '}';
     }
-
-//    public boolean getMuscleGroup() {
-//    }
-//
-//    /*
-//     public static Object getMuscleGroup(Object o) {
-//    }*/
 }

@@ -1,7 +1,7 @@
 package com.example.fithit.Enums;
 public enum DifficultyLevel {
     BEGINNER(1),
-    ADVANCED(2),
+    INTERMEDIATE(2),
     EXPERT(3);
 
     private int value;
@@ -19,12 +19,11 @@ public enum DifficultyLevel {
             case 1:
                 return BEGINNER;
             case 2:
-                return ADVANCED;
+                return INTERMEDIATE;
             case 3:
                 return EXPERT;
             default:
                 return BEGINNER;
         }
     }
-
 }

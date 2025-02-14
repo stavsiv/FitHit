@@ -1,55 +1,27 @@
 package com.example.fithit.Models;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.fithit.Enums.EquipmentType;
+
 
 public class Equipment {
-    private int equipmentId;
-    private String equipmentName;
-    private String description;
-    private String imageResource;
+    private EquipmentType equipmentType;
 
-    public Equipment(String equipmentName, int equipmentId, String description, String imageResource) {
-        this.equipmentName = equipmentName;
-        this.equipmentId = equipmentId;
-        this.description = description;
-        this.imageResource = imageResource;
-    }
-
-    public int getEquipmentId() {
-        return equipmentId;
-    }
-
-    public void setEquipmentId(int equipmentId) {
-        this.equipmentId = equipmentId;
-    }
-
-    public String getEquipmentName() {
-        return equipmentName;
-    }
-
-    public void setEquipmentName(String equipmentName) {
-        this.equipmentName = equipmentName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public Equipment(EquipmentType equipmentType) {
+        this.equipmentType = equipmentType;
     }
 
     public String getImageResource() {
-        return imageResource;
+        return equipmentType.getImageFileName();
     }
 
-    public void setImageResource(String imageResource) {
-        this.imageResource = imageResource;
+    public String getDisplayName() {
+        return equipmentType.getDisplayName();
     }
 
-    public static List<Equipment> getAllAvailableEquipment() {
-        List<Equipment> equipment = new ArrayList<>();
-        return equipment;
+    public String toString() {
+        return "Equipment{" +
+                "type=" + equipmentType.getDisplayName() +
+                ", image='" + getImageResource() + '\'' +
+                '}';
     }
 }

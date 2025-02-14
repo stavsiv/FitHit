@@ -55,7 +55,7 @@ public class User {
         if (this.level >= 1 && this.level <= 4) {
             this.currentDifficulty = DifficultyLevel.BEGINNER;
         } else if (this.level >= 5 && this.level <= 9) {
-            this.currentDifficulty = DifficultyLevel.ADVANCED;
+            this.currentDifficulty = DifficultyLevel.INTERMEDIATE;
         } else if (this.level >= 10) {
             this.currentDifficulty = DifficultyLevel.EXPERT;
         }
