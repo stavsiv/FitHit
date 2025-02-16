@@ -8,12 +8,79 @@ import com.example.fithit.Enums.MuscleGroup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DatabaseExercises {
     private static final List<Exercise> exercises = new ArrayList<>();
     private static int nextExerciseId = 1;
+    private static Map<DifficultyLevel, Integer> getRepetitionsForExercise(String exerciseName) {
+        Map<DifficultyLevel, Integer> reps = new HashMap<>();
+        switch (exerciseName.toLowerCase()) {
+            case "dumbbell squat":
+            case "bulgarian split squats":
+                reps.put(DifficultyLevel.BEGINNER, 15);
+                reps.put(DifficultyLevel.INTERMEDIATE, 30);
+                reps.put(DifficultyLevel.EXPERT, 50);
+                break;
+
+            case "pull-ups":
+                reps.put(DifficultyLevel.BEGINNER, 5);
+                reps.put(DifficultyLevel.INTERMEDIATE, 10);
+                reps.put(DifficultyLevel.EXPERT, 20);
+                break;
+
+            case "push-ups":
+                reps.put(DifficultyLevel.BEGINNER, 10);
+                reps.put(DifficultyLevel.INTERMEDIATE, 20);
+                reps.put(DifficultyLevel.EXPERT, 40);
+                break;
+            case "barbell bench press":
+                reps.put(DifficultyLevel.BEGINNER, 8);
+                reps.put(DifficultyLevel.INTERMEDIATE, 12);
+                reps.put(DifficultyLevel.EXPERT, 15);
+                break;
+
+            case "plank with row":
+            case "face pulls":
+                reps.put(DifficultyLevel.BEGINNER, 10);
+                reps.put(DifficultyLevel.INTERMEDIATE, 15);
+                reps.put(DifficultyLevel.EXPERT, 20);
+                break;
+
+            case "kettlebell swing":
+                reps.put(DifficultyLevel.BEGINNER, 15);
+                reps.put(DifficultyLevel.INTERMEDIATE, 25);
+                reps.put(DifficultyLevel.EXPERT, 35);
+                break;
+            // For cardio exercises, reps are in seconds
+            case "jumping jacks":
+            case "mountain climbers":
+                reps.put(DifficultyLevel.BEGINNER, 30);  // 30 seconds
+                reps.put(DifficultyLevel.INTERMEDIATE, 45);  // 45 seconds
+                reps.put(DifficultyLevel.EXPERT, 60);  // 60 seconds
+                break;
+
+            // For stretching exercises, reps are in seconds (hold time)
+            case "hamstring stretch":
+            case "cobra pose":
+            case "wall slides":
+                reps.put(DifficultyLevel.BEGINNER, 20);  // 20 seconds hold
+                reps.put(DifficultyLevel.INTERMEDIATE, 30);  // 30 seconds hold
+                reps.put(DifficultyLevel.EXPERT, 45);  // 45 seconds hold
+                break;
+            // Default values for other exercises
+            default:
+                reps.put(DifficultyLevel.BEGINNER, 12);
+                reps.put(DifficultyLevel.INTERMEDIATE, 15);
+                reps.put(DifficultyLevel.EXPERT, 20);
+                break;
+        }
+
+        return reps;
+    }
 
     static {
         // Strength Exercises
@@ -31,7 +98,8 @@ public class DatabaseExercises {
                         "Lower until thighs are parallel to the ground",
                         "Return to starting position"
                 ),
-                MuscleGroup.LEGS
+                MuscleGroup.LEGS,
+                getRepetitionsForExercise("Dumbbell Squat")
         ));
 
         exercises.add(new Exercise(
@@ -47,7 +115,8 @@ public class DatabaseExercises {
                         "Lower body until elbows are at 90 degrees",
                         "Push back up to starting position"
                 ),
-                MuscleGroup.CHEST
+                MuscleGroup.CHEST,
+                getRepetitionsForExercise("Push-ups")
         ));
         exercises.add(new Exercise(
                 nextExerciseId++,
@@ -63,7 +132,8 @@ public class DatabaseExercises {
                         "Lower bar to chest with control",
                         "Press bar back up to starting position"
                 ),
-                MuscleGroup.CHEST
+                MuscleGroup.CHEST,
+                getRepetitionsForExercise("Barbell Bench Press")
         ));
 
         exercises.add(new Exercise(
@@ -79,7 +149,9 @@ public class DatabaseExercises {
                         "Pull yourself up until chin passes bar",
                         "Lower back down with control"
                 ),
-                MuscleGroup.BACK
+                MuscleGroup.BACK,
+                getRepetitionsForExercise("Pull-ups")
+
         ));
 
         exercises.add(new Exercise(
@@ -95,7 +167,8 @@ public class DatabaseExercises {
                         "Lower back knee toward ground",
                         "Push through front foot to return to start"
                 ),
-                MuscleGroup.LEGS
+                MuscleGroup.LEGS,
+                getRepetitionsForExercise("Unilateral leg exercise")
         ));
 
         exercises.add(new Exercise(
@@ -111,7 +184,9 @@ public class DatabaseExercises {
                         "Row one dumbbell to hip while maintaining plank",
                         "Lower and repeat on other side"
                 ),
-                MuscleGroup.CORE
+                MuscleGroup.CORE,
+                getRepetitionsForExercise("Plank with Row")
+
         ));
 
         exercises.add(new Exercise(
@@ -127,7 +202,8 @@ public class DatabaseExercises {
                         "Hinge at hips and swing kettlebell between legs",
                         "Thrust hips forward to swing kettlebell to shoulder height"
                 ),
-                MuscleGroup.BACK
+                MuscleGroup.BACK,
+                getRepetitionsForExercise("Kettlebell Swing")
         ));
 
         exercises.add(new Exercise(
@@ -143,7 +219,8 @@ public class DatabaseExercises {
                         "Pull band towards face, spreading hands apart",
                         "Squeeze shoulder blades together"
                 ),
-                MuscleGroup.SHOULDERS
+                MuscleGroup.SHOULDERS,
+                getRepetitionsForExercise("Face Pulls")
         ));
         // Stretching Exercises
         exercises.add(new Exercise(
@@ -159,7 +236,8 @@ public class DatabaseExercises {
                         "Reach for your toes",
                         "Hold for 30 seconds"
                 ),
-                MuscleGroup.LEGS
+                MuscleGroup.LEGS,
+                getRepetitionsForExercise("Stretches the back of your thighs")
         ));
         exercises.add(new Exercise(
                 nextExerciseId++,
@@ -174,7 +252,8 @@ public class DatabaseExercises {
                         "Place hand inside front foot and rotate torso",
                         "Reach arm to sky and hold"
                 ),
-                MuscleGroup.FULL_BODY
+                MuscleGroup.FULL_BODY,
+                getRepetitionsForExercise("World's Greatest Stretch")
         ));
 
         exercises.add(new Exercise(
@@ -190,7 +269,8 @@ public class DatabaseExercises {
                         "Place one hand behind head",
                         "Rotate torso and follow elbow with eyes"
                 ),
-                MuscleGroup.BACK
+                MuscleGroup.BACK,
+                getRepetitionsForExercise("Thoracic Bridge")
         ));
 
         exercises.add(new Exercise(
@@ -206,7 +286,8 @@ public class DatabaseExercises {
                         "Keep back straight",
                         "Lean forward to feel stretch"
                 ),
-                MuscleGroup.LEGS
+                MuscleGroup.LEGS,
+                getRepetitionsForExercise("90/90 Hip Stretch")
         ));
 
         exercises.add(new Exercise(
@@ -222,7 +303,8 @@ public class DatabaseExercises {
                         "Slide one arm under body, reaching across",
                         "Return to start and repeat other side"
                 ),
-                MuscleGroup.SHOULDERS
+                MuscleGroup.SHOULDERS,
+                getRepetitionsForExercise("Shoulder and spine mobility")
         ));
 
         exercises.add(new Exercise(
@@ -238,7 +320,8 @@ public class DatabaseExercises {
                         "Press chest up keeping hips on ground",
                         "Hold position and breathe"
                 ),
-                MuscleGroup.BACK
+                MuscleGroup.BACK,
+                getRepetitionsForExercise("Cobra Pose")
         ));
 
         exercises.add(new Exercise(
@@ -254,7 +337,8 @@ public class DatabaseExercises {
                         "Slide arms up wall keeping elbows bent",
                         "Return to start position"
                 ),
-                MuscleGroup.SHOULDERS
+                MuscleGroup.SHOULDERS,
+                getRepetitionsForExercise("Wall Slides")
         ));
 
         // Balance Exercises
@@ -271,7 +355,8 @@ public class DatabaseExercises {
                         "Maintain balance for 30 seconds",
                         "Switch legs and repeat"
                 ),
-                MuscleGroup.CORE
+                MuscleGroup.CORE,
+                getRepetitionsForExercise("Single Leg Stand")
         ));
         exercises.add(new Exercise(
                 nextExerciseId++,
@@ -286,7 +371,8 @@ public class DatabaseExercises {
                         "Extend opposite arm and leg",
                         "Hold position maintaining balance"
                 ),
-                MuscleGroup.CORE
+                MuscleGroup.CORE,
+                getRepetitionsForExercise("Bird Dog")
         ));
 
         exercises.add(new Exercise(
@@ -302,7 +388,8 @@ public class DatabaseExercises {
                         "Lower into single leg squat",
                         "Return to standing using one leg"
                 ),
-                MuscleGroup.LEGS
+                MuscleGroup.LEGS,
+                getRepetitionsForExercise("Pistol Squat Progression")
         ));
 
         exercises.add(new Exercise(
@@ -318,7 +405,8 @@ public class DatabaseExercises {
                         "Alternate bringing knees to chest",
                         "Maintain stability throughout"
                 ),
-                MuscleGroup.CORE
+                MuscleGroup.CORE,
+                getRepetitionsForExercise("Dynamic balance exercise")
         ));
 
         exercises.add(new Exercise(
@@ -334,7 +422,8 @@ public class DatabaseExercises {
                         "Pike hips up bringing ball closer to hands",
                         "Return to plank with control"
                 ),
-                MuscleGroup.CORE
+                MuscleGroup.CORE,
+                getRepetitionsForExercise("Stability Ball Pike")
         ));
 
         exercises.add(new Exercise(
@@ -350,7 +439,8 @@ public class DatabaseExercises {
                         "Hinge at hips while lifting other leg behind",
                         "Return to standing while maintaining balance"
                 ),
-                MuscleGroup.LEGS
+                MuscleGroup.LEGS,
+                getRepetitionsForExercise("Single Leg Romanian Deadlift")
         ));
 
         exercises.add(new Exercise(
@@ -366,7 +456,8 @@ public class DatabaseExercises {
                         "Press band straight out",
                         "Resist rotation while holding position"
                 ),
-                MuscleGroup.CORE
+                MuscleGroup.CORE,
+                getRepetitionsForExercise("Half-Kneeling Pallof Press")
         ));
 
         // Cardio Exercises
@@ -383,7 +474,8 @@ public class DatabaseExercises {
                         "Jump while spreading legs and raising arms above head",
                         "Jump back to starting position"
                 ),
-                MuscleGroup.FULL_BODY
+                MuscleGroup.FULL_BODY,
+                getRepetitionsForExercise("Jumping Jacks")
         ));
         exercises.add(new Exercise(
                 nextExerciseId++,
@@ -398,7 +490,8 @@ public class DatabaseExercises {
                         "Rest for 10 seconds",
                         "Repeat 8 times"
                 ),
-                MuscleGroup.FULL_BODY
+                MuscleGroup.FULL_BODY,
+                getRepetitionsForExercise("Tabata Sprint")
         ));
 
         exercises.add(new Exercise(
@@ -414,7 +507,8 @@ public class DatabaseExercises {
                         "Swing rope twice under feet in one jump",
                         "Land softly and repeat"
                 ),
-                MuscleGroup.FULL_BODY
+                MuscleGroup.FULL_BODY,
+                getRepetitionsForExercise("jump Rope Double Unders")
         ));
 
         exercises.add(new Exercise(
@@ -430,7 +524,8 @@ public class DatabaseExercises {
                         "Sprint between markers",
                         "Touch ground at each turn"
                 ),
-                MuscleGroup.LEGS
+                MuscleGroup.LEGS,
+                getRepetitionsForExercise("Shuttle Runs")
         ));
 
         exercises.add(new Exercise(
@@ -446,7 +541,8 @@ public class DatabaseExercises {
                         "Alternate bringing knees to chest quickly",
                         "Keep hips stable throughout"
                 ),
-                MuscleGroup.FULL_BODY
+                MuscleGroup.FULL_BODY,
+                getRepetitionsForExercise("Mountain Climbers")
         ));
 
         exercises.add(new Exercise(
@@ -462,7 +558,8 @@ public class DatabaseExercises {
                         "Jump onto box from burpee",
                         "Step down and repeat"
                 ),
-                MuscleGroup.FULL_BODY
+                MuscleGroup.FULL_BODY,
+                getRepetitionsForExercise("Box Jump Burpee")
         ));
 
         exercises.add(new Exercise(
@@ -478,7 +575,8 @@ public class DatabaseExercises {
                         "Create alternating waves with arms",
                         "Maintain constant movement"
                 ),
-                MuscleGroup.ARMS
+                MuscleGroup.ARMS,
+                getRepetitionsForExercise("Battle Rope Waves")
         ));
     }
 

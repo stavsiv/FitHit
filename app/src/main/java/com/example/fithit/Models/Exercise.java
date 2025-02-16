@@ -7,6 +7,7 @@ import com.example.fithit.Enums.MuscleGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Exercise {
     private int exerciseId;
@@ -18,7 +19,7 @@ public class Exercise {
     private int durationInMinutes;
     private List<String> instructions;
     private MuscleGroup targetMuscle;
-
+    private Map<DifficultyLevel, Integer> repetitionsByDifficulty;
     public Exercise(int exerciseId,
                     String exerciseName,
                     ExerciseType exerciseType,
@@ -27,7 +28,8 @@ public class Exercise {
                     DifficultyLevel difficultyLevel,
                     int durationInMinutes,
                     List<String> instructions,
-                    MuscleGroup targetMuscle) {
+                    MuscleGroup targetMuscle,
+                    Map<DifficultyLevel, Integer> repetitionsByDifficulty) {
         this.exerciseId = exerciseId;
         this.exerciseName = exerciseName;
         this.exerciseType = exerciseType;
@@ -37,6 +39,7 @@ public class Exercise {
         this.durationInMinutes = durationInMinutes;
         this.instructions = instructions;
         this.targetMuscle = targetMuscle;
+        this.repetitionsByDifficulty = repetitionsByDifficulty;
     }
 
     // Getters
@@ -75,6 +78,9 @@ public class Exercise {
     public MuscleGroup getTargetMuscle() {
         return targetMuscle;
     }
+    public int getRepetitionsForDifficulty(DifficultyLevel difficulty) {
+        return repetitionsByDifficulty.getOrDefault(difficulty, 0);
+    }
 
     // Helper method to convert EquipmentTypes to Equipment objects
     public List<Equipment> getRequiredEquipment() {
@@ -98,6 +104,7 @@ public class Exercise {
                 ", type=" + exerciseType.getExerciseTypeName() +
                 ", difficulty=" + difficultyLevel +
                 ", duration=" + durationInMinutes + " minutes" +
+                ", reps=" + getRepetitionsForDifficulty(difficultyLevel) +
                 '}';
     }
 }
