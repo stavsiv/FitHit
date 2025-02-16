@@ -1,27 +1,31 @@
 package com.example.fithit.Models;
 
 import com.example.fithit.Enums.DifficultyLevel;
-import com.example.fithit.Enums.MuscleGroup;
-import com.example.fithit.Enums.WorkoutType;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Workout {
     private int workoutId;
-    private WorkoutType type;             // סוג האימון (כוח, גמישות וכו')
     private List<Exercise> exercises;     // רשימת תרגילים
     private DifficultyLevel difficulty;   // רמת קושי
     private int requiredLevel;            // רמה נדרשת מהמשתמש
     private int totalDuration;        // זמן משוער בדקות
 
-    public Workout(int id, List<Exercise> exercises, DifficultyLevel difficulty, int requiredLevel, int totalDuration, WorkoutType type) {
+    private Date date;
+    private String type;
+
+    public Date getDate() { return date; }
+    public String getType() { return type; }
+
+
+
+    public Workout(int id, List<Exercise> exercises, DifficultyLevel difficulty, int requiredLevel, int totalDuration) {
         this.workoutId = id;
         this.exercises = exercises;
         this.difficulty = difficulty;
         this.requiredLevel = requiredLevel;
         this.totalDuration = totalDuration;
-        this.type = type;
     }
 
     public int getId() {
@@ -62,14 +66,6 @@ public class Workout {
 
     public void setTotalDuration(int estimatedDuration) {
         this.totalDuration = estimatedDuration;
-    }
-
-    public WorkoutType getType() {
-        return type;
-    }
-
-    public void setType(WorkoutType type) {
-        this.type = type;
     }
 
     public void addExercise(Exercise exercise) {
@@ -139,8 +135,6 @@ public class Workout {
                     .distinct()
                     .collect(Collectors.toList());
         }
-
-
     }
 
 

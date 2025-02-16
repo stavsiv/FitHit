@@ -170,16 +170,6 @@
                 android:gravity="center"
                 android:layout_marginTop="16dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_add_workout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Add Exercise"
-                    android:layout_marginEnd="8dp"
-                    android:enabled="false"
-                    app:icon="@android:drawable/ic_input_add"
-                    app:iconGravity="textStart" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_cancel_workout"
@@ -187,10 +177,21 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Cancel Exercise"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:enabled="false"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     app:icon="@android:drawable/ic_menu_close_clear_cancel"
+                    app:iconGravity="textStart" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_workout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Add Exercise"
+                    android:layout_marginStart="8dp"
+                    android:enabled="false"
+                    app:icon="@android:drawable/ic_input_add"
                     app:iconGravity="textStart" />
             </LinearLayout>
         </LinearLayout>
