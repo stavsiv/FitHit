@@ -4,17 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.example.fithit.Adapters.EquipmentAdapter;
 import com.example.fithit.Adapters.MetricsAdapter;
@@ -137,8 +134,15 @@ public class FragmentPersonalArea extends Fragment implements EquipmentAdapter.O
         });
 
         // Load user equipment
+        // Load user equipment
         firebaseManager.getUserEquipment(userId)
-                .addOnSuccessListener(equipmentList -> {
+                .addOnSuccessListener(dataSnapshot -> {
+                    List<Equipment> equipmentList = new ArrayList<>();
+                    // Iterating through the DataSnapshot if needed
+                    for (Equipment equipment : dataSnapshot) { // assuming dataSnapshot is already a List<Equipment>
+                        equipmentList.add(equipment);
+                    }
+
                     if (equipmentAdapter != null && isAdded()) {
                         equipmentAdapter.updateEquipment(equipmentList);
                     }
@@ -218,7 +222,7 @@ public class FragmentPersonalArea extends Fragment implements EquipmentAdapter.O
     }
 
     private void showAddMetricDialog() {
-        AddMetricDialogFragment dialog = new AddMetricDialogFragment();
+        CircularMetricDialogFragment dialog = new CircularMetricDialogFragment();
         dialog.show(getChildFragmentManager(), "AddMetric");
     }
 
@@ -226,6 +230,4 @@ public class FragmentPersonalArea extends Fragment implements EquipmentAdapter.O
         EquipmentDetailsDialogFragment dialog = EquipmentDetailsDialogFragment.newInstance(equipment);
         dialog.show(getChildFragmentManager(), "EquipmentDetails");
     }
-
-
 }

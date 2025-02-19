@@ -5,4 +5,21 @@
     <string name="total_workouts_format">Total Workouts: %d</string>
     <string name="difficulty_format">Difficulty: %s</string>
     <string name="weekly_target_format">Weekly Target: %d workouts</string>
+    <string name="duration_hint">duration_hint</string>
+    <string name="exercise_distribution">exercise_distribution</string>
+    <string name="strength">strength</string>
+    <string name="zero_percent">zero_percent</string>
+    <string name="cardio">cardio</string>
+    <string name="stretching">stretching</string>
+    <string name="balance">balance</string>
+    <string name="total_zero_percent">total_zero_percent</string>
+    <string name="generate_workout">Generate Workout</string>
+
+    <string name="percent_format">%d%%</string>
+    <string name="total_percent_format">Total: %d%%</string>
+
+    <string name="error_enter_duration">Please enter workout duration</string>
+    <string name="error_duration_range">Duration must be between 15 and 60 minutes</string>
+    <string name="error_percentage_sum">Exercise percentages must sum to exactly 100%</string>
+
 </resources>

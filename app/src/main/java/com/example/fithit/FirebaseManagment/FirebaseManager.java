@@ -1,5 +1,7 @@
 package com.example.fithit.FirebaseManagment;
 
+import android.util.Log;
+
 import com.example.fithit.Models.Equipment;
 import com.example.fithit.Models.Exercise;
 import com.example.fithit.Models.Metric;
@@ -44,39 +46,29 @@ public class FirebaseManager {
         return instance;
     }
 
-//    public void initializeDatabaseStructure() {
-//        Map<String, Object> dbStructure = new HashMap<>();
-//        dbStructure.put(USERS_NODE, new HashMap<>());
-//        dbStructure.put(EQUIPMENT_NODE, new HashMap<>());
-//        dbStructure.put(EXERCISES_NODE, new HashMap<>());
-//        dbStructure.put(WORKOUTS_NODE, new HashMap<>());
-//        dbStructure.put(METRICS_NODE, new HashMap<>());
-//
-//        dbRef.updateChildren(dbStructure);
-//    }
 
     public Task<Void> createNewUser(String userId, String email, String username,
                                     String phone, int age, double weight, boolean wantReminders) {
-        if (userId == null) {
-            return Tasks.forException(new Exception("User ID cannot be null"));
+        if (userId == null || email == null || phone == null) {
+            return Tasks.forException(new Exception("All parameters are required"));
         }
         DatabaseReference userRef = dbRef.child(USERS_NODE).child(userId);
 
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("email", email);
-        userData.put("userName", username);
-        userData.put("phone", phone);
-        userData.put("age", age);
-        userData.put("weight", weight);
-        userData.put("wantReminders", wantReminders);
+        List<String> equipmentList = new ArrayList<>();
+        List<String> historyList = new ArrayList<>();
 
-        // Initialize default values
-        userData.put("level", 1);
-        userData.put("currentDifficulty", DifficultyLevel.BEGINNER.toString());
-        userData.put("totalWorkouts", 0);
-        userData.put("equipment", new HashMap<>());
-        userData.put("metrics", new HashMap<>());
-        userData.put("history", new ArrayList<>());
+        List<Object> userData = new ArrayList<>();
+        userData.add(email);
+        userData.add(username);
+        userData.add(phone);
+        userData.add(age);
+        userData.add(weight);
+        userData.add(wantReminders);
+        userData.add(1);
+        userData.add(DifficultyLevel.BEGINNER.toString());
+        userData.add(0);
+        userData.add(equipmentList);
+        userData.add(historyList);
 
         return userRef.setValue(userData);
     }
@@ -118,35 +110,41 @@ public class FirebaseManager {
                 return null;
             }
 
-            return new User(email, username, phone, age, weight, wantReminders);
+            return new User();//(email, username, phone, age, weight, wantReminders);
         } catch (Exception e) {
             return null;
         }
     }
 
-//    public Task<User> getUserProfile(String userId) {
-//        if (userId == null) {
-//            return Tasks.forException(new Exception("User ID cannot be null"));
-//        }
-//
-//        return dbRef.child(USERS_NODE).child(userId).get()
-//                .continueWith(task -> {
-//                    if (!task.isSuccessful()) {
-//                        throw task.getException();
-//                    }
-//                    User user = createUserFromSnapshot(task.getResult());
-//                    if (user == null) {
-//                        throw new Exception("Failed to parse user data");
-//                    }
-//                    return user;
-//                });
-//    }
+    public Task<Void> updateUserProfile(String userId, String username, String phone,
+                                        int age, double weight, boolean wantReminders) {
+        if (userId == null) {
+            return Tasks.forException(new Exception("User ID cannot be null"));
+        }
+        DatabaseReference userRef = dbRef.child(USERS_NODE).child(userId);
 
+        Task<Void> usernameTask = userRef.child("username").setValue(username);
+        Task<Void> phoneTask = userRef.child("phone").setValue(phone);
+        Task<Void> ageTask = userRef.child("age").setValue(age);
+        Task<Void> weightTask = userRef.child("weight").setValue(weight);
+        Task<Void> remindersTask = userRef.child("wantReminders").setValue(wantReminders);
+
+        return Tasks.whenAll(usernameTask, phoneTask, ageTask, weightTask, remindersTask);
+    }
     public void getUserData(String userId, ValueEventListener listener) {
+        if (userId == null) {
+            Log.e("FirebaseManager", "User ID cannot be null");
+            return;
+        }
         dbRef.child(USERS_NODE).child(userId).addValueEventListener(listener);
     }
 
+
     public Task<List<Equipment>> getUserEquipment(String userId) {
+        if (userId == null) {
+            return Tasks.forException(new Exception("User ID cannot be null"));
+        }
+
         return dbRef.child(USERS_NODE).child(userId).child("equipment").get()
                 .continueWith(task -> {
                     if (!task.isSuccessful()) {
@@ -162,28 +160,13 @@ public class FirebaseManager {
                     return equipmentList;
                 });
     }
-    public Task<Void> updateUserProfile(String userId, String username, String phone,
-                                        int age, double weight, boolean wantReminders) {
-        if (userId == null) {
-            return Tasks.forException(new Exception("User ID cannot be null"));
-        }
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("/userName", username);
-        updates.put("/phone", phone);
-        updates.put("/age", age);
-        updates.put("/weight", weight);
-        updates.put("/wantReminders", wantReminders);
 
-        return dbRef.child(USERS_NODE).child(userId).updateChildren(updates);
-    }
     public String getCurrentUserId() {
         if (mAuth.getCurrentUser() != null) {
             return mAuth.getCurrentUser().getUid();
         }
         return null;
     }
-
-
 
     public Task<Void> addEquipment(Equipment equipment) {
         String equipmentId = dbRef.child(EQUIPMENT_NODE).push().getKey();
@@ -265,5 +248,20 @@ public class FirebaseManager {
     public interface OnMetricsLoadedListener {
         void onMetricsLoaded(List<Metric> metrics);
         void onError(String error);
+    }
+
+    public Task<Void> updateMetricsForWorkout(String userId, List<Metric> newMetrics) {
+        if (userId == null || newMetrics == null) {
+            return Tasks.forException(new Exception("User ID or metrics cannot be null"));
+        }
+
+        DatabaseReference userMetricsRef = dbRef.child(METRICS_NODE).child(userId);
+        for (Metric metric : newMetrics) {
+            String metricId = userMetricsRef.push().getKey();
+            if (metricId != null) {
+                userMetricsRef.child(metricId).setValue(metric);
+            }
+        }
+        return Tasks.forResult(null);
     }
 }

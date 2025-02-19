@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                                   int age, double weight, boolean wantReminders) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
 
-        User user = new User(email, username, phone, age, weight, wantReminders);
+        User user = new User();//(email, username, phone, age, weight, wantReminders);
         usersRef.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(user).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "User data saved successfully", Toast.LENGTH_SHORT).show();

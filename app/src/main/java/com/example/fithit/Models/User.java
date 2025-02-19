@@ -6,36 +6,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
+
+    private String userId;
     private String email;
     private String userName;
     private String phone;
     private int age;
-    private double weight;
+    private double weight;// למחוק
     private boolean wantReminders;
-    private int level;
-    private DifficultyLevel currentDifficulty;
-    private int totalWorkouts;
-    private List<Equipment> userEquipment;
-    private UserGoals currentGoals;
-    private List<WorkoutBank> history;
-    private List<Metric> metrics;
+    private int level;// למחוק
+    private DifficultyLevel currentDifficulty;// דיפולטיבי  // לא מקבלי כפרמטר - לאפס בבנאיי
+    private int totalWorkouts; // למחוק
+    private List<Equipment> userEquipment; // לא בבנאי מעדכנים באיזור האישי
+    private UserGoals currentGoals; // לא בבנאי מעדכנים באיזור האיש
+    private List<DatabaseWorkouts> history; //למחוק
+    private List<Metric> metrics;// למחוק
+// להוסיף מערך של אימונים+מטריקות שמתחיל בגודל אפס וגודל עם כל אימון
+
 
     public User() {
     }
-    public User(String email, String userName, String phone, int age, double weight, boolean wantReminders) {
+    // id לא אמור להתקבל בבנאי אלא משתנה סטטי שעולה באחד עם כל משתנה
+    public User(String userId, String email, String username, String phone, Integer age, Double weight, Boolean wantReminders) {
+    }
+
+    public User(String userId, String email, String userName, String phone, int age, double weight, boolean wantReminders, int level, DifficultyLevel currentDifficulty, int totalWorkouts, List<Equipment> userEquipment, UserGoals currentGoals, List<DatabaseWorkouts> history, List<Metric> metrics) {
+        this.userId = userId;
         this.email = email;
         this.userName = userName;
         this.phone = phone;
         this.age = age;
         this.weight = weight;
         this.wantReminders = wantReminders;
-        this.level = 1;  // Starting level for new users
-        this.currentDifficulty = DifficultyLevel.BEGINNER;
-        this.totalWorkouts = 0;
-        this.userEquipment = new ArrayList<>();
-        this.currentGoals = new UserGoals();
-        this.history = new ArrayList<>();
-        this.metrics = new ArrayList<>();
+        this.level = level;
+        this.currentDifficulty = currentDifficulty;
+        this.totalWorkouts = totalWorkouts;
+        this.userEquipment = userEquipment;
+        this.currentGoals = currentGoals;
+        this.history = history;
+        this.metrics = metrics;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
     public DifficultyLevel getCurrentDifficulty() {
         return currentDifficulty;
@@ -63,7 +80,6 @@ public class User {
         }
     }
 
-    //get and set
     public String getEmail() {
         return email;
     }
@@ -144,11 +160,11 @@ public class User {
         this.currentGoals = currentGoals;
     }
 
-    public List<WorkoutBank> getHistory() {
+    public List<DatabaseWorkouts> getHistory() {
         return history;
     }
 
-    public void setHistory(List<WorkoutBank> history) {
+    public void setHistory(List<DatabaseWorkouts> history) {
         this.history = history;
     }
 
@@ -159,4 +175,6 @@ public class User {
     public void setMetrics(List<Metric> metrics) {
         this.metrics = metrics;
     }
+
+
 }

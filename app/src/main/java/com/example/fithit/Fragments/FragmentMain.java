@@ -12,6 +12,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.widget.EditText;
+import android.widget.SeekBar;
+
 import androidx.navigation.Navigation;
 
 import androidx.fragment.app.Fragment;
@@ -80,7 +83,7 @@ public class FragmentMain extends Fragment {
         });
 
         // Workout management buttons
-        //btnAddWorkout.setOnClickListener(v -> showAddWorkoutDialog());
+        btnAddWorkout.setOnClickListener(v -> showAddWorkoutDialog());  // הוספנו את זה
         btnCancelWorkout.setOnClickListener(v -> showCancelWorkoutDialog());
     }
 
@@ -104,7 +107,6 @@ public class FragmentMain extends Fragment {
     private void updateWorkoutButtons() {
         if (selectedDate == null) return;
 
-        // Enable/disable buttons based on whether the selected date has a workout
         boolean hasWorkout = checkIfDateHasWorkout(selectedDate);
         boolean isPastDate = selectedDate.before(new Date());
 
@@ -122,10 +124,8 @@ public class FragmentMain extends Fragment {
 
     private void showUpcomingWorkoutAlert(Workout workout) {
         upcomingWorkoutAlert.setVisibility(View.VISIBLE);
-        TextView alertText = upcomingWorkoutAlert.findViewById(android.R.id.text1);
-        String alertMessage = String.format("Upcoming workout: %s on %s",
-                workout.getType(),
-                new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(workout.getDate()));
+        TextView alertText = upcomingWorkoutAlert.findViewById(R.id.alert_text);
+        String alertMessage = String.format("Upcoming workout: %s", workout.getName());
         alertText.setText(alertMessage);
     }
 
@@ -143,44 +143,151 @@ public class FragmentMain extends Fragment {
         }
     }
 
-//    private void showAddWorkoutDialog() {
-//        // TODO: Implement add workout dialog
-//        WorkoutDialogFragment dialog = WorkoutDialogFragment.newInstance(selectedDate);
-//        dialog.show(getChildFragmentManager(), "AddWorkout");
-//    }
+    private void showAddWorkoutDialog() {
+        Context context = getContext();
+        if (context != null) {
+            new MaterialAlertDialogBuilder(context)
+                    .setTitle("Add Workout")
+                    .setMessage("Choose workout type:")
+                    .setPositiveButton("Choose from existing workouts", (dialog, which) -> {
+                        Bundle args = new Bundle();
+                        args.putLong("selectedDate", selectedDate.getTime());
+                        Navigation.findNavController(getView())
+                                .navigate(R.id.action_fragmentMain_to_fragmentWorkouts, args);
+                    })
+                    .setNegativeButton("Create custom workout", (dialog, which) -> {
+                        showCustomWorkoutDialog();
+                    })
+                    .show();
+        }
+    }
 
+    private void showCustomWorkoutDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_custom_workout, null);
+
+        // Initialize views
+        EditText durationInput = dialogView.findViewById(R.id.duration_input);
+        SeekBar strengthSeekBar = dialogView.findViewById(R.id.strength_seekbar);
+        SeekBar cardioSeekBar = dialogView.findViewById(R.id.cardio_seekbar);
+        SeekBar stretchingSeekBar = dialogView.findViewById(R.id.stretching_seekbar);
+        SeekBar balanceSeekBar = dialogView.findViewById(R.id.balance_seekbar);
+
+        TextView strengthPercent = dialogView.findViewById(R.id.strength_percent);
+        TextView cardioPercent = dialogView.findViewById(R.id.cardio_percent);
+        TextView stretchingPercent = dialogView.findViewById(R.id.stretching_percent);
+        TextView balancePercent = dialogView.findViewById(R.id.balance_percent);
+        TextView totalPercentage = dialogView.findViewById(R.id.total_percentage);
+
+        // Set up seekbar listeners
+        SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Calculate total percentage
+                int total = strengthSeekBar.getProgress() +
+                        cardioSeekBar.getProgress() +
+                        stretchingSeekBar.getProgress() +
+                        balanceSeekBar.getProgress();
+
+                // Update percentage texts
+                strengthPercent.setText(strengthSeekBar.getProgress() + "%");
+                cardioPercent.setText(cardioSeekBar.getProgress() + "%");
+                stretchingPercent.setText(stretchingSeekBar.getProgress() + "%");
+                balancePercent.setText(balanceSeekBar.getProgress() + "%");
+                totalPercentage.setText("Total: " + total + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        };
+
+        // Set listeners
+        strengthSeekBar.setOnSeekBarChangeListener(seekBarListener);
+        cardioSeekBar.setOnSeekBarChangeListener(seekBarListener);
+        stretchingSeekBar.setOnSeekBarChangeListener(seekBarListener);
+        balanceSeekBar.setOnSeekBarChangeListener(seekBarListener);
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Create Custom Workout")
+                .setView(dialogView)
+                .setPositiveButton("Generate Workout", (dialog, which) -> {
+                    // Validate duration
+                    String durationStr = durationInput.getText().toString();
+                    if (durationStr.isEmpty()) {
+                        Toast.makeText(getContext(), "Please enter workout duration", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    int duration = Integer.parseInt(durationStr);
+                    if (duration < 15 || duration > 60) {
+                        Toast.makeText(getContext(), "Duration must be between 15 and 60 minutes", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Validate percentages
+                    int total = strengthSeekBar.getProgress() +
+                            cardioSeekBar.getProgress() +
+                            stretchingSeekBar.getProgress() +
+                            balanceSeekBar.getProgress();
+
+                    if (total != 100) {
+                        Toast.makeText(getContext(), "Exercise percentages must sum to exactly 100%", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // All validations passed, create workout
+                    createCustomWorkout(duration,
+                            strengthSeekBar.getProgress(),
+                            cardioSeekBar.getProgress(),
+                            stretchingSeekBar.getProgress(),
+                            balanceSeekBar.getProgress());
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+    private void createCustomWorkout(int duration, int strengthPercentage, int cardioPercentage,
+                                     int stretchingPercentage, int balancePercentage) {
+        // TODO: Implement custom workout creation
+        // This will be implemented later
+        Toast.makeText(getContext(), "Creating custom workout...", Toast.LENGTH_SHORT).show();
+    }
     private void showCancelWorkoutDialog() {
         Context context = getContext();
         if (context != null) {
             new MaterialAlertDialogBuilder(context)
                     .setTitle("Cancel Workout")
                     .setMessage("Are you sure you want to cancel this workout?")
-                    .setPositiveButton("Yes", (dialog, which) -> cancelWorkout())
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        cancelWorkout();
+                    })
                     .setNegativeButton("No", null)
                     .show();
-        } else {
-            Log.e("Dialog", "Context is null, cannot show cancel workout dialog");
         }
     }
 
     private void cancelWorkout() {
-        // TODO: Implement workout cancellation logic
         if (selectedDate != null) {
-            // Delete workout from database
-            // Update UI
+            // TODO: Implement workout cancellation logic
+            Toast.makeText(getContext(), "Workout cancelled", Toast.LENGTH_SHORT).show();
             updateWorkoutButtons();
             loadUserData();
         }
     }
 
-    // TODO: Implement these methods to get actual data from your backend/database
-    private int getCurrentUserPoints() { return 0; }
+    // מתודות זמניות לטובת הדוגמה - יוחלפו בהמשך במימוש אמיתי
+    private int getCurrentUserPoints() { return 50; }
     private int getPointsForNextLevel() { return 100; }
     private int getWeeklyWorkoutsCount() { return 3; }
     private int getWeeklyWorkoutGoal() { return 7; }
-    private boolean checkIfDateHasWorkout(Date date) { return false; }
-    private Workout getNextScheduledWorkout() { return null; }
-
-    // Workout data class (you might want to move this to a separate file)
+    private boolean checkIfDateHasWorkout(Date date) {
+        // TODO: Implement actual check
+        return false;
+    }
+    private Workout getNextScheduledWorkout() {
+        // TODO: Implement actual next workout fetch
+        return null;
+    }
 
 }

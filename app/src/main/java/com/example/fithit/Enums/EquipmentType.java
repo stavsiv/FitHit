@@ -3,7 +3,7 @@ package com.example.fithit.Enums;
 public enum EquipmentType {
     Dumbbell("Dumbbell", "dumbbells_image.webp"),
     Barbell("Barbell", "barbell_set_image.jpg"),
-    Bench("Bench", "bench_image.jpg"),
+    Bench("Bench", "bench_image.jpeg"),
     PullUpBar("Pull Up Bar", "pullup_bar_image.jpg"),
     Kettlebell("Kettlebell", "kettlebells_image.webp"),
     ResistanceBand("Resistance Band", "resistance_bands_image.webp"),
@@ -12,7 +12,7 @@ public enum EquipmentType {
     BattleRopes("Battle Ropes", "battle_ropes_image.jpg"),
     PlyoBox("Plyo Box", "plyo_box_image.jpg"),
     JumpRope("Jump Rope", "jump_rope_image.jpg"),
-    YogaMat("Yoga Mat", "yoga_mat_image.jpg");
+    YogaMat("Yoga Mat", "yoga_mat_image.jpeg");
 
     private final String displayName;
     private final String imageFileName;

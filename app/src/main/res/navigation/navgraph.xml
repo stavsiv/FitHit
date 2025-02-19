@@ -48,5 +48,24 @@
         <action
             android:id="@+id/action_fragmentMain_to_fragmentPersonalArea"
             app:destination="@id/fragmentPersonalArea" />
+        <action
+            android:id="@+id/action_fragmentMain_to_fragmentWorkouts"
+            app:destination="@id/fragmentWorkouts" />
     </fragment>
+    <fragment
+        android:id="@+id/addMetricDialogFragment"
+        android:name="com.example.fithit.Fragments.CircularMetricDialogFragment"
+        android:label="AddMetricDialogFragment" />
+    <fragment
+        android:id="@+id/customWorkoutDialogFragment"
+        android:name="com.example.fithit.Fragments.CustomWorkoutDialogFragment"
+        android:label="CustomWorkoutDialogFragment" />
+    <fragment
+        android:id="@+id/addEquipmentDialogFragment"
+        android:name="com.example.fithit.Fragments.AddEquipmentDialogFragment"
+        android:label="AddEquipmentDialogFragment" />
+    <fragment
+        android:id="@+id/equipmentDetailsDialogFragment"
+        android:name="com.example.fithit.Fragments.EquipmentDetailsDialogFragment"
+        android:label="EquipmentDetailsDialogFragment" />
 </navigation>

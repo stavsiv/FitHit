@@ -54,19 +54,19 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
 
     static class EquipmentViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvEquipmentName;
-        private final TextView tvDescription;
+        private final TextView tvImage;
         private final ImageButton btnRemove;
 
         public EquipmentViewHolder(@NonNull View itemView) {
             super(itemView);
             tvEquipmentName = itemView.findViewById(R.id.tv_equipment_name);
-            tvDescription = itemView.findViewById(R.id.tv_equipment_description);
+            tvImage = itemView.findViewById(R.id.tv_equipment_description);
             btnRemove = itemView.findViewById(R.id.btn_remove_equipment);
         }
 
         public void bind(Equipment equipment, OnEquipmentClickListener listener) {
-            tvEquipmentName.setText(equipment.getEquipmentName());
-            tvDescription.setText(equipment.getDescription());
+            tvEquipmentName.setText(equipment.getDisplayName());
+            tvImage.setText(equipment.getImageResource());
 
             itemView.setOnClickListener(v -> listener.onEquipmentClick(equipment));
             btnRemove.setOnClickListener(v -> {

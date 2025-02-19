@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class DatabaseEquipment {
+public class DatabaseEquipments {
     private static final List<Equipment> equipmentList = new ArrayList<>();
 
     static {
