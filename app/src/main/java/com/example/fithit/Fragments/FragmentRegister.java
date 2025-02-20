@@ -21,7 +21,6 @@ public class FragmentRegister extends Fragment {
     private EditText editTextUsername;
     private EditText editTextPhone;
     private EditText editTextAge;
-    private EditText editTextWeight;
     private CheckBox checkBoxReminders;
 
     @Override
@@ -35,7 +34,6 @@ public class FragmentRegister extends Fragment {
         editTextUsername = view.findViewById(R.id.editTextUsername);
         editTextPhone = view.findViewById(R.id.editTextPhone);
         editTextAge = view.findViewById(R.id.editTextAge);
-        editTextWeight = view.findViewById(R.id.editTextWeight);
         checkBoxReminders = view.findViewById(R.id.checkBoxReminders);
         Button buttonRegister = view.findViewById(R.id.buttonRegister);
 
@@ -47,21 +45,19 @@ public class FragmentRegister extends Fragment {
             String phone = editTextPhone.getText().toString().trim();
 
             String ageStr = editTextAge.getText().toString().trim();
-            String weightStr = editTextWeight.getText().toString().trim();
 
-            if (ageStr.isEmpty() || weightStr.isEmpty()) {
+            if (ageStr.isEmpty()) {
                 Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
             try {
                 int age = Integer.parseInt(editTextAge.getText().toString().trim());
-                double weight = Double.parseDouble(editTextWeight.getText().toString().trim());
                 boolean wantReminders = checkBoxReminders.isChecked();
 
                 MainActivity mainActivity = (MainActivity) getActivity();
                 if (mainActivity != null) {
                     mainActivity.register(email, password1, password2, username, phone,
-                            age, weight, wantReminders, view);
+                            age, wantReminders, view);
                 } else {
                     Toast.makeText(getContext(), "Error: Activity not found", Toast.LENGTH_SHORT).show();
                 }

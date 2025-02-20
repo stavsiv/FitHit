@@ -87,17 +87,6 @@
             android:padding="12dp"
             android:layout_marginBottom="8dp"/>
 
-        <EditText
-            android:id="@+id/editTextWeight"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:autofillHints=""
-            android:hint="Weight"
-            android:inputType="numberDecimal"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp"/>
-
         <CheckBox
             android:id="@+id/checkBoxReminders"
             android:layout_width="match_parent"

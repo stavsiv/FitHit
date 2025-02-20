@@ -60,35 +60,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void register(String email, String password1, String password2, String username,
-                         String phone, int age, double weight, boolean wantReminders, View view) {
-        if (!validateInputs(email, password1, password2, username, phone, age, weight)) {
+                         String phone, int age, boolean wantReminders, View view) {
+        if (!validateInputs(email, password1, password2, username, phone, age)) {
             return;
         }
 
         // First create the authentication user
         mAuth.createUserWithEmailAndPassword(email, password1)
                 .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful() && mAuth.getCurrentUser() != null) {  // בדיקת null
+                    if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
                         // Get the new user's ID
                         String userId = mAuth.getCurrentUser().getUid();
 
-                        // Now create the user profile in the database
-                        FirebaseManager.getInstance()
-                                .createNewUser(userId, email, username, phone, age, weight, wantReminders)
+                        // Create new user with updated constructor
+                        User newUser = new User(username, phone, age, wantReminders);
+                        newUser.setUserId(userId);  // שימוש ב-ID מהפיירבייס במקום המספר הרץ
+
+                        // Save to database
+                        FirebaseDatabase.getInstance().getReference("users")
+                                .child(userId)
+                                .setValue(newUser)
                                 .addOnCompleteListener(profileTask -> {
                                     if (profileTask.isSuccessful()) {
                                         Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
                                         Navigation.findNavController(view)
                                                 .navigate(R.id.action_fragmentRegister_to_fragmentLogin);
                                     } else {
-                                        mAuth.getCurrentUser().delete()
-                                                .addOnCompleteListener(deleteTask -> {
-                                                    String errorMessage = "Failed to create user profile";
-                                                    if (profileTask.getException() != null) {
-                                                        errorMessage += ": " + profileTask.getException().getMessage();
-                                                    }
-                                                    Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
-                                                });
+                                        // מחיקת המשתמש מהאוטנטיקציה אם נכשלה השמירה בדאטהבייס
+                                        mAuth.getCurrentUser().delete();
+                                        String errorMessage = "Failed to create user profile";
+                                        if (profileTask.getException() != null) {
+                                            errorMessage += ": " + profileTask.getException().getMessage();
+                                        }
+                                        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     } else {
@@ -102,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean validateInputs(String email, String password1, String password2,
-                                   String username, String phone, int age, double weight) {
+                                   String username, String phone, int age) {
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show();
             return false;
@@ -138,11 +142,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (age < 16 || age > 70) {
             Toast.makeText(this, "Age must be between 16 and 70", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (weight <= 0 || weight > 200) {
-            Toast.makeText(this, "Invalid weight", Toast.LENGTH_SHORT).show();
             return false;
         }
 
