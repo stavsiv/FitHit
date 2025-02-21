@@ -3,7 +3,8 @@ package com.example.fithit.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,13 +18,14 @@ import java.util.List;
 public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.EquipmentViewHolder> {
 
     private List<Equipment> equipmentList;
-    private OnEquipmentClickListener listener;
+    private OnEquipmentSelectionChangedListener listener;
 
-    public interface OnEquipmentClickListener {
-        void onEquipmentClick(Equipment equipment);
+    public interface OnEquipmentSelectionChangedListener {
+        void onEquipmentSelectionChanged(Equipment equipment, boolean isSelected);
     }
 
-    public EquipmentAdapter(List<Equipment> equipmentList, OnEquipmentClickListener listener) {
+    public EquipmentAdapter(List<Equipment> equipmentList,
+                            OnEquipmentSelectionChangedListener listener) {
         this.equipmentList = equipmentList;
         this.listener = listener;
     }
@@ -33,13 +35,12 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
     public EquipmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_equipment, parent, false);
-        return new EquipmentViewHolder(view);
+        return new EquipmentViewHolder(view, listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull EquipmentViewHolder holder, int position) {
-        Equipment equipment = equipmentList.get(position);
-        holder.bind(equipment, listener);
+        holder.bind(equipmentList.get(position));
     }
 
     @Override
@@ -47,30 +48,48 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
         return equipmentList.size();
     }
 
-    public void updateEquipment(List<Equipment> newEquipment) {
-        this.equipmentList = newEquipment;
+    public void updateEquipmentList(List<Equipment> newList) {
+        this.equipmentList = newList;
         notifyDataSetChanged();
     }
 
     static class EquipmentViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvEquipmentName;
-        private final TextView tvImage;
-        private final ImageButton btnRemove;
+        private ImageView ivEquipmentImage;
+        private TextView tvEquipmentName;
+        private CheckBox cbEquipmentSelected;
+        private OnEquipmentSelectionChangedListener listener;
 
-        public EquipmentViewHolder(@NonNull View itemView) {
+        public EquipmentViewHolder(@NonNull View itemView,
+                                   OnEquipmentSelectionChangedListener listener) {
             super(itemView);
+            this.listener = listener;
+
+            ivEquipmentImage = itemView.findViewById(R.id.iv_equipment_image);
             tvEquipmentName = itemView.findViewById(R.id.tv_equipment_name);
-            tvImage = itemView.findViewById(R.id.tv_equipment_image);
-            btnRemove = itemView.findViewById(R.id.btn_remove_equipment);
+            cbEquipmentSelected = itemView.findViewById(R.id.cb_equipment_selected);
         }
 
-        public void bind(Equipment equipment, OnEquipmentClickListener listener) {
+        public void bind(Equipment equipment) {
+            // Set equipment name
             tvEquipmentName.setText(equipment.getDisplayName());
-            tvImage.setText(equipment.getImageResource());
 
-            itemView.setOnClickListener(v -> listener.onEquipmentClick(equipment));
-            btnRemove.setOnClickListener(v -> {
-                // Handle remove equipment
+            // Set default image (replace with actual logic)
+            ivEquipmentImage.setImageResource(equipment.getImageResourceId());
+
+            // Set checkbox state
+            cbEquipmentSelected.setChecked(equipment.isSelected());
+
+            // Checkbox change listener
+            cbEquipmentSelected.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                equipment.setSelected(isChecked);
+                if (listener != null) {
+                    listener.onEquipmentSelectionChanged(equipment, isChecked);
+                }
+            });
+
+            // Item view click listener to toggle checkbox
+            itemView.setOnClickListener(v -> {
+                cbEquipmentSelected.setChecked(!cbEquipmentSelected.isChecked());
             });
         }
     }
