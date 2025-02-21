@@ -2,7 +2,6 @@ package com.example.fithit.Fragments;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,14 +12,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.fithit.Adapters.ExercisesAdapter;
-import com.example.fithit.Enums.EquipmentType;
 import com.example.fithit.Models.DatabaseWorkouts;
-import com.example.fithit.Models.Exercise;
 import com.example.fithit.Models.Workout;
 import com.example.fithit.R;
 import com.google.android.material.chip.Chip;
 
-import java.util.List;
 
 
 public class FragmentWorkoutDetails extends Fragment {

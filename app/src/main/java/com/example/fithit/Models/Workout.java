@@ -16,6 +16,8 @@ public class Workout {
     private DifficultyLevel difficultyLevel;
     private String category; // e.g., "Quick", "Full Body", "Cardio Focus" etc.
 
+    private int requiredHearts;
+
     public Workout(int workoutId, String name, String description, List<Exercise> exercises, int estimatedDuration, DifficultyLevel difficultyLevel, String category) {
         this.workoutId = workoutId;
         this.name = name;
@@ -24,7 +26,59 @@ public class Workout {
         this.estimatedDuration = estimatedDuration;
         this.difficultyLevel = difficultyLevel;
         this.category = category;
+
+        calculateRequiredHearts();
     }
+
+    private void calculateRequiredHearts() {
+        int baseHearts;
+        switch (difficultyLevel) {
+            case BEGINNER:
+                baseHearts = 5;
+                break;
+            case INTERMEDIATE:
+                baseHearts = 10;
+                break;
+            case EXPERT:
+                baseHearts = 15;
+                break;
+            default:
+                baseHearts = 5;
+                break;
+        }
+
+        int durationHearts = (estimatedDuration / 15) * 2;
+
+        int varietyHearts = (int) exercises.stream()
+                .map(Exercise::getExerciseType)
+                .distinct()
+                .count() * 2;
+
+        this.requiredHearts = baseHearts + durationHearts + varietyHearts;
+    }
+
+    public int calculateEarnedHearts(int completedExercises) {
+        double completionPercentage = (double) completedExercises / exercises.size();
+
+        int baseHearts;
+        switch (difficultyLevel) {
+            case BEGINNER:
+                baseHearts = 3;
+                break;
+            case INTERMEDIATE:
+                baseHearts = 5;
+                break;
+            case EXPERT:
+                baseHearts = 8;
+                break;
+            default:
+                baseHearts = 3;
+                break;
+        }
+
+        return (int) (baseHearts * completionPercentage);
+    }
+
     //getters and setters
     public int getWorkoutId() {
         return workoutId;
