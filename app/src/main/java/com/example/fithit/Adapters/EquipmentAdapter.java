@@ -60,7 +60,7 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
         public EquipmentViewHolder(@NonNull View itemView) {
             super(itemView);
             tvEquipmentName = itemView.findViewById(R.id.tv_equipment_name);
-            tvImage = itemView.findViewById(R.id.tv_equipment_description);
+            tvImage = itemView.findViewById(R.id.tv_equipment_image);
             btnRemove = itemView.findViewById(R.id.btn_remove_equipment);
         }
 

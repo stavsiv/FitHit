@@ -10,27 +10,23 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fithit.Adapters.EquipmentAdapter;
-import com.example.fithit.Adapters.MetricsAdapter;
 import com.example.fithit.R;
 import com.example.fithit.Models.Equipment;
-import com.example.fithit.Models.Metric;
 import com.example.fithit.Models.User;
 import com.example.fithit.FirebaseManagment.FirebaseManager;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class FragmentPersonalArea extends Fragment implements EquipmentAdapter.OnEquipmentClickListener {
 
@@ -40,7 +36,7 @@ public class FragmentPersonalArea extends Fragment implements EquipmentAdapter.O
     private RecyclerView metricsRecyclerView;
     private LineChart progressChart;
     private EquipmentAdapter equipmentAdapter;
-    private MetricsAdapter metricsAdapter;
+    // private MetricsAdapter metricsAdapter;
     private TextView tvUserName;
     private TextView tvUserLevel;
     private View progressLevel;
@@ -80,10 +76,11 @@ public class FragmentPersonalArea extends Fragment implements EquipmentAdapter.O
         tvUserLevel = rootView.findViewById(R.id.tv_user_level);
         progressLevel = rootView.findViewById(R.id.progress_level);
 
-        FloatingActionButton fabAddMetric = rootView.findViewById(R.id.fab_add_metric);
-        fabAddMetric.setOnClickListener(v -> showAddMetricDialog());
+        FloatingActionButton fabAddEquipment = rootView.findViewById(R.id.btn_add_equipment);
+        fabAddEquipment.setOnClickListener(v -> showAddEquipmentDialog());
 
-        rootView.findViewById(R.id.btn_add_equipment).setOnClickListener(v -> showAddEquipmentDialog());
+        FloatingActionButton fabAddMetric = rootView.findViewById(R.id.fab_add_metric);
+        //  fabAddMetric.setOnClickListener(v -> showAddMetricDialog());
     }
 
     private void setupRecyclerViews() {
@@ -91,11 +88,8 @@ public class FragmentPersonalArea extends Fragment implements EquipmentAdapter.O
         equipmentAdapter = new EquipmentAdapter(new ArrayList<>(), this);
         equipmentRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         equipmentRecyclerView.setAdapter(equipmentAdapter);
+        equipmentRecyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
-        // Setup Metrics RecyclerView
-        metricsAdapter = new MetricsAdapter(new ArrayList<>());
-        metricsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        metricsRecyclerView.setAdapter(metricsAdapter);
     }
 
     private void setupChart() {
@@ -117,114 +111,121 @@ public class FragmentPersonalArea extends Fragment implements EquipmentAdapter.O
         firebaseManager.getUserData(userId, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!isAdded()) return;
+
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
-                    updateUserUI(user);
+                    //updateUserUI(user);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                if (isAdded()) {
-                    Toast.makeText(requireContext(),
-                            "Failed to load user data: " + error.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                }
+                if (!isAdded()) return;
+                Toast.makeText(requireContext(),
+                        "Failed to load user data: " + error.getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Load user equipment
-        // Load user equipment
         firebaseManager.getUserEquipment(userId)
-                .addOnSuccessListener(dataSnapshot -> {
-                    List<Equipment> equipmentList = new ArrayList<>();
-                    // Iterating through the DataSnapshot if needed
-                    for (Equipment equipment : dataSnapshot) { // assuming dataSnapshot is already a List<Equipment>
-                        equipmentList.add(equipment);
-                    }
-
-                    if (equipmentAdapter != null && isAdded()) {
-                        equipmentAdapter.updateEquipment(equipmentList);
-                    }
+                .addOnSuccessListener(equipmentList -> {
+                    if (!isAdded()) return;
+                    equipmentAdapter.updateEquipment(equipmentList);
                 })
                 .addOnFailureListener(e -> {
-                    if (isAdded()) {
-                        Toast.makeText(requireContext(),
-                                "Failed to load equipment: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        // Load user metrics
-        firebaseManager.getLatestMetrics(userId, 7, new FirebaseManager.OnMetricsLoadedListener() {
-            @Override
-            public void onMetricsLoaded(List<Metric> metrics) {
-                if (isAdded()) {
-                    updateMetricsUI(metrics);
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                if (isAdded()) {
+                    if (!isAdded()) return;
                     Toast.makeText(requireContext(),
-                            "Failed to load metrics: " + error,
+                            "Failed to load equipment: " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                });
     }
 
-    private void updateUserUI(User user) {
-        if (!isAdded()) return;
+//        // Load user metrics
+//        firebaseManager.getLatestMetrics(userId, 7, new FirebaseManager.OnMetricsLoadedListener() {
+//            @Override
+//            public void onMetricsLoaded(List<Metric> metrics) {
+//                if (isAdded()) {
+//                   // updateMetricsUI(metrics);
+//                }
+//            }
 
-        tvUserName.setText(user.getUserName());
-        tvUserLevel.setText("Level " + user.getLevel());
+//            @Override
+//            public void onError(String error) {
+//                if (isAdded()) {
+//                    Toast.makeText(requireContext(),
+//                            "Failed to load metrics: " + error,
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            }
 
-        if (progressLevel instanceof android.widget.ProgressBar) {
-            int progress = (user.getTotalWorkouts() % 10) * 10; // 10 workouts per level
-            ((android.widget.ProgressBar) progressLevel).setProgress(progress);
-        }
-    }
 
-    private void updateMetricsUI(List<Metric> metrics) {
-        if (!isAdded()) return;
-
-        if (metricsAdapter != null) {
-            metricsAdapter.updateMetrics(metrics);
-        }
-
-        if (!metrics.isEmpty() && progressChart != null) {
-            List<Entry> entries = new ArrayList<>();
-            for (int i = 0; i < metrics.size(); i++) {
-                entries.add(new Entry(i, (float) metrics.get(i).getValue()));
-            }
-
-            LineDataSet dataSet = new LineDataSet(entries, "Progress");
-            dataSet.setDrawFilled(true);
-            dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-
-            LineData lineData = new LineData(dataSet);
-            progressChart.setData(lineData);
-            progressChart.invalidate();
-        }
-    }
-
+    //    private void updateUserUI(User user) {
+//        if (!isAdded()) return;
+//
+//        tvUserName.setText(user.getUserName());
+//        tvUserLevel.setText(getString(R.string.level_format, user.getLevel()));
+//
+//        if (progressLevel instanceof ProgressBar) {
+//            int progress = (user.getTotalWorkouts() % 10) * 10; // 10 workouts per level
+//            ((ProgressBar) progressLevel).setProgress(progress);
+//        }
+//    }
+//
+//    private void updateMetricsUI(List<Metric> metrics) {
+//        if (!isAdded() || metrics == null || metrics.isEmpty()) return;
+//
+//        // Update chart data here if needed
+//        progressChart.clear();
+//        // Add your chart update logic
+//    }
     @Override
     public void onEquipmentClick(Equipment equipment) {
-        if (!isAdded()) return;
+        if (!isAdded() || equipment == null) return;
         showEquipmentDetailsDialog(equipment);
     }
 
+
+    // @Override
+//    public void onEquipmentRemove(Equipment equipment) {
+//        if (!isAdded() || equipment == null) return;
+//
+//        new AlertDialog.Builder(requireContext())
+//                .setTitle(R.string.remove_equipment_title)
+//                .setMessage(getString(R.string.remove_equipment_message, equipment.getDisplayName()))
+//                .setPositiveButton(R.string.yes, (dialog, which) -> {
+//                    String userId = firebaseManager.getCurrentUserId();
+//                    if (userId != null) {
+//                        firebaseManager.removeEquipmentFromUser(userId, equipment.getId())
+//                                .addOnSuccessListener(aVoid -> {
+//                                    if (!isAdded()) return;
+//                                    Toast.makeText(requireContext(),
+//                                            R.string.equipment_removed_success,
+//                                            Toast.LENGTH_SHORT).show();
+//                                    loadUserData();  // Refresh the list
+//                                })
+//                                .addOnFailureListener(e -> {
+//                                    if (!isAdded()) return;
+//                                    Toast.makeText(requireContext(),
+//                                            getString(R.string.equipment_removed_error, e.getMessage()),
+//                                            Toast.LENGTH_SHORT).show();
+//                                });
+//                    }
+//                })
+//                .setNegativeButton(R.string.no, null)
+//                .show();
+//    }
+
     private void showAddEquipmentDialog() {
+        if (!isAdded()) return;
         AddEquipmentDialogFragment dialog = new AddEquipmentDialogFragment();
         dialog.show(getChildFragmentManager(), "AddEquipment");
     }
 
-    private void showAddMetricDialog() {
-        CircularMetricDialogFragment dialog = new CircularMetricDialogFragment();
-        dialog.show(getChildFragmentManager(), "AddMetric");
-    }
+//    private void showAddMetricDialog() {
+//        CircularMetricDialogFragment dialog = new CircularMetricDialogFragment();
+//        dialog.show(getChildFragmentManager(), "AddMetric");
+//    }
 
     private void showEquipmentDetailsDialog(Equipment equipment) {
         EquipmentDetailsDialogFragment dialog = EquipmentDetailsDialogFragment.newInstance(equipment);

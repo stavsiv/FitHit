@@ -16,60 +16,44 @@ import com.example.fithit.FirebaseManagment.FirebaseManager;
 import com.example.fithit.Models.Equipment;
 import com.example.fithit.R;
 
-public class AddEquipmentDialogFragment extends DialogFragment {
+import java.util.Arrays;
 
+public class AddEquipmentDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_add_equipment, null);
 
-        EditText etEquipmentName = view.findViewById(R.id.et_equipment_name);
+        final String[] equipmentNames = Arrays.stream(EquipmentType.values())
+                .map(EquipmentType::getDisplayName)
+                .toArray(String[]::new);
 
-        builder.setView(view)
-                .setTitle("Add Equipment")
-                .setPositiveButton("Add", (dialog, id) -> {
-                    String name = etEquipmentName.getText().toString().trim();
+        builder.setTitle("Select Equipment")
+                .setItems(equipmentNames, (dialog, which) -> {
+                    EquipmentType selectedType = EquipmentType.values()[which];
+                    Equipment newEquipment = new Equipment(selectedType);
 
-                    if (name.isEmpty()) {
-                        Toast.makeText(getContext(), "Please enter equipment name",
-                                Toast.LENGTH_SHORT).show();
-                        return;
+                    String userId = FirebaseManager.getInstance().getCurrentUserId();
+                    if (userId != null) {
+                        FirebaseManager.getInstance().addEquipment(newEquipment)
+                                .continueWithTask(task -> {
+                                    String equipmentId = task.getResult().toString();
+                                    return FirebaseManager.getInstance()
+                                            .addEquipmentToUser(userId, equipmentId);
+                                })
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(getContext(),
+                                            "Equipment added successfully",
+                                            Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(),
+                                            "Failed to add equipment: " + e.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                });
                     }
-
-                    // להמיר את שם הציוד לסוג EquipmentType
-                    EquipmentType equipmentType = getEquipmentTypeFromName(name);
-                    if (equipmentType == null) {
-                        Toast.makeText(getContext(), "Invalid equipment type", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    Equipment newEquipment = new Equipment(equipmentType);
-                    FirebaseManager.getInstance().addEquipment(newEquipment)
-                            .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(getContext(), "Equipment added successfully",
-                                        Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(getContext(), "Failed to add equipment: "
-                                        + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            });
-                })
-                .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel());
+                });
 
         return builder.create();
-    }
-
-    /**
-     * ממירה שם ציוד לסוג EquipmentType
-     */
-    private EquipmentType getEquipmentTypeFromName(String name) {
-        for (EquipmentType type : EquipmentType.values()) {
-            if (type.getDisplayName().equalsIgnoreCase(name)) {
-                return type;
-            }
-        }
-        return null;
     }
 }

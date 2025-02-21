@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.fithit.Enums.MetricType;
 import com.example.fithit.FirebaseManagment.FirebaseManager;
 import com.example.fithit.Models.Metric;
 import com.example.fithit.R;
@@ -23,11 +22,13 @@ import com.example.fithit.Views.CircularMetricsView;
 import java.util.Date;
 
 public class CircularMetricDialogFragment extends DialogFragment {
+    private static final String TAG = "MetricDialog";
+
     private CircularMetricsView circularMetricsView;
     private SeekBar valueSeekBar;
     private TextView selectedMetricText;
-    private MetricType selectedMetricType;
     private FirebaseManager firebaseManager;
+    private String selectedMetricType;
 
     public interface MetricUpdateListener {
         void onMetricUpdated();
@@ -39,15 +40,8 @@ public class CircularMetricDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_circular_metric, null);
 
-        // Initialize Firebase
         firebaseManager = FirebaseManager.getInstance();
-
-        // Initialize views
-        circularMetricsView = view.findViewById(R.id.circular_metrics_view);
-        valueSeekBar = view.findViewById(R.id.value_seekbar);
-        selectedMetricText = view.findViewById(R.id.selected_metric_text);
-
-        // Setup listeners
+        initializeViews(view);
         setupListeners();
 
         builder.setView(view)
@@ -58,50 +52,64 @@ public class CircularMetricDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    private void initializeViews(View view) {
+        circularMetricsView = view.findViewById(R.id.circular_metrics_view);
+        valueSeekBar = view.findViewById(R.id.value_seekbar);
+        selectedMetricText = view.findViewById(R.id.selected_metric_text);
+    }
+
     private void saveMetric() {
         if (selectedMetricType == null) {
             Toast.makeText(getContext(), "Please select a metric type", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String userId = firebaseManager.getCurrentUserId();
-        if (userId == null) {
-            Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        Metric newMetric = new Metric();
+        newMetric.setUserId(firebaseManager.getCurrentUserId());
+        newMetric.addMetric(selectedMetricType, valueSeekBar.getProgress());
 
-        double value = valueSeekBar.getProgress();
-        Metric newMetric = new Metric(userId, selectedMetricType, value, new Date(), "After workout");
+        ProgressDialog progressDialog = createAndShowProgressDialog();
 
-        // Show loading indicator
+        firebaseManager.addMetric(firebaseManager.getCurrentUserId(), newMetric)
+                .addOnSuccessListener(aVoid -> handleSaveSuccess(progressDialog))
+                .addOnFailureListener(e -> handleSaveFailure(e, progressDialog));
+    }
+
+    private ProgressDialog createAndShowProgressDialog() {
         ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Saving metric...");
         progressDialog.show();
+        return progressDialog;
+    }
 
-        firebaseManager.addMetric(userId, newMetric)
-                .addOnSuccessListener(aVoid -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(getContext(), "Metric saved successfully", Toast.LENGTH_SHORT).show();
-                    if (getActivity() instanceof MetricUpdateListener) {
-                        ((MetricUpdateListener) getActivity()).onMetricUpdated();
-                    }
-                    dismiss();
-                })
-                .addOnFailureListener(e -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(getContext(), "Failed to save metric: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e("MetricDialog", "Error saving metric", e);
-                });
+    private void handleSaveSuccess(ProgressDialog progressDialog) {
+        progressDialog.dismiss();
+        Toast.makeText(getContext(), "Metric saved successfully", Toast.LENGTH_SHORT).show();
+        if (getActivity() instanceof MetricUpdateListener) {
+            ((MetricUpdateListener) getActivity()).onMetricUpdated();
+        }
+        dismiss();
+    }
+
+    private void handleSaveFailure(Exception e, ProgressDialog progressDialog) {
+        progressDialog.dismiss();
+        Toast.makeText(getContext(), "Failed to save metric: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        Log.e(TAG, "Error saving metric", e);
     }
 
     private void setupListeners() {
-        // CircularMetricsView listener
-        circularMetricsView.setOnMetricSelectedListener((metricType, value) -> {
-            selectedMetricType = metricType;
-            updateSelectedMetricText(metricType, valueSeekBar.getProgress());
-        });
+        setupCircularMetricsViewListener();
+        setupSeekBarListener();
+    }
 
-        // SeekBar listener
+    private void setupCircularMetricsViewListener() {
+        circularMetricsView.setOnMetricSelectedListener((metricType, value) -> {
+            selectedMetricType = String.valueOf(metricType);
+            updateSelectedMetricText(String.valueOf(metricType), valueSeekBar.getProgress());
+        });
+    }
+
+    private void setupSeekBarListener() {
         valueSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -119,22 +127,22 @@ public class CircularMetricDialogFragment extends DialogFragment {
         });
     }
 
-    private void updateSelectedMetricText(MetricType type, int value) {
+    private void updateSelectedMetricText(String type, int value) {
         String unit = getUnitForMetric(type);
-        selectedMetricText.setText(String.format("%s: %d%s", type.toString(), value, unit));
+        selectedMetricText.setText(String.format("%s: %d%s", type, value, unit));
     }
+    //צריך להשים הגבלה על משקל , קלט וכו
 
-    private String getUnitForMetric(MetricType type) {
+    private String getUnitForMetric(String type) {
         switch (type) {
-            case WEIGHT:
+            case Metric.WEIGHT:
                 return "kg";
-            case HEART_RATE:
+            case Metric.HEART_RATE:
                 return "bpm";
-            case BODY_FAT:
-            case MUSCLE_MASS:
-                return "%";
-            case ENDURANCE_TIME:
-                return "min";
+            case Metric.CALORIES:
+                return "cal";
+            case Metric.STEPS:
+                return "steps";
             default:
                 return "";
         }

@@ -1,27 +1,48 @@
 package com.example.fithit.Models;
 
-import com.example.fithit.Enums.MetricType;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Metric {
+    public static final String WEIGHT = "WEIGHT";
+    public static final String HEART_RATE = "HEART_RATE";
+    public static final String CALORIES = "CALORIES";
+    public static final String STEPS = "STEPS";
     private String metricId;
     private String userId;
-    private String type;
-    private double value;
-    private long measurementDate;
-    private String notes;
+    private Map<String, Double> metrics;
 
-    public Metric() {}
-
-    public Metric(String userId, MetricType metricType, double value, Date date, String notes) {
+    public Metric() {
         this.userId = userId;
-        this.type = metricType.name();
-        this.value = value;
-        this.measurementDate = date.getTime();
-        this.notes = notes;
+        this.metrics = new HashMap<>();
     }
 
-    // Regular getters and setters
+    public static boolean isValidType(String type) {
+        return type != null && (
+                type.equals(WEIGHT) ||
+                        type.equals(HEART_RATE) ||
+                        type.equals(CALORIES) ||
+                        type.equals(STEPS)
+        );
+    }
+
+    public void addMetric(String type, double value) {
+        if (!isValidType(type)) {
+            throw new IllegalArgumentException("Invalid metric type: " + type);
+        }
+        metrics.put(type, value);
+    }
+
+    public Double getMetricValue(String type) {
+        return metrics.get(type);
+    }
+
+    public Map<String, Double> getAllMetrics() {
+        return new HashMap<>(metrics);
+    }
+
+
     public String getMetricId() {
         return metricId;
     }
@@ -36,54 +57,5 @@ public class Metric {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    // Helper methods for working with the MetricType enum
-    public MetricType getMetricType() {
-        return type != null ? MetricType.valueOf(type) : null;
-    }
-
-    public void setMetricType(MetricType metricType) {
-        this.type = metricType != null ? metricType.name() : null;
-    }
-
-    public double getValue() {
-        return value;
-    }
-
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public long getMeasurementDate() {
-        return measurementDate;
-    }
-
-    public void setMeasurementDate(long measurementDate) {
-        this.measurementDate = measurementDate;
-    }
-
-    // Helper methods for Date handling
-    public Date getDate() {
-        return new Date(measurementDate);
-    }
-
-    public void setDate(Date date) {
-        this.measurementDate = date != null ? date.getTime() : 0;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 }
