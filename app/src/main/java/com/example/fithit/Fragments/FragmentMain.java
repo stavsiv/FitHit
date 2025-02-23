@@ -133,15 +133,13 @@ public class FragmentMain extends Fragment {
         try {
             Navigation.findNavController(getView()).navigate(R.id.action_fragmentMain_to_fragmentPersonalArea);
         } catch (Exception e) {
-            Log.e("Navigation", "Failed to navigate to personal area fragment", e);
             Context context = getContext();
             if (context != null) {
-                Toast.makeText(context,
-                        "Failed to navigate: " + e.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Failed to navigate: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 
     private void showAddWorkoutDialog() {
         Context context = getContext();
