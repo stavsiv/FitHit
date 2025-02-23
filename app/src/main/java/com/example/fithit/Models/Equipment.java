@@ -1,27 +1,40 @@
 package com.example.fithit.Models;
 
-import com.example.fithit.Enums.EquipmentType;
+import androidx.annotation.NonNull;
 
+import com.example.fithit.Enums.EquipmentType;
 
 public class Equipment {
     private EquipmentType equipmentType;
+    private boolean isSelected;
 
     public Equipment(EquipmentType equipmentType) {
         this.equipmentType = equipmentType;
-    }
-
-    public String getImageResource() {
-        return equipmentType.getImageFileName();
+        this.isSelected = false;
     }
 
     public String getDisplayName() {
         return equipmentType.getDisplayName();
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    @NonNull
+    @Override
     public String toString() {
         return "Equipment{" +
                 "type=" + equipmentType.getDisplayName() +
-                ", image='" + getImageResource() + '\'' +
+                ", selected=" + isSelected +
                 '}';
+    }
+
+    public int getImageResourceId() {
+        return equipmentType.getResourceId();
     }
 }
