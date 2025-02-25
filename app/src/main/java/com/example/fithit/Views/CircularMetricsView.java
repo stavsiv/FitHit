@@ -33,7 +33,6 @@ public class CircularMetricsView extends View {
     private final String[] metricTypes = new String[]{
             Metric.WEIGHT,
             Metric.HEART_RATE,
-            Metric.CALORIES,
             Metric.STEPS
     };
 
@@ -58,7 +57,7 @@ public class CircularMetricsView extends View {
 
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.BLACK);
-        textPaint.setTextSize(40f);
+        textPaint.setTextSize(60f);
         textPaint.setTextAlign(Paint.Align.CENTER);
 
         selectedIconPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -70,13 +69,11 @@ public class CircularMetricsView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // ציור המעגל המרכזי
-        canvas.drawCircle(centerX, centerY, radius / 2, centerCirclePaint);
+        canvas.drawCircle(centerX, centerY, radius * 0.6f, centerCirclePaint);  // הגדלת הרדיוס מ-0.5f ל-0.6f
 
-        // ציור הטקסט
         String valueText = selectedMetric != null ?
                 String.format("%.0f%s", currentValue, getUnitForMetric(selectedMetric)) : "0";
-        canvas.drawText(valueText, centerX, centerY + textPaint.getTextSize() / 3, textPaint);
+        canvas.drawText(valueText, centerX, centerY + textPaint.getTextSize() / 4, textPaint);
 
         drawMetricIcons(canvas);
     }
@@ -129,8 +126,6 @@ public class CircularMetricsView extends View {
                 return Color.parseColor("#2196F3"); // Blue
             case Metric.HEART_RATE:
                 return Color.parseColor("#F44336"); // Red
-            case Metric.CALORIES:
-                return Color.parseColor("#4CAF50"); // Green
             case Metric.STEPS:
                 return Color.parseColor("#FFC107"); // Yellow
             default:
@@ -182,8 +177,6 @@ public class CircularMetricsView extends View {
                 return "kg";
             case Metric.HEART_RATE:
                 return "bpm";
-            case Metric.CALORIES:
-                return "cal";
             case Metric.STEPS:
                 return "steps";
             default:
@@ -198,5 +191,22 @@ public class CircularMetricsView extends View {
 
     public void setOnMetricSelectedListener(OnMetricSelectedListener listener) {
         this.listener = listener;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+        int size = Math.min(width, height);
+        setMeasuredDimension(size, size);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        centerX = w / 2f;
+        centerY = h / 2f;
+        radius = Math.min(w, h)/3f;
     }
 }

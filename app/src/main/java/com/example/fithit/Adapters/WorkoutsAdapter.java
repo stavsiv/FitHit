@@ -1,21 +1,19 @@
 package com.example.fithit.Adapters;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.fithit.Models.Workout;
 import com.example.fithit.R;
-
 import java.util.List;
 
 public class WorkoutsAdapter extends RecyclerView.Adapter<WorkoutsAdapter.WorkoutViewHolder> {
-    private List<Workout> workouts;
-    private OnWorkoutSelectedListener listener;
+    private final List<Workout> workouts;
+    private final OnWorkoutSelectedListener listener;
 
     public interface OnWorkoutSelectedListener {
         void onWorkoutSelected(Workout workout);
@@ -45,10 +43,10 @@ public class WorkoutsAdapter extends RecyclerView.Adapter<WorkoutsAdapter.Workou
         return workouts.size();
     }
     class WorkoutViewHolder extends RecyclerView.ViewHolder {
-        private TextView nameText;
-        private TextView descriptionText;
-        private TextView durationText;
-        private TextView difficultyText;
+        private final TextView nameText;
+        private final TextView descriptionText;
+        private final TextView durationText;
+        private final TextView difficultyText;
 
         public WorkoutViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -58,13 +56,14 @@ public class WorkoutsAdapter extends RecyclerView.Adapter<WorkoutsAdapter.Workou
             difficultyText = itemView.findViewById(R.id.workout_difficulty);
 
             itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
+                int position = getBindingAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     listener.onWorkoutSelected(workouts.get(position));
                 }
             });
         }
 
+        @SuppressLint("SetTextI18n")
         public void bind(Workout workout) {
             nameText.setText(workout.getName());
             descriptionText.setText(workout.getDescription());

@@ -1,30 +1,35 @@
 package com.example.fithit.Models;
 
+import android.util.Log;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WorkoutRecord {
-    private Date workoutDateTime;
+    private long date;
     private Workout workout;
-    private Map<String, Double> metrics;
+    private  Map<String, Double> metrics;
+    private boolean isCompleted; // Added to track if workout was completed
 
-    public WorkoutRecord(Workout workout, Metric metric) { //check
-    }
-
-    public WorkoutRecord(Workout workout) {
-        this.workoutDateTime = new Date();
-        this.workout = workout;
+    public WorkoutRecord() {
         this.metrics = new HashMap<>();
     }
-
-    // Getters and Setters
-    public Date getWorkoutDateTime() {
-        return workoutDateTime;
+    public WorkoutRecord(Workout workout, Date scheduledDate) {
+        this.workout = workout;
+        this.date = scheduledDate.getTime();
+        this.metrics = new HashMap<>();
+        this.isCompleted = false;
     }
 
-    public void setWorkoutDateTime(Date workoutDateTime) {
-        this.workoutDateTime = workoutDateTime;
+
+    // Getters and Setters
+    public long getDate() {  // Returns timestamp
+        return date;
+    }
+
+    public void setDate(long date) {  // Takes timestamp
+        this.date = date;
     }
 
     public Workout getWorkout() {
@@ -35,8 +40,12 @@ public class WorkoutRecord {
         this.workout = workout;
     }
 
-    public Double getMetric(String type) {
-        return metrics.get(type);
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
     }
 
     public void setMetric(String type, Double value) {
@@ -46,12 +55,23 @@ public class WorkoutRecord {
             throw new IllegalArgumentException("Invalid metric type: " + type);
         }
     }
+/*
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
+        if (completed && date == null) {
+            date = new Date(); // Set completion time when workout is marked as done
+        }
+    }*/
 
     public void addMetric(String type, double value) {
-        if (Metric.isValidType(type)) {
-            metrics.put(type, value);
-        } else {
-            throw new IllegalArgumentException("Invalid metric type: " + type);
+        if (metrics == null) {
+            metrics = new HashMap<>();
         }
+        Log.d("WorkoutRecord", "Adding metric: " + type + " = " + value);
+        metrics.put(type, value);
+    }
+
+    public Map<String, Double> getMetrics() {
+        return metrics;
     }
 }

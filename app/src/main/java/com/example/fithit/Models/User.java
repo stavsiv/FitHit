@@ -36,15 +36,23 @@ public class User {
         this.workoutHistory = new ArrayList<>();
         this.totalHearts = 0;
     }
+    public void addWorkoutRecord(WorkoutRecord workoutRecord) {
+        if (workoutRecord != null) {
+            if (this.workoutHistory == null) {
+                this.workoutHistory = new ArrayList<>();
+            }
+            this.workoutHistory.add(workoutRecord);
+        }
+    }
     public void addHearts(int heartsEarned) {
         this.totalHearts += heartsEarned;
         checkAndUpdateDifficultyLevel();
     }
+
     private void checkAndUpdateDifficultyLevel() {
         DifficultyLevel newLevel = calculateDifficultyByHearts();
         if (newLevel.ordinal() > currentDifficulty.ordinal()) {
             this.currentDifficulty = newLevel;
-            // כאן אפשר להוסיף הודעה או התראה למשתמש על העלייה ברמה
         }
     }
     private DifficultyLevel calculateDifficultyByHearts() {
@@ -55,14 +63,19 @@ public class User {
         }
         return DifficultyLevel.BEGINNER;
     }
-    public void addCompletedWorkout(Workout workout, int completedExercises) {
-        int earnedHearts = workout.calculateEarnedHearts(completedExercises);
-        addHearts(earnedHearts);
+    public int getCompletedWorkoutsCount() {
+        if (workoutHistory == null) {
+            return 0;
+        }
 
-        WorkoutRecord record = new WorkoutRecord(workout, new Metric());  // צריך להוסיף את המטריקות הרלוונטיות
-        workoutHistory.add(record);
+        int count = 0;
+        for (WorkoutRecord record : workoutHistory) {
+            if (record.isCompleted()) {
+                count++;
+            }
+        }
+        return count;
     }
-
     public void updateUserGoals(UserGoals newGoals) {
         this.currentGoals = newGoals;
     }
@@ -143,7 +156,7 @@ public class User {
     public int getLevel() {
         int totalWorkouts = workoutHistory.size();
         return (totalWorkouts / 10) + 1;  // אם צריך לחשב level בשביל UI
-    }
+    }// למחוק
 
     public List<WorkoutRecord> getWorkoutHistory() {
         return workoutHistory;

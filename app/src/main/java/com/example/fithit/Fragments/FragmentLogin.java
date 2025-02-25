@@ -1,6 +1,5 @@
 package com.example.fithit.Fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,18 +8,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.example.fithit.R;
 import com.example.fithit.Activities.MainActivity;
+import java.util.Objects;
 
 public class FragmentLogin extends Fragment {
     private View rootView;
 
     public FragmentLogin() {
-        // Required empty public constructor
     }
 
     @Override
@@ -69,17 +67,14 @@ public class FragmentLogin extends Fragment {
     }
 
     private void navigateToMainFragment() {
-        if (rootView != null) {
-            try {
-                Navigation.findNavController(rootView).navigate(R.id.action_fragmentLogin_to_fragmentMain);
-            } catch (Exception e) {
-                Log.e("Navigation", "Failed to navigate to main fragment", e);
-                Toast.makeText(requireContext(),
-                        "Failed to navigate: " + e.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+        try {
+            NavController navController = Navigation.findNavController(requireView());
+            if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != R.id.fragmentMain) {
+                navController.navigate(R.id.action_fragmentLogin_to_fragmentMain);
             }
-        } else {
-            Log.e("Navigation", "rootView is null, cannot navigate");
+        } catch (Exception e) {
+            Log.e("Navigation", "Navigation error: " + e.getMessage());
+            requireActivity().recreate();
         }
     }
 }

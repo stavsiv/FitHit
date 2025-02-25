@@ -1,22 +1,22 @@
 package com.example.fithit.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.example.fithit.Adapters.ExercisesAdapter;
-import com.example.fithit.Models.DatabaseWorkouts;
+import com.example.fithit.FirebaseManagment.FirebaseManager;
 import com.example.fithit.Models.Workout;
 import com.example.fithit.R;
-import com.google.android.material.chip.Chip;
-
 
 
 public class FragmentWorkoutDetails extends Fragment {
@@ -24,18 +24,19 @@ public class FragmentWorkoutDetails extends Fragment {
     private Workout workout;
     private TextView workoutName;
     private TextView workoutDescription;
-    private Chip workoutDuration;
-    private Chip workoutDifficulty;
+    private TextView  workoutDuration;
+    private TextView  workoutDifficulty;
     private RecyclerView exercisesRecyclerView;
-    private ExercisesAdapter exercisesAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            // Assuming you pass the workout ID and fetch the workout from the database
-            int workoutId = getArguments().getInt("workoutId");
-            workout = DatabaseWorkouts.getWorkoutById(workoutId);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                workout = getArguments().getSerializable("workout", Workout.class);
+            } else {
+                workout = (Workout) getArguments().getSerializable("workout");
+            }
         }
     }
 
@@ -55,14 +56,45 @@ public class FragmentWorkoutDetails extends Fragment {
         workoutDuration = view.findViewById(R.id.workout_duration);
         workoutDifficulty = view.findViewById(R.id.workout_difficulty);
         exercisesRecyclerView = view.findViewById(R.id.exercises_recycler_view);
-    }
 
+        Button backToMainButton = view.findViewById(R.id.back_to_main_button);
+        backToMainButton.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_fragmentWorkoutDetails_to_fragmentMain);
+        });
+
+        Button finishWorkoutButton = view.findViewById(R.id.finish_workout_button);
+        finishWorkoutButton.setOnClickListener(v -> {
+            addHeartsToUser();
+
+            Bundle args = new Bundle();
+            args.putInt("workoutId", workout.getWorkoutId());
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(R.id.action_fragmentWorkoutDetails_to_addMetricDialogFragment);
+        });
+    }
+    private void addHeartsToUser() {
+        if (workout != null) {
+            int heartsEarned = workout.calculateHearts();
+
+            FirebaseManager.getInstance()
+                    .updateUserHearts(heartsEarned)
+                    .addOnSuccessListener(aVoid -> {
+                        String message = "You earned " + heartsEarned + " hearts!";
+                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(getContext(),
+                            "Failed to update hearts: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show());
+        }
+    }
     private void setupExercisesList() {
         exercisesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        exercisesAdapter = new ExercisesAdapter(workout.getExercises());
+        ExercisesAdapter exercisesAdapter = new ExercisesAdapter(workout.getExercises());
         exercisesRecyclerView.setAdapter(exercisesAdapter);
     }
 
+    @SuppressLint("SetTextI18n")
     private void populateWorkoutDetails() {
         if (workout != null) {
             workoutName.setText(workout.getName());

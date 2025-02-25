@@ -580,51 +580,47 @@ public class DatabaseExercises {
         ));
     }
 
-    // Get all exercises
     public static List<Exercise> getAllExercises() {
         return new ArrayList<>(exercises);
     }
 
-    // Get exercises by type
     public static List<Exercise> getExercisesByType(ExerciseType type) {
         return exercises.stream()
                 .filter(exercise -> exercise.getExerciseType() == type)
                 .collect(Collectors.toList());
     }
 
-    // Get exercises by difficulty level
     public static List<Exercise> getExercisesByDifficulty(DifficultyLevel difficulty) {
         return exercises.stream()
                 .filter(exercise -> exercise.getDifficultyLevel() == difficulty)
                 .collect(Collectors.toList());
     }
 
-    // Get exercises by target muscle
     public static List<Exercise> getExercisesByMuscleGroup(MuscleGroup muscleGroup) {
         return exercises.stream()
                 .filter(exercise -> exercise.getTargetMuscle() == muscleGroup)
                 .collect(Collectors.toList());
     }
 
-    public static List<Exercise> getExercisesByEquipmentAndDifficulty(
-            List<EquipmentType> availableEquipment,
-            DifficultyLevel difficultyLevel) {
-        return exercises.stream()
-                .filter(exercise -> exercise.getDifficultyLevel() == difficultyLevel)
-                .filter(exercise -> exercise.canPerformWithEquipment(availableEquipment))
-                .collect(Collectors.toList());
-    }
+    /*    public static List<Exercise> getExercisesByEquipmentAndDifficulty(
+                List<EquipmentType> availableEquipment,
+                DifficultyLevel difficultyLevel) {
+            return exercises.stream()
+                    .filter(exercise -> exercise.getDifficultyLevel() == difficultyLevel)
+                    .filter(exercise -> exercise.canPerformWithEquipment(availableEquipment))
+                    .collect(Collectors.toList());
+        }*/
     public static List<Exercise> getExercisesByTypeAndDifficulty(
             ExerciseType type,
             DifficultyLevel difficulty,
             List<EquipmentType> availableEquipment) {
-        return exercises.stream()
-                .filter(exercise -> exercise.getExerciseType() == type)
-                .filter(exercise -> exercise.getDifficultyLevel() == difficulty)
-                .filter(exercise -> exercise.canPerformWithEquipment(availableEquipment))
+        return getAllExercises().stream()
+                .filter(e -> e.getExerciseType() == type)
+                .filter(e -> e.getDifficultyLevel() == difficulty)
+                .filter(e -> e.canPerformWithEquipment(availableEquipment))
                 .collect(Collectors.toList());
     }
-    public static List<Exercise> getExercisesByTypeAndEquipment(
+/*    public static List<Exercise> getExercisesByTypeAndEquipment(
             ExerciseType type,
             List<EquipmentType> availableEquipment) {
         return exercises.stream()
@@ -637,5 +633,5 @@ public class DatabaseExercises {
                 .filter(exercise -> exercise.getExerciseId() == id)
                 .findFirst()
                 .orElse(null);
-    }
+    }*/
 }

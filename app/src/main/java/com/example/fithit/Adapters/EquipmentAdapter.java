@@ -1,5 +1,8 @@
 package com.example.fithit.Adapters;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +28,6 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
     public interface OnEquipmentSelectionChangedListener {
         void onEquipmentSelectionChanged(Equipment equipment, boolean isSelected);
     }
-
 
     // Constructor to create a list of all equipment types
     public EquipmentAdapter(OnEquipmentSelectionChangedListener listener) {
@@ -67,6 +69,56 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
         }
         notifyDataSetChanged();
     }
+    private static void loadImageEfficiently(ImageView imageView, int resourceId) {
+        try {
+            // Create options to decode the bitmap
+            BitmapFactory.Options options = new BitmapFactory.Options();
+
+            // First decode with inJustDecodeBounds=true to check dimensions
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeResource(imageView.getResources(), resourceId, options);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, 200, 200); // Adjust size as needed
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.RGB_565; // Uses less memory
+            Bitmap bitmap = BitmapFactory.decodeResource(imageView.getResources(), resourceId, options);
+
+            imageView.setImageBitmap(bitmap);
+        } catch (Exception e) {
+            Log.e("EquipmentAdapter", "Error loading image: " + e.getMessage());
+            // Fallback to a small default image
+            try {
+                imageView.setImageResource(R.drawable.default_image); // Replace with an actual small icon
+            } catch (Exception ex) {
+                // Last resort, don't set any image
+                Log.e("EquipmentAdapter", "Could not set fallback image: " + ex.getMessage());
+            }
+        }
+    }
+
+    // Helper method to calculate sample size for image loading
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
 
     static class EquipmentViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivEquipmentImage;
@@ -89,7 +141,7 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
             tvEquipmentName.setText(equipment.getDisplayName());
 
             // Set equipment image
-            ivEquipmentImage.setImageResource(equipment.getImageResourceId());
+            loadImageEfficiently(ivEquipmentImage, equipment.getImageResourceId());
 
             // Set checkbox state
             cbEquipmentSelected.setChecked(equipment.isSelected());

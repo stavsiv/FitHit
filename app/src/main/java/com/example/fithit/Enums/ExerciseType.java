@@ -1,5 +1,12 @@
 package com.example.fithit.Enums;
 public enum ExerciseType {
+    STRENGTH,
+    STRETCHING,
+    BALANCE,
+    CARDIO
+}
+/*
+public enum ExerciseType {
     STRENGTH("STRENGTH"),
     STRETCHING("STRETCHING"),
     BALANCE("BALANCE"),
@@ -14,4 +21,4 @@ public enum ExerciseType {
     public String getExerciseTypeName() {
         return ExerciseTypeName;
     }
-}
+}*/

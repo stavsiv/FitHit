@@ -1,9 +1,12 @@
 package com.example.fithit.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,18 +17,27 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fithit.Adapters.EquipmentAdapter;
+import com.example.fithit.Enums.DifficultyLevel;
+import com.example.fithit.Models.WorkoutRecord;
 import com.example.fithit.R;
 import com.example.fithit.Models.Equipment;
 import com.example.fithit.Models.User;
 import com.example.fithit.FirebaseManagment.FirebaseManager;
 import com.github.mikephil.charting.charts.LineChart;
-
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentPersonalArea extends Fragment {
 
+    private static final int HEARTS_FOR_INTERMEDIATE = 100;
+    private static final int HEARTS_FOR_EXPERT = 250;
     private FirebaseManager firebaseManager;
     private View rootView;
     private RecyclerView equipmentRecyclerView;
@@ -33,7 +45,11 @@ public class FragmentPersonalArea extends Fragment {
     private EquipmentAdapter equipmentAdapter;
     private TextView tvUserName;
     private TextView tvUserLevel;
-    private View progressLevel;
+    private TextView tvDifficultyLevel;
+    private TextView tvHeartsProgress;
+    private ProgressBar progressLevel;
+    private Button btnBackToMain;
+    private MaterialButton btnAddEquipment;
 
     public static FragmentPersonalArea newInstance() {
         return new FragmentPersonalArea();
@@ -60,13 +76,6 @@ public class FragmentPersonalArea extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loadUserData();
-
-        // Add refresh listener for equipment updates
-        getChildFragmentManager().setFragmentResultListener(
-                "equipment_updated",
-                getViewLifecycleOwner(),
-                (requestKey, result) -> loadUserData()
-        );
     }
 
     private void initializeViews() {
@@ -76,16 +85,33 @@ public class FragmentPersonalArea extends Fragment {
         tvUserLevel = rootView.findViewById(R.id.tv_user_level);
         progressLevel = rootView.findViewById(R.id.progress_level);
 
-        MaterialButton btnAddEquipment = rootView.findViewById(R.id.btn_add_equipment);
-        btnAddEquipment.setOnClickListener(v -> showAddEquipmentDialog());
+        tvDifficultyLevel = tvUserLevel;
+        tvHeartsProgress = tvUserLevel;
+
+        btnBackToMain = rootView.findViewById(R.id.btn_back_to_main);
+        btnBackToMain.setOnClickListener(v -> navigateToMainArea());
+
+        btnAddEquipment = rootView.findViewById(R.id.btn_add_equipment);
+        btnAddEquipment.setOnClickListener(v -> showEquipmentSelectionDialog());
+    }
+
+    private void navigateToMainArea() {
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager().popBackStack();
+        }
     }
 
     private void setupRecyclerViews() {
-        // Setup Equipment RecyclerView
-        equipmentAdapter = new EquipmentAdapter(new ArrayList<>(), new EquipmentAdapter.OnEquipmentSelectionChangedListener() {
+        equipmentAdapter = new EquipmentAdapter(new EquipmentAdapter.OnEquipmentSelectionChangedListener() {
             @Override
             public void onEquipmentSelectionChanged(Equipment equipment, boolean isSelected) {
                 updateEquipmentInFirebase(equipment, isSelected);
+
+                String announcement = isSelected ?
+                        "Added " + equipment.getDisplayName() + " to your equipment" :
+                        "Removed " + equipment.getDisplayName() + " from your equipment";
+
+                announceForAccessibility(announcement);
             }
         });
 
@@ -93,12 +119,60 @@ public class FragmentPersonalArea extends Fragment {
         equipmentRecyclerView.setAdapter(equipmentAdapter);
     }
 
-    private void setupChart() {
+    private void updateProgressChart(List<WorkoutRecord> history) {
+        if (history.isEmpty()) return;
+
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        int totalWorkouts = history.size();
+
+        for (int i = 0; i < history.size(); i++) {
+            entries.add(new Entry(i, i+1));
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "Workout Progress");
+        dataSet.setDrawFilled(true);
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+
+        LineData lineData = new LineData(dataSet);
+        progressChart.setData(lineData);
         progressChart.getDescription().setEnabled(false);
+        progressChart.getXAxis().setEnabled(false);
+        progressChart.invalidate();
+    }
+
+    private void setupChart() {
         progressChart.setTouchEnabled(true);
         progressChart.setDragEnabled(true);
         progressChart.setScaleEnabled(true);
-        progressChart.setPinchZoom(true);
+        progressChart.setPinchZoom(false);
+        progressChart.getAxisLeft().setDrawGridLines(false);
+        progressChart.getAxisRight().setEnabled(false);
+        progressChart.getLegend().setEnabled(false);
+
+        // Add content description for the chart
+        progressChart.setContentDescription("Workout progress chart showing history of completed workouts");
+
+        // Make chart accessible with custom announcements
+        progressChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                String announcement = "Workout " + ((int)e.getX() + 1) +
+                        ": Total " + (int)e.getY() + " workouts completed";
+                announceForAccessibility(announcement);
+            }
+
+            @Override
+            public void onNothingSelected() {
+                // Optional: Announce when selection is cleared
+            }
+        });
+    }
+
+    private void announceForAccessibility(String announcement) {
+        if (getView() != null) {
+            getView().announceForAccessibility(announcement);
+        }
     }
 
     private void loadUserData() {
@@ -108,10 +182,10 @@ public class FragmentPersonalArea extends Fragment {
             return;
         }
 
-        // Load user profile
         firebaseManager.getCurrentUserData()
                 .addOnSuccessListener(user -> {
                     if (!isAdded()) return;
+
                     updateUserProfileUI(user);
                 })
                 .addOnFailureListener(e -> {
@@ -121,11 +195,12 @@ public class FragmentPersonalArea extends Fragment {
                             Toast.LENGTH_SHORT).show();
                 });
 
+
         // Load user equipment
-        firebaseManager.getUserEquipment(userId)
-                .addOnSuccessListener(equipmentList -> {
+        firebaseManager.getUserEquipmentIds(userId)
+                .addOnSuccessListener(equipmentNames -> {
                     if (!isAdded()) return;
-                    equipmentAdapter.updateEquipmentList(equipmentList);
+                    equipmentAdapter.updateEquipmentSelection(equipmentNames);
                 })
                 .addOnFailureListener(e -> {
                     if (!isAdded()) return;
@@ -135,16 +210,49 @@ public class FragmentPersonalArea extends Fragment {
                 });
     }
 
+    @SuppressLint({"RestrictedApi", "SetTextI18n"})
     private void updateUserProfileUI(User user) {
         if (user == null || !isAdded()) return;
 
-        // Update user name
-        tvUserName.setText(user.getUserName() != null ? user.getUserName() : "User");
+        String userName = user.getUserName();
+        tvUserName.setText(userName);
+        tvUserName.setContentDescription("User profile for " + userName);
 
-        // Update user level (assuming User model has appropriate methods)
-        if (user.getLevel() > 0) {
-            tvUserLevel.setText(getString(R.string.level_format, user.getLevel()));
+        DifficultyLevel difficulty = user.getCurrentDifficulty();
+        int hearts = user.getTotalHearts();
+        int heartsNeeded = 0;
+
+        if (difficulty == DifficultyLevel.BEGINNER) {
+            heartsNeeded = HEARTS_FOR_INTERMEDIATE - hearts;
+        } else if (difficulty == DifficultyLevel.INTERMEDIATE) {
+            heartsNeeded = HEARTS_FOR_EXPERT - hearts;
         }
+
+        tvDifficultyLevel.setText("Difficulty: " + difficulty.toString());
+
+        int totalWorkouts = user.getTotalWorkouts();
+        int completedWorkouts = user.getCompletedWorkoutsCount();
+        if (heartsNeeded > 0) {
+            tvHeartsProgress.setText("Hearts : " + hearts + " (" + heartsNeeded + " more for next level)\n" +
+                    "Completed : " + completedWorkouts + " / " + totalWorkouts + " workouts");
+        } else {
+            tvHeartsProgress.setText("Hearts : " + hearts + " (Max level reached)\n" +
+                    "Completed : " + completedWorkouts + " / " + totalWorkouts + " workouts");
+        }
+
+        int maxHearts = (difficulty == DifficultyLevel.BEGINNER) ? HEARTS_FOR_INTERMEDIATE :
+                (difficulty == DifficultyLevel.INTERMEDIATE) ? HEARTS_FOR_EXPERT : hearts;
+        int progressPercent = (hearts * 100) / maxHearts;
+
+        // Update progress bar
+        progressLevel.setProgress(progressPercent);
+        progressLevel.setContentDescription(
+                "Heart progress: " + progressPercent + "% complete, " + heartsNeeded + " hearts remaining, " +
+                        completedWorkouts + " of " + totalWorkouts + " workouts completed");
+
+        // Update workout history chart
+        List<WorkoutRecord> workoutHistory = user.getWorkoutHistory();
+        updateProgressChart(workoutHistory);
     }
 
     private void updateEquipmentInFirebase(Equipment equipment, boolean isSelected) {
@@ -152,19 +260,9 @@ public class FragmentPersonalArea extends Fragment {
         if (userId == null) return;
 
         if (isSelected) {
-            // Add equipment to user
-            firebaseManager.addEquipment(equipment)
-                    .continueWithTask(task -> {
-                        if (!task.isSuccessful()) {
-                            throw task.getException();
-                        }
-                        return firebaseManager.addEquipmentToUser(userId, task.getResult().toString());
-                    })
+            firebaseManager.addOrUpdateUserEquipment(userId, equipment)
                     .addOnSuccessListener(aVoid -> {
                         if (!isAdded()) return;
-                        Toast.makeText(requireContext(),
-                                "Equipment added successfully",
-                                Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
                         if (!isAdded()) return;
@@ -173,22 +271,46 @@ public class FragmentPersonalArea extends Fragment {
                                 Toast.LENGTH_SHORT).show();
                     });
         } else {
-            // Remove equipment from user (implement this method in FirebaseManager)
-            // firebaseManager.removeEquipmentFromUser(userId, equipment.getId())
-            //     .addOnSuccessListener(...)
-            //     .addOnFailureListener(...);
+            firebaseManager.removeEquipmentFromUser(userId, equipment.getDisplayName())
+                    .addOnSuccessListener(aVoid -> {
+                        if (!isAdded()) return;
+                    })
+                    .addOnFailureListener(e -> {
+                        if (!isAdded()) return;
+                        Toast.makeText(requireContext(),
+                                "Failed to remove equipment: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    });
         }
     }
 
-    private void showAddEquipmentDialog() {
+    private void saveAllEquipment() {
         if (!isAdded()) return;
 
-        EquipmentSelectionDialogFragment dialog =
-                EquipmentSelectionDialogFragment.newInstance(selectedEquipment -> {
-                    // Optional: Handle any additional logic after equipment selection
-                    loadUserData();
-                });
+        String userId = firebaseManager.getCurrentUserId();
+        if (userId == null) return;
+        List<Equipment> selectedEquipment = equipmentAdapter.getSelectedEquipment();
 
-        dialog.show(getChildFragmentManager(), "EquipmentSelection");
+        firebaseManager.updateUserEquipmentBatch(userId, selectedEquipment)
+                .addOnSuccessListener(aVoid -> {
+                    if (!isAdded()) return;
+                    // loadingDialog.dismiss();
+                    Toast.makeText(requireContext(),
+                            "Equipment updated successfully",
+                            Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    if (!isAdded()) return;
+                    // loadingDialog.dismiss();
+                    Toast.makeText(requireContext(),
+                            "Failed to update equipment: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void showEquipmentSelectionDialog() {
+        if (!isAdded()) return;
+
+        saveAllEquipment();
     }
 }

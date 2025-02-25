@@ -1,87 +1,186 @@
 package com.example.fithit.Fragments;
 
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import com.example.fithit.Enums.DifficultyLevel;
-import com.example.fithit.Enums.EquipmentType;
+import com.example.fithit.FirebaseManagment.FirebaseManager;
 import com.example.fithit.Models.Workout;
+import com.example.fithit.Models.WorkoutRecord;
 import com.example.fithit.R;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class CustomWorkoutDialogFragment extends DialogFragment {
-    private EditText durationInput;
-    private SeekBar strengthSeekBar, cardioSeekBar, stretchingSeekBar, balanceSeekBar;
-    private TextView strengthPercent, cardioPercent, stretchingPercent, balancePercent;
+    private TextView durationText;
+    private com.google.android.material.slider.Slider durationSlider;
+    private TextView strengthPercentage, cardioPercentage, stretchingPercentage, balancePercentage;
     private TextView totalPercentage;
     private Button generateWorkoutButton;
+    private Button strengthDecreaseBtn, strengthIncreaseBtn;
+    private Button cardioDecreaseBtn, cardioIncreaseBtn;
+    private Button stretchingDecreaseBtn, stretchingIncreaseBtn;
+    private Button balanceDecreaseBtn, balanceIncreaseBtn;
+    private Date selectedDate;
+
+    private static final int MIN_DURATION = 15;
+    private static final int MAX_DURATION = 60;
+    private static final int DEFAULT_DURATION = 30;
+
+    private static final int PERCENTAGE_STEP = 5;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // Make sure the layout reference is correct
         View view = inflater.inflate(R.layout.fragment_custom_workout_dialog, container, false);
-        initializeViews(view);
-        setupSeekBarListeners();
-        setupGenerateButton();
+
+        Log.d("CustomWorkout", "Fragment created with view: " + view);
+
+        try {
+            initializeViews(view);
+            if (getArguments() != null) {
+                long dateInMillis = getArguments().getLong("selectedDate");
+                selectedDate = new Date(dateInMillis);
+                Log.d("CustomWorkout", "Got selected date: " + selectedDate);
+            } else {
+                Log.e("CustomWorkout", "No arguments found, using current date");
+                selectedDate = new Date(); // Use current date as fallback
+            }
+
+            setupDurationSlider();
+            setupPercentageButtons();
+            setupGenerateButton();
+        } catch (Exception e) {
+            Log.e("CustomWorkout", "Error setting up fragment", e);
+        }
+
         return view;
     }
 
     private void initializeViews(View view) {
-        durationInput = view.findViewById(R.id.duration_input);
-        strengthSeekBar = view.findViewById(R.id.strength_seekbar);
-        cardioSeekBar = view.findViewById(R.id.cardio_seekbar);
-        stretchingSeekBar = view.findViewById(R.id.stretching_seekbar);
-        balanceSeekBar = view.findViewById(R.id.balance_seekbar);
-        strengthPercent = view.findViewById(R.id.strength_percent);
-        cardioPercent = view.findViewById(R.id.cardio_percent);
-        stretchingPercent = view.findViewById(R.id.stretching_percent);
-        balancePercent = view.findViewById(R.id.balance_percent);
-        totalPercentage = view.findViewById(R.id.total_percentage);
-        generateWorkoutButton = view.findViewById(R.id.generate_workout_button);
+        Log.d("CustomWorkout", "Initializing views");//delete later
+
+        durationText = view.findViewById(R.id.durationText);
+        durationSlider = view.findViewById(R.id.durationSlider);
+
+        strengthPercentage = view.findViewById(R.id.strengthPercentage);
+        cardioPercentage = view.findViewById(R.id.cardioPercentage);
+        stretchingPercentage = view.findViewById(R.id.stretchingPercentage);
+        balancePercentage = view.findViewById(R.id.balancePercentage);
+
+        totalPercentage = view.findViewById(R.id.totalPercentage);
+
+        strengthDecreaseBtn = view.findViewById(R.id.strengthDecreaseBtn);
+        Log.d("CustomWorkout", "strengthDecreaseBtn: " + (strengthDecreaseBtn != null));
+
+        strengthIncreaseBtn = view.findViewById(R.id.strengthIncreaseBtn);
+        Log.d("CustomWorkout", "strengthIncreaseBtn: " + (strengthIncreaseBtn != null));
+        cardioDecreaseBtn = view.findViewById(R.id.cardioDecreaseBtn);
+        cardioIncreaseBtn = view.findViewById(R.id.cardioIncreaseBtn);
+        stretchingDecreaseBtn = view.findViewById(R.id.stretchingDecreaseBtn);
+        stretchingIncreaseBtn = view.findViewById(R.id.stretchingIncreaseBtn);
+        balanceDecreaseBtn = view.findViewById(R.id.balanceDecreaseBtn);
+        balanceIncreaseBtn = view.findViewById(R.id.balanceIncreaseBtn);
+
+        generateWorkoutButton = view.findViewById(R.id.generateWorkoutButton);
     }
 
-    private void setupSeekBarListeners() {
-        SeekBar.OnSeekBarChangeListener listener = new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updatePercentages();
-            }
+    private void setupDurationSlider() {
+        if (durationSlider != null) {
+            durationSlider.setValueFrom(MIN_DURATION);
+            durationSlider.setValueTo(MAX_DURATION);
+            durationSlider.setValue(DEFAULT_DURATION);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        };
-
-        strengthSeekBar.setOnSeekBarChangeListener(listener);
-        cardioSeekBar.setOnSeekBarChangeListener(listener);
-        stretchingSeekBar.setOnSeekBarChangeListener(listener);
-        balanceSeekBar.setOnSeekBarChangeListener(listener);
+            durationSlider.addOnChangeListener((slider, value, fromUser) -> {
+                durationText.setText(String.format(Locale.getDefault(), "%.0f", value));
+            });
+        }
     }
 
-    private void updatePercentages() {
-        int strength = strengthSeekBar.getProgress();
-        int cardio = cardioSeekBar.getProgress();
-        int stretching = stretchingSeekBar.getProgress();
-        int balance = balanceSeekBar.getProgress();
+    private void setupPercentageButtons() {
+        // Add null checks for all buttons
+        if (strengthIncreaseBtn != null && strengthDecreaseBtn != null) {
+            // Strength buttons
+            strengthIncreaseBtn.setOnClickListener(v -> adjustPercentage(strengthPercentage, PERCENTAGE_STEP));
+            strengthDecreaseBtn.setOnClickListener(v -> adjustPercentage(strengthPercentage, -PERCENTAGE_STEP));
+        } else {
+            Log.e("CustomWorkout", "Strength buttons are null");
+        }
 
-        strengthPercent.setText(getString(R.string.percent_format, strength));
-        cardioPercent.setText(getString(R.string.percent_format, cardio));
-        stretchingPercent.setText(getString(R.string.percent_format, stretching));
-        balancePercent.setText(getString(R.string.percent_format, balance));
+        if (cardioIncreaseBtn != null && cardioDecreaseBtn != null) {
+            // Cardio buttons
+            cardioIncreaseBtn.setOnClickListener(v -> adjustPercentage(cardioPercentage, PERCENTAGE_STEP));
+            cardioDecreaseBtn.setOnClickListener(v -> adjustPercentage(cardioPercentage, -PERCENTAGE_STEP));
+        } else {
+            Log.e("CustomWorkout", "Cardio buttons are null");
+        }
 
-        int total = strength + cardio + stretching + balance;
-        totalPercentage.setText(getString(R.string.total_percent_format, total));
+        if (stretchingIncreaseBtn != null && stretchingDecreaseBtn != null) {
+            // Stretching buttons
+            stretchingIncreaseBtn.setOnClickListener(v -> adjustPercentage(stretchingPercentage, PERCENTAGE_STEP));
+            stretchingDecreaseBtn.setOnClickListener(v -> adjustPercentage(stretchingPercentage, -PERCENTAGE_STEP));
+        } else {
+            Log.e("CustomWorkout", "Stretching buttons are null");
+        }
+
+        if (balanceIncreaseBtn != null && balanceDecreaseBtn != null) {
+            // Balance buttons
+            balanceIncreaseBtn.setOnClickListener(v -> adjustPercentage(balancePercentage, PERCENTAGE_STEP));
+            balanceDecreaseBtn.setOnClickListener(v -> adjustPercentage(balancePercentage, -PERCENTAGE_STEP));
+        } else {
+            Log.e("CustomWorkout", "Balance buttons are null");
+        }
+    }
+
+    private void adjustPercentage(TextView percentageView, int change) {
+        int currentValue = getCurrentPercentage(percentageView);
+        int newValue = currentValue + change;
+
+        // Validate new value
+        if (newValue < 0 || newValue > 100) {
+            return;
+        }
+
+        // Check if total would exceed 100%
+        int totalWithoutCurrent = calculateTotalPercentage() - currentValue;
+        if (totalWithoutCurrent + newValue > 100) {
+            return;
+        }
+
+        percentageView.setText(newValue + "%");
+        updateTotalPercentage();
+    }
+
+    private int getCurrentPercentage(TextView percentageView) {
+        String text = percentageView.getText().toString();
+        return Integer.parseInt(text.replace("%", ""));
+    }
+
+    private int calculateTotalPercentage() {
+        return getCurrentPercentage(strengthPercentage) +
+                getCurrentPercentage(cardioPercentage) +
+                getCurrentPercentage(stretchingPercentage) +
+                getCurrentPercentage(balancePercentage);
+    }
+
+    private void updateTotalPercentage() {
+        int total = calculateTotalPercentage();
+        totalPercentage.setText("Total: " + total + "%");
     }
 
     private void setupGenerateButton() {
@@ -89,55 +188,55 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
     }
 
     private void validateAndGenerateWorkout() {
-        // Validate duration
-        String durationStr = durationInput.getText().toString();
-        if (durationStr.isEmpty()) {
-            showError(getString(R.string.error_enter_duration));
-            return;
-        }
-
-        int duration = Integer.parseInt(durationStr);
-        if (duration < 15 || duration > 60) {
-            showError(getString(R.string.error_duration_range));
-            return;
-        }
-
-        // Validate percentages
-        int total = strengthSeekBar.getProgress() +
-                cardioSeekBar.getProgress() +
-                stretchingSeekBar.getProgress() +
-                balanceSeekBar.getProgress();
+        int duration = (int) durationSlider.getValue();
+        int total = calculateTotalPercentage();
 
         if (total != 100) {
-            showError(getString(R.string.error_percentage_sum));
+            Toast.makeText(requireContext(),
+                    "Total percentage must be 100% (currently: " + total + "%)",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Create workout using the static method from Workout class
-        List<EquipmentType> availableEquipment = new ArrayList<>();
         Workout workout = Workout.generateCustomWorkout(
                 duration,
-                strengthSeekBar.getProgress(),
-                cardioSeekBar.getProgress(),
-                stretchingSeekBar.getProgress(),
-                balanceSeekBar.getProgress(),
-                DifficultyLevel.INTERMEDIATE,
-                availableEquipment
+                getCurrentPercentage(strengthPercentage),
+                getCurrentPercentage(cardioPercentage),
+                getCurrentPercentage(stretchingPercentage),
+                getCurrentPercentage(balancePercentage),
+                DifficultyLevel.BEGINNER,
+                new ArrayList<>()
         );
 
-        // Notify parent fragment/activity
-        if (getParentFragment() instanceof OnWorkoutGeneratedListener) {
-            ((OnWorkoutGeneratedListener) getParentFragment()).onWorkoutGenerated(workout);
-        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(selectedDate);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date normalizedDate = calendar.getTime();
 
-        dismiss();
+        WorkoutRecord workoutRecord = new WorkoutRecord(workout, normalizedDate);
+
+        FirebaseManager.getInstance()
+                .addWorkoutRecord(workoutRecord)
+                .addOnSuccessListener(aVoid -> {
+                    Bundle args = new Bundle();
+                    args.putSerializable("workout", workout);
+                    args.putLong("date", normalizedDate.getTime());
+
+                    NavController navController = Navigation.findNavController(requireView());
+                    navController.navigate(R.id.action_CustomWorkoutDialogFragment_to_fragmentWorkoutDetails, args);
+
+                    dismiss();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(),
+                            "Failed to save workout: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                });
     }
 
-    private void showError(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    // Updated interface to use Workout instead of CustomWorkout
     public interface OnWorkoutGeneratedListener {
         void onWorkoutGenerated(Workout workout);
     }

@@ -1,25 +1,36 @@
 package com.example.fithit.Models;
 
+import android.annotation.SuppressLint;
+
 import com.example.fithit.Enums.DifficultyLevel;
 import com.example.fithit.Enums.EquipmentType;
 import com.example.fithit.Enums.ExerciseType;
+import com.example.fithit.Enums.MuscleGroup;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Workout {
+public class Workout implements Serializable {
+    private static int nextWorkoutId = 1;
     private int workoutId;
     private String name;
     private String description;
     private List<Exercise> exercises;
     private int estimatedDuration; // in minutes
     private DifficultyLevel difficultyLevel;
-    private String category; // e.g., "Quick", "Full Body", "Cardio Focus" etc.
-
-    private int requiredHearts;
-
-    public Workout(int workoutId, String name, String description, List<Exercise> exercises, int estimatedDuration, DifficultyLevel difficultyLevel, String category) {
-        this.workoutId = workoutId;
+    private String category;
+    //המשתנה nextWorkoutId יכול להיות מוחלף ב-UUID או מזהה אחר שמיוצר על ידי Firebase.
+    public Workout() {
+        exercises = new ArrayList<>();
+    }
+    public Workout(String name, String description, List<Exercise> exercises, int estimatedDuration, DifficultyLevel difficultyLevel, String category) {
+        this.workoutId = nextWorkoutId++;
         this.name = name;
         this.description = description;
         this.exercises = new ArrayList<>(exercises);
@@ -27,15 +38,12 @@ public class Workout {
         this.difficultyLevel = difficultyLevel;
         this.category = category;
 
-        calculateRequiredHearts();
+        calculateHearts();
     }
 
-    private void calculateRequiredHearts() {
+    public int calculateHearts() {
         int baseHearts;
         switch (difficultyLevel) {
-            case BEGINNER:
-                baseHearts = 5;
-                break;
             case INTERMEDIATE:
                 baseHearts = 10;
                 break;
@@ -54,31 +62,8 @@ public class Workout {
                 .distinct()
                 .count() * 2;
 
-        this.requiredHearts = baseHearts + durationHearts + varietyHearts;
+        return baseHearts + durationHearts + varietyHearts;
     }
-
-    public int calculateEarnedHearts(int completedExercises) {
-        double completionPercentage = (double) completedExercises / exercises.size();
-
-        int baseHearts;
-        switch (difficultyLevel) {
-            case BEGINNER:
-                baseHearts = 3;
-                break;
-            case INTERMEDIATE:
-                baseHearts = 5;
-                break;
-            case EXPERT:
-                baseHearts = 8;
-                break;
-            default:
-                baseHearts = 3;
-                break;
-        }
-
-        return (int) (baseHearts * completionPercentage);
-    }
-
     //getters and setters
     public int getWorkoutId() {
         return workoutId;
@@ -137,38 +122,6 @@ public class Workout {
     }
 
 
-
-   //לבדוק אם צריך
-    public Exercise getExerciseById(String id) {
-        return exercises.stream()
-                .filter(exercise -> Objects.equals(exercise.getExerciseId(), id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public List<Exercise> filterByDifficulty(DifficultyLevel difficultyLevel) {
-        return exercises.stream()
-                .filter(exercise -> exercise.getDifficultyLevel() == difficultyLevel)
-                .collect(Collectors.toList());
-    }
-
-//    public List<Exercise> filterByMuscleGroup(MuscleGroup muscleGroup) {
-//        return exercises.stream()
-//                .filter(exercise -> exercise.getMuscleGroup() == muscleGroup)
-//                .collect(Collectors.toList());
-//    }
-
-//    public Map<MuscleGroup, List<Exercise>> groupExercisesByMuscle() {
-//        return exercises.stream()
-//                .collect(Collectors.groupingBy(Exercise::getMuscleGroup));
-//    }
-        public List<Equipment> getAllRequiredEquipment () {
-            return exercises.stream()
-                    .flatMap(e -> e.getRequiredEquipment().stream())
-                    .distinct()
-                    .collect(Collectors.toList());
-        }
-
     public static Workout generateCustomWorkout(
             int duration,
             int strengthPercentage,
@@ -178,79 +131,117 @@ public class Workout {
             DifficultyLevel difficultyLevel,
             List<EquipmentType> availableEquipment) {
 
-        // חישוב זמן לכל סוג תרגיל
-        int strengthDuration = (duration * strengthPercentage) / 100;
-        int cardioDuration = (duration * cardioPercentage) / 100;
-        int stretchingDuration = (duration * stretchingPercentage) / 100;
-        int balanceDuration = (duration * balancePercentage) / 100;
+        // Validate total percentage
+        int totalPercentage = strengthPercentage + cardioPercentage + stretchingPercentage + balancePercentage;
+        if (totalPercentage != 100) {
+            throw new IllegalArgumentException("Total percentage must equal 100");
+        }
 
-        // קבלת תרגילים מתאימים מה-DatabaseExercises
+        // Calculate time for each exercise type (in minutes)
+        Map<ExerciseType, Integer> timeDistribution = new HashMap<>();
+        timeDistribution.put(ExerciseType.STRENGTH, (duration * strengthPercentage) / 100);
+        timeDistribution.put(ExerciseType.CARDIO, (duration * cardioPercentage) / 100);
+        timeDistribution.put(ExerciseType.STRETCHING, (duration * stretchingPercentage) / 100);
+        timeDistribution.put(ExerciseType.BALANCE, (duration * balancePercentage) / 100);
+
         List<Exercise> selectedExercises = new ArrayList<>();
+        Random random = new Random();
 
-        // הוספת תרגילי כוח
-        if (strengthPercentage > 0) {
-            selectedExercises.addAll(
-                    DatabaseExercises.getExercisesByTypeAndDifficulty(
-                            ExerciseType.STRENGTH,
-                            difficultyLevel,
-                            availableEquipment
-                    )
-            );
+        // Select exercises for each type
+        for (Map.Entry<ExerciseType, Integer> entry : timeDistribution.entrySet()) {
+            ExerciseType type = entry.getKey();
+            int typeMinutes = entry.getValue();
+
+            if (typeMinutes > 0) {
+                List<Exercise> availableExercises = DatabaseExercises.getExercisesByTypeAndDifficulty(
+                        type,
+                        difficultyLevel,
+                        availableEquipment
+                );
+
+                int remainingTime = typeMinutes;
+                while (remainingTime > 0 && !availableExercises.isEmpty()) {
+                    int randomIndex = random.nextInt(availableExercises.size());
+                    Exercise exercise = availableExercises.get(randomIndex);
+
+                    if (exercise.getDurationInMinutes() <= remainingTime) {
+                        selectedExercises.add(exercise);
+                        remainingTime -= exercise.getDurationInMinutes();
+                    }
+                    availableExercises.remove(randomIndex);
+                }
+            }
         }
 
-        // הוספת תרגילי קרדיו
-        if (cardioPercentage > 0) {
-            selectedExercises.addAll(
-                    DatabaseExercises.getExercisesByTypeAndDifficulty(
-                            ExerciseType.CARDIO,
-                            difficultyLevel,
-                            availableEquipment
-                    )
-            );
-        }
+        // Sort exercises by type and muscle group
+        selectedExercises.sort((e1, e2) -> {
+            int typeCompare = e1.getExerciseType().compareTo(e2.getExerciseType());
+            if (typeCompare != 0) return typeCompare;
+            return e1.getTargetMuscle().compareTo(e2.getTargetMuscle());
+        });
 
-        // הוספת תרגילי מתיחות
-        if (stretchingPercentage > 0) {
-            selectedExercises.addAll(
-                    DatabaseExercises.getExercisesByTypeAndDifficulty(
-                            ExerciseType.STRETCHING,
-                            difficultyLevel,
-                            availableEquipment
-                    )
-            );
-        }
+        String workoutName = generateWorkoutName(strengthPercentage, cardioPercentage,
+                stretchingPercentage, balancePercentage);
+        String description = generateWorkoutDescription(duration, strengthPercentage, cardioPercentage,
+                stretchingPercentage, balancePercentage,
+                difficultyLevel, selectedExercises);
 
-        // הוספת תרגילי שיווי משקל
-        if (balancePercentage > 0) {
-            selectedExercises.addAll(
-                    DatabaseExercises.getExercisesByTypeAndDifficulty(
-                            ExerciseType.BALANCE,
-                            difficultyLevel,
-                            availableEquipment
-                    )
-            );
-        }
-
-        // יצירת אימון חדש
         return new Workout(
-                generateWorkoutId(), // צריך ליצור מתודה שמייצרת ID ייחודי
-                "Custom Workout",
-                "Personalized workout based on your preferences",
+                workoutName,
+                description,
                 selectedExercises,
                 duration,
                 difficultyLevel,
                 "Custom"
         );
     }
+    private static String generateWorkoutName(int strength, int cardio,
+                                              int stretching, int balance) {
+        List<String> focusAreas = new ArrayList<>();
+        if (strength >= 40) focusAreas.add("Strength");
+        if (cardio >= 40) focusAreas.add("Cardio");
+        if (stretching >= 40) focusAreas.add("Flexibility");
+        if (balance >= 40) focusAreas.add("Balance");
 
-    // מתודת עזר ליצירת ID ייחודי
-    private static int generateWorkoutId() {
-        // כאן צריך להוסיף לוגיקה ליצירת ID ייחודי
-        // אפשר להשתמש ב-UUID או במונה פשוט
-        return UUID.randomUUID().hashCode();
+        if (focusAreas.isEmpty()) {
+            return "Balanced Custom Workout";
+        } else if (focusAreas.size() == 1) {
+            return focusAreas.get(0) + " Focused Workout";
+        } else {
+            return String.join("-", focusAreas) + " Combo Workout";
+        }
     }
 
+    @SuppressLint("DefaultLocale")
+    private static String generateWorkoutDescription(int duration, int strength, int cardio,
+                                                     int stretching, int balance,
+                                                     DifficultyLevel level,
+                                                     List<Exercise> exercises) {
+        StringBuilder desc = new StringBuilder();
+        desc.append(String.format("%d minute %s workout focusing on: ", duration, level.toString().toLowerCase()));
+
+        List<String> components = new ArrayList<>();
+        if (strength > 0) components.add(strength + "% strength training");
+        if (cardio > 0) components.add(cardio + "% cardio");
+        if (stretching > 0) components.add(stretching + "% stretching");
+        if (balance > 0) components.add(balance + "% balance");
+
+        desc.append(String.join(", ", components));
+
+        // Add exercise count
+        desc.append(String.format("\nTotal exercises: %d", exercises.size()));
+
+        // Add targeted muscle groups
+        Set<MuscleGroup> targetedMuscles = exercises.stream()
+                .map(Exercise::getTargetMuscle)
+                .collect(Collectors.toSet());
+        if (!targetedMuscles.isEmpty()) {
+            desc.append("\nTargeted muscle groups: ")
+                    .append(targetedMuscles.stream()
+                            .map(Enum::toString)
+                            .collect(Collectors.joining(", ")));
+        }
+
+        return desc.toString();
     }
-
-
-
+}

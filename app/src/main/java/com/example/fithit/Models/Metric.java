@@ -7,7 +7,6 @@ import java.util.Map;
 public class Metric {
     public static final String WEIGHT = "WEIGHT";
     public static final String HEART_RATE = "HEART_RATE";
-    public static final String CALORIES = "CALORIES";
     public static final String STEPS = "STEPS";
     private String metricId;
     private String userId;
@@ -22,7 +21,6 @@ public class Metric {
         return type != null && (
                 type.equals(WEIGHT) ||
                         type.equals(HEART_RATE) ||
-                        type.equals(CALORIES) ||
                         type.equals(STEPS)
         );
     }

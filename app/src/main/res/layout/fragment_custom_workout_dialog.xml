@@ -1,158 +1,243 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/duration_hint">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/duration_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:minHeight="48dp"
-            android:maxLength="2"
-            android:digits="0123456789" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/exercise_distribution"
-        android:textStyle="bold" />
-
-    <!-- Strength Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
-
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="@string/strength" />
-
-        <SeekBar
-            android:id="@+id/strength_seekbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="100" />
-
-        <TextView
-            android:id="@+id/strength_percent"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_percent" />
-
-    </LinearLayout>
-
-    <!-- Cardio Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
-
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="@string/cardio" />
-
-        <SeekBar
-            android:id="@+id/cardio_seekbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="100" />
-
-        <TextView
-            android:id="@+id/cardio_percent"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_percent" />
-
-    </LinearLayout>
-
-    <!-- Stretching Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
-
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="@string/stretching" />
-
-        <SeekBar
-            android:id="@+id/stretching_seekbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="100" />
-
-        <TextView
-            android:id="@+id/stretching_percent"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_percent" />
-
-    </LinearLayout>
-
-    <!-- Balance Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
-
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="@string/balance" />
-
-        <SeekBar
-            android:id="@+id/balance_seekbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="100" />
-
-        <TextView
-            android:id="@+id/balance_percent"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="@string/zero_percent" />
-
-    </LinearLayout>
-
-    <!-- Total Percentage Display -->
+        android:text="Create Custom Workout"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="16dp"/>
     <TextView
-        android:id="@+id/total_percentage"
+        android:id="@+id/durationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="end"
-        android:text="@string/total_zero_percent"
-        android:textStyle="bold" />
+        android:text="50"
+        android:gravity="center"
+        android:layout_marginTop="18dp"/>
 
-    <!-- Add Generate Workout Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/generate_workout_button"
+    <!-- Duration Slider -->
+    <com.google.android.material.slider.Slider
+        android:id="@+id/durationSlider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/generate_workout"
-        android:padding="12dp" />
+        android:layout_marginBottom="16dp"
+        android:value="30"
+        android:stepSize="1"
+        android:valueFrom="15"
+        android:valueTo="60"
+        app:labelBehavior="floating"
+        android:contentDescription="Workout duration in minutes"/>
+
+    <!-- Workout Distribution Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="workout_distribution"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+
+    <!-- Strength Distribution -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <Button
+            android:id="@+id/strengthDecreaseBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="-"
+            android:textSize="20sp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Strength Training"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/strengthPercentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="30%"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/strengthIncreaseBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="+"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <!-- Cardio Distribution -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <Button
+            android:id="@+id/cardioDecreaseBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="-"
+            android:textSize="20sp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="cardio"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/cardioPercentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="20%"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/cardioIncreaseBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="+"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <!-- Stretching Distribution -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <Button
+            android:id="@+id/stretchingDecreaseBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="-"
+            android:textSize="20sp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="stretching"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/stretchingPercentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="20%"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/stretchingIncreaseBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="+"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <!-- Balance Distribution -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/balanceDecreaseBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="-"
+            android:textSize="20sp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="balance"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/balancePercentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="30%"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/balanceIncreaseBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="+"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <!-- Total Percentage -->
+    <TextView
+        android:id="@+id/totalPercentage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total: 100%"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="26dp"/>
+
+    <!-- Generate Workout Button -->
+    <Button
+        android:id="@+id/generateWorkoutButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GENERATE WORKOUT"
+        android:textColor="@android:color/holo_red_light"/>
 
 </LinearLayout>

@@ -2,11 +2,10 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Header -->
+    <!-- Header with Back Button -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,18 +26,24 @@
                 android:padding="16dp"
                 android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_myplaces"/>
+                <Button
+                    android:id="@+id/btn_back_to_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Back"
+                    android:contentDescription="Return to main area"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    app:icon="@android:drawable/ic_menu_revert"
+                    app:iconGravity="start"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="Personal Dashboard"
+                    android:text="Personal Area"
                     android:textSize="20sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:accessibilityHeading="true"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </com.google.android.material.appbar.AppBarLayout>
@@ -74,10 +79,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="24sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        android:accessibilityHeading="true"/>
 
                     <TextView
                         android:id="@+id/tv_user_level"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_hearts_progress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"/>
@@ -87,7 +99,8 @@
                         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp"
+                        android:contentDescription="Hearts progress indicator"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -110,7 +123,8 @@
                         android:layout_height="wrap_content"
                         android:text="My Equipment"
                         android:textSize="20sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        android:accessibilityHeading="true"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_equipment"
@@ -146,15 +160,23 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Progress"
+                        android:text="Workout Progress"
                         android:textSize="20sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        android:accessibilityHeading="true"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Total workouts completed since joining:"/>
 
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/chart_progress"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp"
+                        android:contentDescription="Workout progress chart"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

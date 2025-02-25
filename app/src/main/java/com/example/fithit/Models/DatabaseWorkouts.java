@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class DatabaseWorkouts {
     private static final List<Workout> workouts = new ArrayList<>();
-    private static int nextWorkoutId = 1;
 
     static {
         // Quick Stretch and Balance (15 minutes)
@@ -28,7 +27,6 @@ public class DatabaseWorkouts {
         // Add more exercises...
 
         workouts.add(new Workout(
-                nextWorkoutId++,
                 "Quick Stretch & Balance",
                 "A quick 15-minute routine combining basic stretches and balance exercises. Perfect for morning or pre-workout.",
                 quickStretchExercises,
@@ -44,7 +42,6 @@ public class DatabaseWorkouts {
                 .collect(Collectors.toList());
 
         workouts.add(new Workout(
-                nextWorkoutId++,
                 "Cardio Blast",
                 "High-intensity cardio workout to get your heart pumping. Great for burning calories and improving endurance.",
                 cardioExercises,
@@ -60,7 +57,6 @@ public class DatabaseWorkouts {
                 .collect(Collectors.toList());
 
         workouts.add(new Workout(
-                nextWorkoutId++,
                 "Full Body Strength",
                 "Comprehensive strength training targeting all major muscle groups.",
                 strengthExercises,
@@ -82,7 +78,6 @@ public class DatabaseWorkouts {
                 .stream().limit(2).collect(Collectors.toList()));
 
         workouts.add(new Workout(
-                nextWorkoutId++,
                 "Complete Fitness Journey",
                 "The ultimate workout combining cardio, strength, balance, and flexibility training.",
                 allInExercises,
@@ -99,7 +94,6 @@ public class DatabaseWorkouts {
                 .collect(Collectors.toList());
 
         workouts.add(new Workout(
-                nextWorkoutId++,
                 "Core Power",
                 "Focused core workout to build strength and stability in your midsection.",
                 coreExercises,

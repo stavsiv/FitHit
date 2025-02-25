@@ -12,10 +12,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.Navigation;
 
-import com.example.fithit.FirebaseManagment.FirebaseManager;
 import com.example.fithit.R;
 import com.example.fithit.Models.User;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FirebaseApp.initializeApp(this);
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -65,18 +67,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // First create the authentication user
         mAuth.createUserWithEmailAndPassword(email, password1)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
-                        // Get the new user's ID
                         String userId = mAuth.getCurrentUser().getUid();
 
-                        // Create new user with updated constructor
                         User newUser = new User(username, phone, age, wantReminders);
-                        newUser.setUserId(userId);  // שימוש ב-ID מהפיירבייס במקום המספר הרץ
+                        newUser.setUserId(userId);
 
-                        // Save to database
                         FirebaseDatabase.getInstance().getReference("users")
                                 .child(userId)
                                 .setValue(newUser)
@@ -86,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                                         Navigation.findNavController(view)
                                                 .navigate(R.id.action_fragmentRegister_to_fragmentLogin);
                                     } else {
-                                        // מחיקת המשתמש מהאוטנטיקציה אם נכשלה השמירה בדאטהבייס
                                         mAuth.getCurrentUser().delete();
                                         String errorMessage = "Failed to create user profile";
                                         if (profileTask.getException() != null) {
@@ -157,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addDataToDatabase(String email, String username, String phone,
-                                  int age, double weight, boolean wantReminders) {
+                                  int age, boolean wantReminders) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
 
         User user = new User();//(email, username, phone, age, weight, wantReminders);

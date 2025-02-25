@@ -6,6 +6,7 @@ import com.example.fithit.Enums.ExerciseType;
 import com.example.fithit.Enums.MuscleGroup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +15,18 @@ public class Exercise {
     private String exerciseName;
     private ExerciseType exerciseType;
     private String description;
-    private List<EquipmentType> requiredEquipmentTypes;
+    private final List<EquipmentType> requiredEquipmentTypes;
     private DifficultyLevel difficultyLevel;
     private int durationInMinutes;
     private List<String> instructions;
     private MuscleGroup targetMuscle;
-    private Map<DifficultyLevel, Integer> repetitionsByDifficulty;
+    private final Map<DifficultyLevel, Integer> repetitionsByDifficulty;
+
+    public Exercise() {
+        requiredEquipmentTypes = new ArrayList<>();
+        instructions = new ArrayList<>();
+        repetitionsByDifficulty = new HashMap<>();
+    }
     public Exercise(int exerciseId,
                     String exerciseName,
                     ExerciseType exerciseType,
@@ -82,15 +89,6 @@ public class Exercise {
         return repetitionsByDifficulty.getOrDefault(difficulty, 0);
     }
 
-    // Helper method to convert EquipmentTypes to Equipment objects
-    public List<Equipment> getRequiredEquipment() {
-        List<Equipment> equipmentList = new ArrayList<>();
-        for (EquipmentType type : requiredEquipmentTypes) {
-            equipmentList.add(new Equipment(type));
-        }
-        return equipmentList;
-    }
-
     public boolean canPerformWithEquipment(List<EquipmentType> availableEquipment) {
         if (this.requiredEquipmentTypes.isEmpty()) {
             return true;
@@ -101,7 +99,7 @@ public class Exercise {
     public String toString() {
         return "Exercise{" +
                 "name='" + exerciseName + '\'' +
-                ", type=" + exerciseType.getExerciseTypeName() +
+                ", type=" + exerciseType.name() +
                 ", difficulty=" + difficultyLevel +
                 ", duration=" + durationInMinutes + " minutes" +
                 ", reps=" + getRepetitionsForDifficulty(difficultyLevel) +
