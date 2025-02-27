@@ -21,5 +21,8 @@
     <string name="error_enter_duration">Please enter workout duration</string>
     <string name="error_duration_range">Duration must be between 15 and 60 minutes</string>
     <string name="error_percentage_sum">Exercise percentages must sum to exactly 100%</string>
+    <string name="close">close</string>
+    <string name="no_available_challenges_at_the_moment">no_available_challenges_at_the_moment</string>
+    <string name="available_challenges">available challenges</string>
 
 </resources>

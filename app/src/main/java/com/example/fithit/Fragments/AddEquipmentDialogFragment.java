@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import com.example.fithit.Enums.EquipmentType;
-import com.example.fithit.FirebaseManagment.FirebaseManager;
+import com.example.fithit.Managers.FirebaseManager;
 import com.example.fithit.Models.Equipment;
 import java.util.Arrays;
 

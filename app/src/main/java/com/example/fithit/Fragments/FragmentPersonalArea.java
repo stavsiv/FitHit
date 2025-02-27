@@ -17,12 +17,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fithit.Adapters.EquipmentAdapter;
+import com.example.fithit.Adapters.UserChallengeRecordAdapter;
 import com.example.fithit.Enums.DifficultyLevel;
+import com.example.fithit.Models.ChallengeRecord;
 import com.example.fithit.Models.WorkoutRecord;
 import com.example.fithit.R;
 import com.example.fithit.Models.Equipment;
 import com.example.fithit.Models.User;
-import com.example.fithit.FirebaseManagment.FirebaseManager;
+import com.example.fithit.Managers.FirebaseManager;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -30,6 +32,8 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.button.MaterialButton;
+import com.example.fithit.Managers.ChallengeProgressManager;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +54,10 @@ public class FragmentPersonalArea extends Fragment {
     private ProgressBar progressLevel;
     private Button btnBackToMain;
     private MaterialButton btnAddEquipment;
+
+    private RecyclerView challengesRecyclerView;
+    private TextView tvNoChallenges;
+    private MaterialButton btnAddChallenge;
 
     public static FragmentPersonalArea newInstance() {
         return new FragmentPersonalArea();
@@ -76,17 +84,23 @@ public class FragmentPersonalArea extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loadUserData();
-    }
+        loadUserChallenges();    }
 
     private void initializeViews() {
         equipmentRecyclerView = rootView.findViewById(R.id.rv_equipment);
         progressChart = rootView.findViewById(R.id.chart_progress);
         tvUserName = rootView.findViewById(R.id.tv_user_name);
         tvUserLevel = rootView.findViewById(R.id.tv_user_level);
+        tvHeartsProgress = rootView.findViewById(R.id.tv_hearts_progress);
         progressLevel = rootView.findViewById(R.id.progress_level);
 
         tvDifficultyLevel = tvUserLevel;
         tvHeartsProgress = tvUserLevel;
+
+        challengesRecyclerView = rootView.findViewById(R.id.rv_active_challenges);
+        tvNoChallenges = rootView.findViewById(R.id.tv_no_challenges);
+        btnAddChallenge = rootView.findViewById(R.id.btn_add_challenge);
+        btnAddChallenge.setOnClickListener(v -> showChallengesDialog());
 
         btnBackToMain = rootView.findViewById(R.id.btn_back_to_main);
         btnBackToMain.setOnClickListener(v -> navigateToMainArea());
@@ -95,6 +109,90 @@ public class FragmentPersonalArea extends Fragment {
         btnAddEquipment.setOnClickListener(v -> showEquipmentSelectionDialog());
     }
 
+
+    private void showChallengesDialog() {
+        String userId = firebaseManager.getCurrentUserId();
+        if (userId == null) return;
+
+        firebaseManager.getCurrentUserData()
+                .addOnSuccessListener(user -> {
+                    if (!isAdded()) return;
+
+                    AvailableChallengesDialog dialog = new AvailableChallengesDialog(user);
+                    dialog.setOnChallengeSelectedListener(challenge -> {
+                        ChallengeProgressManager.getInstance().addChallengeForUser(challenge);
+                        loadUserChallenges();
+                        Toast.makeText(requireContext(),
+                                "Challenge added successfully",
+                                Toast.LENGTH_SHORT).show();
+                    });
+                    dialog.show(getChildFragmentManager(), "available_challenges_dialog");
+                })
+                .addOnFailureListener(e -> {
+                    if (!isAdded()) return;
+                    Toast.makeText(requireContext(),
+                            "Error loading user details: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+    private void loadUserChallenges() {
+        firebaseManager.getUserChallengeRecords()  // Change to use ChallengeRecord objects
+                .addOnSuccessListener(records -> {
+                    if (!isAdded()) return;
+
+                    if (records.isEmpty()) {
+                        challengesRecyclerView.setVisibility(View.GONE);
+                        tvNoChallenges.setVisibility(View.VISIBLE);
+                    } else {
+                        challengesRecyclerView.setVisibility(View.VISIBLE);
+                        tvNoChallenges.setVisibility(View.GONE);
+
+                        UserChallengeRecordAdapter userChallengeAdapter = new UserChallengeRecordAdapter(records);
+                        userChallengeAdapter.setOnChallengeActionListener(new UserChallengeRecordAdapter.OnChallengeActionListener() {
+                            @Override
+                            public void onChallengeRemove(ChallengeRecord record) {
+                                firebaseManager.removeChallengeRecord(record)
+                                        .addOnSuccessListener(aVoid -> {
+                                            if (!isAdded()) return;
+
+                                            // Reload challenges to ensure UI is in sync with database
+                                            loadUserChallenges();
+
+                                            Toast.makeText(requireContext(),
+                                                    "Challenge removed successfully",
+                                                    Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            if (!isAdded()) return;
+                                            Toast.makeText(requireContext(),
+                                                    "Error removing challenge: " + e.getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        });
+                            }
+                            @Override
+                            public void onChallengeRenew(ChallengeRecord record) {
+                                ChallengeProgressManager.getInstance().renewChallenge(record);
+                                loadUserChallenges();
+                            }
+                        });
+
+                        challengesRecyclerView.setAdapter(userChallengeAdapter);
+                        challengesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (!isAdded()) return;
+                    Toast.makeText(requireContext(),
+                            "Error loading challenges: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        ChallengeProgressManager.getInstance().updateAllChallengesProgress();
+        loadUserChallenges();
+    }
     private void navigateToMainArea() {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().popBackStack();
@@ -102,17 +200,14 @@ public class FragmentPersonalArea extends Fragment {
     }
 
     private void setupRecyclerViews() {
-        equipmentAdapter = new EquipmentAdapter(new EquipmentAdapter.OnEquipmentSelectionChangedListener() {
-            @Override
-            public void onEquipmentSelectionChanged(Equipment equipment, boolean isSelected) {
-                updateEquipmentInFirebase(equipment, isSelected);
+        equipmentAdapter = new EquipmentAdapter((equipment, isSelected) -> {
+            updateEquipmentInFirebase(equipment, isSelected);
 
-                String announcement = isSelected ?
-                        "Added " + equipment.getDisplayName() + " to your equipment" :
-                        "Removed " + equipment.getDisplayName() + " from your equipment";
+            String announcement = isSelected ?
+                    "Added " + equipment.getDisplayName() + " to your equipment" :
+                    "Removed " + equipment.getDisplayName() + " from your equipment";
 
-                announceForAccessibility(announcement);
-            }
+            announceForAccessibility(announcement);
         });
 
         equipmentRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));

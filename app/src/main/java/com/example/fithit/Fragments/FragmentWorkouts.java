@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.example.fithit.Adapters.WorkoutsAdapter;
-import com.example.fithit.FirebaseManagment.FirebaseManager;
+import com.example.fithit.Managers.FirebaseManager;
 import com.example.fithit.Models.DatabaseWorkouts;
 import com.example.fithit.Models.Workout;
 import com.example.fithit.Models.WorkoutRecord;

@@ -22,7 +22,6 @@
         android:gravity="center"
         android:layout_marginTop="18dp"/>
 
-    <!-- Duration Slider -->
     <com.google.android.material.slider.Slider
         android:id="@+id/durationSlider"
         android:layout_width="match_parent"
@@ -35,17 +34,15 @@
         app:labelBehavior="floating"
         android:contentDescription="Workout duration in minutes"/>
 
-    <!-- Workout Distribution Title -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="workout_distribution"
+        android:text="workout distribution"
         android:textSize="16sp"
         android:gravity="center"
         android:layout_marginBottom="16dp"/>
 
 
-    <!-- Strength Distribution -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -89,7 +86,6 @@
             android:textSize="20sp"/>
     </LinearLayout>
 
-    <!-- Cardio Distribution -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -133,7 +129,6 @@
             android:textSize="20sp"/>
     </LinearLayout>
 
-    <!-- Stretching Distribution -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -177,7 +172,6 @@
             android:textSize="20sp"/>
     </LinearLayout>
 
-    <!-- Balance Distribution -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -221,7 +215,6 @@
             android:textSize="20sp"/>
     </LinearLayout>
 
-    <!-- Total Percentage -->
     <TextView
         android:id="@+id/totalPercentage"
         android:layout_width="match_parent"
@@ -232,12 +225,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="26dp"/>
 
-    <!-- Generate Workout Button -->
     <Button
         android:id="@+id/generateWorkoutButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="GENERATE WORKOUT"
-        android:textColor="@android:color/holo_red_light"/>
+        android:textColor="@android:color/black"/>
 
 </LinearLayout>

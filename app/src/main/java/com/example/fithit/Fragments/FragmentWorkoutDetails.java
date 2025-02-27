@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.fithit.Adapters.ExercisesAdapter;
-import com.example.fithit.FirebaseManagment.FirebaseManager;
+import com.example.fithit.Managers.FirebaseManager;
 import com.example.fithit.Models.Workout;
 import com.example.fithit.R;
 
@@ -28,15 +28,14 @@ public class FragmentWorkoutDetails extends Fragment {
     private TextView  workoutDifficulty;
     private RecyclerView exercisesRecyclerView;
 
+    public FragmentWorkoutDetails() {}
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                workout = getArguments().getSerializable("workout", Workout.class);
-            } else {
-                workout = (Workout) getArguments().getSerializable("workout");
-            }
+            workout = (Workout) getArguments().getSerializable("workout");
         }
     }
 

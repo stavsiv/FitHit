@@ -30,7 +30,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    tasks.withType<JavaCompile>() {
+    tasks.withType<JavaCompile> {
         options.compilerArgs.add("-Xlint:deprecation")
     }
 }
@@ -42,14 +42,12 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation (libs.mpandroidchart)
-    implementation (libs.cardview)
     implementation (libs.recyclerview)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
-    implementation (libs.material.v1110)
 
 
 

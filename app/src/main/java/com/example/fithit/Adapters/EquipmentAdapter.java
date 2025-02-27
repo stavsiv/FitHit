@@ -99,9 +99,7 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
         }
     }
 
-    // Helper method to calculate sample size for image loading
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
@@ -110,8 +108,6 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
 
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
             while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
             }
@@ -137,16 +133,11 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
         }
 
         public void bind(Equipment equipment) {
-            // Set equipment name
             tvEquipmentName.setText(equipment.getDisplayName());
 
-            // Set equipment image
             loadImageEfficiently(ivEquipmentImage, equipment.getImageResourceId());
 
-            // Set checkbox state
             cbEquipmentSelected.setChecked(equipment.isSelected());
-
-            // Checkbox change listener
             cbEquipmentSelected.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 equipment.setSelected(isChecked);
                 if (listener != null) {
@@ -154,14 +145,12 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
                 }
             });
 
-            // Item view click listener to toggle checkbox
             itemView.setOnClickListener(v -> {
                 cbEquipmentSelected.setChecked(!cbEquipmentSelected.isChecked());
             });
         }
     }
 
-    // Get selected equipment
     public List<Equipment> getSelectedEquipment() {
         List<Equipment> selectedEquipment = new ArrayList<>();
         for (Equipment equipment : equipmentList) {

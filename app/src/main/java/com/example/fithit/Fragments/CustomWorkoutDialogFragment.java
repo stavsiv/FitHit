@@ -16,7 +16,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.fithit.Enums.DifficultyLevel;
-import com.example.fithit.FirebaseManagment.FirebaseManager;
+import com.example.fithit.Managers.FirebaseManager;
 import com.example.fithit.Models.Workout;
 import com.example.fithit.Models.WorkoutRecord;
 import com.example.fithit.R;
@@ -106,9 +106,7 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
             durationSlider.setValueTo(MAX_DURATION);
             durationSlider.setValue(DEFAULT_DURATION);
 
-            durationSlider.addOnChangeListener((slider, value, fromUser) -> {
-                durationText.setText(String.format(Locale.getDefault(), "%.0f", value));
-            });
+            durationSlider.addOnChangeListener((slider, value, fromUser) -> durationText.setText(String.format(Locale.getDefault(), "%.0f", value)));
         }
     }
 
@@ -230,11 +228,9 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
 
                     dismiss();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(requireContext(),
-                            "Failed to save workout: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(requireContext(),
+                        "Failed to save workout: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show());
     }
 
     public interface OnWorkoutGeneratedListener {

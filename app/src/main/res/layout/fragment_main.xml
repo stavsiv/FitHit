@@ -62,7 +62,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Personal Area Button (square) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_to_personal_area"
             android:layout_width="60dp"
@@ -82,7 +81,6 @@
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
-    <!-- Calendar Section -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -99,7 +97,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="schedule_workouts"
+                android:text="schedule workouts"
                 android:textColor="@color/design_default_color_on_surface"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -113,14 +111,12 @@
                 android:layout_marginBottom="4dp"
                 style="@style/CustomCalendarView" />
 
-            <!-- Workout Details Container - limited height with scroll -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="8dp">
 
-                <!-- RecyclerView with limited height and scrolling -->
                 <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="80dp"
@@ -134,15 +130,14 @@
                         android:visibility="gone"
                         tools:visibility="visible"
                         tools:itemCount="1"
-                        tools:listitem="@layout/single_workout" />
+                        tools:listitem="@layout/item_workout" />
                 </androidx.core.widget.NestedScrollView>
 
-                <!-- No Workouts Text -->
                 <TextView
                     android:id="@+id/no_workouts_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="no_workouts"
+                    android:text="no workouts"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:textSize="16sp"
@@ -151,7 +146,6 @@
                     tools:visibility="visible" />
             </FrameLayout>
 
-            <!-- Action Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

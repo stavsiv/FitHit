@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import com.example.fithit.Enums.DifficultyLevel;
 import com.example.fithit.Enums.EquipmentType;
 import com.example.fithit.Enums.ExerciseType;
-import com.example.fithit.Enums.MuscleGroup;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ public class Workout implements Serializable {
     private int estimatedDuration; // in minutes
     private DifficultyLevel difficultyLevel;
     private String category;
-    //המשתנה nextWorkoutId יכול להיות מוחלף ב-UUID או מזהה אחר שמיוצר על ידי Firebase.
     public Workout() {
         exercises = new ArrayList<>();
     }
@@ -232,14 +230,13 @@ public class Workout implements Serializable {
         desc.append(String.format("\nTotal exercises: %d", exercises.size()));
 
         // Add targeted muscle groups
-        Set<MuscleGroup> targetedMuscles = exercises.stream()
-                .map(Exercise::getTargetMuscle)
+        Set<String> targetedMuscles = exercises.stream()
+                .map(exercise -> exercise.getTargetMuscle().name()) // Convert enum to string using .name()
                 .collect(Collectors.toSet());
+
         if (!targetedMuscles.isEmpty()) {
             desc.append("\nTargeted muscle groups: ")
-                    .append(targetedMuscles.stream()
-                            .map(Enum::toString)
-                            .collect(Collectors.joining(", ")));
+                    .append(String.join(", ", targetedMuscles));
         }
 
         return desc.toString();

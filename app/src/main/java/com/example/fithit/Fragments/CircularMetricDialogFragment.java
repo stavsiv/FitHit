@@ -15,7 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.example.fithit.FirebaseManagment.FirebaseManager;
+import com.example.fithit.Managers.FirebaseManager;
 import com.example.fithit.Models.DatabaseWorkouts;
 import com.example.fithit.Models.Metric;
 import com.example.fithit.Models.Workout;
@@ -27,7 +27,6 @@ import com.google.android.material.button.MaterialButton;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class CircularMetricDialogFragment extends DialogFragment {
     private CircularMetricsView circularMetricsView;

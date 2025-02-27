@@ -2,19 +2,14 @@ package com.example.fithit.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import android.widget.EditText;
-import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
@@ -25,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fithit.Adapters.UserWorkoutsAdapter;
-import com.example.fithit.FirebaseManagment.FirebaseManager;
+import com.example.fithit.Managers.FirebaseManager;
 import com.example.fithit.Models.Workout;
 import com.example.fithit.Models.WorkoutRecord;
 import com.example.fithit.R;
@@ -101,7 +96,6 @@ public class FragmentMain extends Fragment {
                             "Status: " + (workout.isCompleted() ? "Completed ✓" : "Not completed"))
                     .setPositiveButton("Close", null);
 
-            // Only show "Mark as Completed" button if workout is not already completed
             if (!workout.isCompleted()) {
                 builder.setNeutralButton("Mark as Completed", (dialog, which) -> {
                     markWorkoutAsCompleted(workout);
@@ -109,13 +103,6 @@ public class FragmentMain extends Fragment {
             }
 
             builder.show();
-            /*new MaterialAlertDialogBuilder(context)
-                    .setTitle(workoutObj.getName())
-                    .setMessage(workoutObj.getDescription() + "\n\n" +
-                            "duraion: " + workoutObj.getEstimatedDuration() + " minuts\n" +
-                            "dificulty level: " + workoutObj.getDifficultyLevel())
-                    .setPositiveButton("close", null)
-                    .show();*/
         }
     }
     private void markWorkoutAsCompleted(WorkoutRecord workout) {
@@ -279,52 +266,6 @@ public class FragmentMain extends Fragment {
             }
         });
     }
-
-    /*private void loadWorkoutsForSelectedDate() {
-        if (selectedDate == null) {
-            Log.d("WorkoutDebug", "Selected date is null");
-            selectedDateWorkouts.setVisibility(View.GONE);
-            noWorkoutsText.setVisibility(View.VISIBLE);
-            return;
-        }
-
-        Log.d("WorkoutDebug", "Loading workouts for date: " + selectedDate);
-
-        FirebaseManager.getInstance().getWorkoutsByDate(selectedDate, new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<WorkoutRecord> workouts = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    WorkoutRecord record = snapshot.getValue(WorkoutRecord.class);
-                    if (record != null) {
-                        workouts.add(record);
-                        Log.d("WorkoutDebug", "Found workout: " + record.getWorkout().getName() +
-                                " for date: " + new Date(record.getDate()));
-                    }
-                }
-
-                if (workouts.isEmpty()) {
-                    Log.d("WorkoutDebug", "No workouts found for date: " + selectedDate);
-                    selectedDateWorkouts.setVisibility(View.GONE);
-                    noWorkoutsText.setVisibility(View.VISIBLE);
-                } else {
-                    Log.d("WorkoutDebug", "Found " + workouts.size() + " workouts");
-                    workoutsAdapter.setWorkouts(workouts);
-                    selectedDateWorkouts.setVisibility(View.VISIBLE);
-                    noWorkoutsText.setVisibility(View.GONE);
-                }
-
-                updateWorkoutButtons();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("WorkoutDebug", "Error loading workouts: " + error.getMessage());
-                selectedDateWorkouts.setVisibility(View.GONE);
-                noWorkoutsText.setVisibility(View.VISIBLE);
-            }
-        });
-    }*/
 
     @Override
     public void onResume() {
@@ -496,24 +437,6 @@ public class FragmentMain extends Fragment {
         });
     }
 
-    /*private void showUpcomingWorkoutAlert(Workout workout) {
-        if (workout == null) {
-            Log.e("FragmentMain", "Cannot show alert for null workout");
-            if (upcomingWorkoutAlert != null) {
-                upcomingWorkoutAlert.setVisibility(View.GONE);
-            }
-            return;
-        }
-
-        if (upcomingWorkoutAlert != null) {
-            upcomingWorkoutAlert.setVisibility(View.VISIBLE);
-            TextView alertText = upcomingWorkoutAlert.findViewById(R.id.alert_text);
-            if (alertText != null) {
-                String alertMessage = String.format("Upcoming workout: %s", workout.getName());
-                alertText.setText(alertMessage);
-            }
-        }
-    }*/
 
     private void navigateToPersonalArea() {
         try {

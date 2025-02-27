@@ -596,20 +596,6 @@ public class DatabaseExercises {
                 .collect(Collectors.toList());
     }
 
-    public static List<Exercise> getExercisesByMuscleGroup(MuscleGroup muscleGroup) {
-        return exercises.stream()
-                .filter(exercise -> exercise.getTargetMuscle() == muscleGroup)
-                .collect(Collectors.toList());
-    }
-
-    /*    public static List<Exercise> getExercisesByEquipmentAndDifficulty(
-                List<EquipmentType> availableEquipment,
-                DifficultyLevel difficultyLevel) {
-            return exercises.stream()
-                    .filter(exercise -> exercise.getDifficultyLevel() == difficultyLevel)
-                    .filter(exercise -> exercise.canPerformWithEquipment(availableEquipment))
-                    .collect(Collectors.toList());
-        }*/
     public static List<Exercise> getExercisesByTypeAndDifficulty(
             ExerciseType type,
             DifficultyLevel difficulty,
