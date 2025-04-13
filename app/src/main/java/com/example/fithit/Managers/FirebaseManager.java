@@ -383,7 +383,7 @@ public class FirebaseManager {
         }
     }
 
-    //אתגרים
+
     public Task<Void> removeUserChallenge(String challengeId) {
         String userId = getCurrentUserId();
         if (userId == null) {

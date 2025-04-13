@@ -1,6 +1,7 @@
 package com.example.fithit.Fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.button.MaterialButton;
 import com.example.fithit.Managers.ChallengeProgressManager;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 import java.util.ArrayList;
@@ -285,9 +287,19 @@ public class FragmentPersonalArea extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     if (!isAdded()) return;
-                    Toast.makeText(requireContext(),
-                            "Failed to load user data: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
+                    if (e.getMessage() != null && e.getMessage().contains("Permission denied")) {
+                        Toast.makeText(requireContext(),
+                                "Refreshing login to solve permission issues...",
+                                Toast.LENGTH_LONG).show();
+
+                        FirebaseAuth.getInstance().signOut();
+
+                        navigateToLoginScreen();
+                    } else {
+                        Toast.makeText(requireContext(),
+                                "Failed to load user data: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
                 });
 
 
@@ -305,6 +317,11 @@ public class FragmentPersonalArea extends Fragment {
                 });
     }
 
+    private void navigateToLoginScreen() {
+        Intent intent = new Intent(requireActivity(), FragmentLogin.class);
+        startActivity(intent);
+        requireActivity().finish();
+    }
     @SuppressLint({"RestrictedApi", "SetTextI18n"})
     private void updateUserProfileUI(User user) {
         if (user == null || !isAdded()) return;

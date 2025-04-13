@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "531884747841",
+    "firebase_url": "https://fithitapp25-default-rtdb.firebaseio.com",
     "project_id": "fithitapp25",
     "storage_bucket": "fithitapp25.firebasestorage.app"
   },

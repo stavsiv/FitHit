@@ -45,7 +45,6 @@ public class FragmentWorkouts extends Fragment {
     }
 
     private void openWorkoutDetails(Workout workout) {
-        // Normalize the date to midnight
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(selectedDate);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -56,15 +55,17 @@ public class FragmentWorkouts extends Fragment {
 
         WorkoutRecord workoutRecord = new WorkoutRecord(workout, normalizedDate);
 
+        workoutRecord.setCompleted(false);
+
         FirebaseManager.getInstance()
                 .addWorkoutRecord(workoutRecord)
                 .addOnSuccessListener(aVoid -> {
-                    Bundle args = new Bundle();
-                    args.putSerializable("workout", workout);
-                    args.putLong("date", normalizedDate.getTime());
+                    Toast.makeText(getContext(),
+                            "The workout was successfully added to the calendar",Toast.LENGTH_SHORT).show();
 
                     NavController navController = Navigation.findNavController(requireView());
-                    navController.navigate(R.id.action_fragmentWorkouts_to_fragmentWorkoutDetails, args);
+                    navController.navigateUp();
+
                 })
                 .addOnFailureListener(e -> Toast.makeText(getContext(),
                         "Failed to save workout: " + e.getMessage(),

@@ -47,7 +47,7 @@ public class WorkoutRecord {
     public void setCompleted(boolean completed) {
         isCompleted = completed;
     }
-
+/*
     public void setMetric(String type, Double value) {
         if (Metric.isValidType(type)) {
             metrics.put(type, value);
@@ -55,7 +55,7 @@ public class WorkoutRecord {
             throw new IllegalArgumentException("Invalid metric type: " + type);
         }
     }
-/*
+
     public void setCompleted(boolean completed) {
         isCompleted = completed;
         if (completed && date == null) {
