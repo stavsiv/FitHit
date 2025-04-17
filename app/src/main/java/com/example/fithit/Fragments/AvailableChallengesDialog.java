@@ -50,16 +50,13 @@ public class AvailableChallengesDialog extends DialogFragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_available_challenges, container, false);
 
-        // Initialize views
         recyclerView = view.findViewById(R.id.recyclerViewAvailableChallenges);
         progressLoading = view.findViewById(R.id.progressLoadingChallenges);
         tvNoAvailableChallenges = view.findViewById(R.id.tvNoAvailableChallenges);
 
-        // Set up close button
         ImageButton btnClose = view.findViewById(R.id.btnCloseAvailableChallengesDialog);
         btnClose.setOnClickListener(v -> dismiss());
 
-        // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new AvailableChallengeAdapter(new ArrayList<>());
         adapter.setOnChallengeSelectedListener(challenge -> {
@@ -83,10 +80,8 @@ public class AvailableChallengesDialog extends DialogFragment {
         recyclerView.setVisibility(View.GONE);
         tvNoAvailableChallenges.setVisibility(View.GONE);
 
-        // Use getUserChallengeRecords() which is already implemented
         firebaseManager.getUserChallengeRecords()
                 .addOnSuccessListener(userChallengeRecords -> {
-                    // Extract Challenge objects from ChallengeRecord objects
                     List<Challenge> userChallenges = new ArrayList<>();
                     for (ChallengeRecord record : userChallengeRecords) {
                         if (record.getChallenge() != null) {
@@ -94,7 +89,6 @@ public class AvailableChallengesDialog extends DialogFragment {
                         }
                     }
 
-                    // Get all available challenges from Challenge class
                     List<Challenge> allChallenges = Challenge.ALL_CHALLENGES;
                     if (allChallenges == null) {
                         allChallenges = new ArrayList<>();
@@ -103,7 +97,6 @@ public class AvailableChallengesDialog extends DialogFragment {
                     if (!isAdded()) return;
                     progressLoading.setVisibility(View.GONE);
 
-                    // Filter out challenges the user already has
                     List<Challenge> availableChallenges = filterOutExistingChallenges(
                             allChallenges, userChallenges);
 
@@ -156,7 +149,6 @@ public class AvailableChallengesDialog extends DialogFragment {
             dialog.getWindow().setLayout(width, height);
         }
     }
-
     public void setOnChallengeSelectedListener(OnChallengeSelectedListener listener) {
         this.listener = listener;
     }

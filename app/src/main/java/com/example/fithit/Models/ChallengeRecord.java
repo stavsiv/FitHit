@@ -1,5 +1,7 @@
 package com.example.fithit.Models;
 
+import android.util.Log;
+
 import java.util.Date;
 
 public class ChallengeRecord {
@@ -31,12 +33,13 @@ public class ChallengeRecord {
         this.currentProgress = 0;
         this.isCompleted = false;
     }
-
     public boolean updateProgress(int newProgress) {
         this.currentProgress = newProgress;
+        Log.d("ChallengeRecord", "Progress updated: " + currentProgress + "/" + getTargetValue());
 
-        if (newProgress >= getTargetValue() && !isCompleted) {
+        if (currentProgress >= getTargetValue() && !isCompleted) {
             this.isCompleted = true;
+            Log.d("ChallengeRecord", "Challenge marked as completed");
             return true;
         }
 
@@ -169,7 +172,6 @@ public class ChallengeRecord {
                 break;
         }
 
-        // Check if challenge is completed
         if (currentProgress >= challenge.getTargetValue() && !isCompleted) {
             isCompleted = true;
         }
@@ -194,8 +196,6 @@ public class ChallengeRecord {
     public int getTargetValue() {
         return challenge != null ? challenge.getTargetValue() : 0;
     }
-
-    // ---------- Getters and Setters ----------
 
     public Challenge getChallenge() {
         return challenge;

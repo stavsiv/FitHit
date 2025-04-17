@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class FragmentMain extends Fragment {
-    // UI Components
     private MaterialCardView btnToPersonalArea;
     private MaterialCardView upcomingWorkoutAlert;
     private CalendarView calendarView;
@@ -66,7 +65,6 @@ public class FragmentMain extends Fragment {
 
     @SuppressLint("ResourceType")
     private void initializeViews(View view) {
-        // Initialize all UI components
         btnToPersonalArea = view.findViewById(R.id.btn_to_personal_area);
         upcomingWorkoutAlert = view.findViewById(R.id.upcoming_workout_alert);
         calendarView = view.findViewById(R.id.calendar_view);
@@ -275,7 +273,6 @@ public class FragmentMain extends Fragment {
         }
     }
     private void loadUserData() {
-        // Set alert as initially hidden until we check if there are upcoming workouts
         upcomingWorkoutAlert.setVisibility(View.GONE);
         TextView alertText = upcomingWorkoutAlert.findViewById(R.id.alert_text);
 
@@ -287,12 +284,10 @@ public class FragmentMain extends Fragment {
                     WorkoutRecord nextWorkout = null;
                     long earliestTime = Long.MAX_VALUE;
 
-                    // Find the earliest upcoming workout
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         try {
                             WorkoutRecord record = snapshot.getValue(WorkoutRecord.class);
                             if (record != null && record.getWorkout() != null && record.getDate() > System.currentTimeMillis()) {
-                                // Check if this is earlier than our current earliest
                                 if (record.getDate() < earliestTime) {
                                     earliestTime = record.getDate();
                                     nextWorkout = record;
@@ -307,7 +302,6 @@ public class FragmentMain extends Fragment {
                     if (hasUpcomingWorkout && nextWorkout != null) {
                         showUpcomingWorkoutAlert(nextWorkout.getWorkout(), new Date(nextWorkout.getDate()));
                     } else {
-                        // No upcoming workouts
                         if (alertText != null) {
                             alertText.setText("No upcoming workouts scheduled");
                             upcomingWorkoutAlert.setVisibility(View.VISIBLE);
@@ -350,53 +344,6 @@ public class FragmentMain extends Fragment {
             loadWorkoutsForSelectedDate();
         });
     }
-   /* @SuppressLint("DefaultLocale")
-    private void loadUserData() {
-        // במקום להשתמש בפונקציה המקורית, פשוט הסתר את ההתראה
-        upcomingWorkoutAlert.setVisibility(View.GONE);
-
-        // אופציה: עדיין לנסות לטעון את הנתונים, אבל עם גישה מגוננת יותר
-        try {
-            FirebaseManager.getInstance().getUpcomingWorkouts(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    // אל תעשה כלום עם הנתונים בינתיים, רק צא מהפונקציה
-                    return;
-
-                *//*
-                // הקוד המקורי שגורם לשגיאה - מבוטל
-                boolean hasUpcomingWorkout = false;
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    try {
-                        WorkoutRecord record = snapshot.getValue(WorkoutRecord.class);
-                        if (record != null && record.getWorkout() != null) {
-                            Workout workout = record.getWorkout();
-                            showUpcomingWorkoutAlert(workout);
-                            hasUpcomingWorkout = true;
-                            break;
-                        }
-                    } catch (Exception e) {
-                        Log.e("FragmentMain", "Error processing upcoming workout: " + e.getMessage());
-                    }
-                }
-
-                if (!hasUpcomingWorkout) {
-                    upcomingWorkoutAlert.setVisibility(View.GONE);
-                }
-                *//*
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    Log.e("FirebaseError", "Failed to get upcoming workouts: " + error.getMessage());
-                    upcomingWorkoutAlert.setVisibility(View.GONE);
-                }
-            });
-        } catch (Exception e) {
-            Log.e("FragmentMain", "Error in loadUserData: " + e.getMessage());
-        }
-    }*/
-
     private void updateWorkoutButtons() {
         if (selectedDate == null) {
             btnAddWorkout.setEnabled(false);
@@ -426,9 +373,8 @@ public class FragmentMain extends Fragment {
         }
 
         checkIfDateHasWorkout(selectedDate, hasWorkout -> {
-            btnAddWorkout.setEnabled(!hasWorkout);
+            btnAddWorkout.setEnabled(true);
             btnCancelWorkout.setEnabled(hasWorkout);
-
             // Debug log
             Log.d("WorkoutButtons", "Selected date: " + selectedDate);
             Log.d("WorkoutButtons", "Is date valid: " + isDateValid);
@@ -436,7 +382,6 @@ public class FragmentMain extends Fragment {
             Log.d("WorkoutButtons", "Add button enabled: " + btnAddWorkout.isEnabled());
         });
     }
-
 
     private void navigateToPersonalArea() {
         try {
@@ -495,7 +440,6 @@ public class FragmentMain extends Fragment {
                     .show();
         }
     }
-
     private void cancelWorkout() {
         if (selectedDate != null) {
             FirebaseManager.getInstance().getWorkoutsByDate(selectedDate, new ValueEventListener() {
@@ -505,14 +449,14 @@ public class FragmentMain extends Fragment {
                         snapshot.getRef().removeValue()
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(getContext(), "Workout cancelled", Toast.LENGTH_SHORT).show();
-                                    updateWorkoutButtons();
-                                    loadWorkoutsForSelectedDate();
                                 })
                                 .addOnFailureListener(e ->
                                         Toast.makeText(getContext(), "Failed to cancel workout", Toast.LENGTH_SHORT).show()
                                 );
-                        break; // Cancel only the first workout on this date
                     }
+
+                    updateWorkoutButtons();
+                    loadWorkoutsForSelectedDate();
                 }
 
                 @Override

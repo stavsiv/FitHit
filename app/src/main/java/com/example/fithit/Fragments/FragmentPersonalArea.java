@@ -1,12 +1,16 @@
 package com.example.fithit.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,16 +54,12 @@ public class FragmentPersonalArea extends Fragment {
     private LineChart progressChart;
     private EquipmentAdapter equipmentAdapter;
     private TextView tvUserName;
-    private TextView tvUserLevel;
     private TextView tvDifficultyLevel;
     private TextView tvHeartsProgress;
     private ProgressBar progressLevel;
-    private Button btnBackToMain;
-    private MaterialButton btnAddEquipment;
 
     private RecyclerView challengesRecyclerView;
     private TextView tvNoChallenges;
-    private MaterialButton btnAddChallenge;
 
     public static FragmentPersonalArea newInstance() {
         return new FragmentPersonalArea();
@@ -92,7 +92,7 @@ public class FragmentPersonalArea extends Fragment {
         equipmentRecyclerView = rootView.findViewById(R.id.rv_equipment);
         progressChart = rootView.findViewById(R.id.chart_progress);
         tvUserName = rootView.findViewById(R.id.tv_user_name);
-        tvUserLevel = rootView.findViewById(R.id.tv_user_level);
+        TextView tvUserLevel = rootView.findViewById(R.id.tv_user_level);
         tvHeartsProgress = rootView.findViewById(R.id.tv_hearts_progress);
         progressLevel = rootView.findViewById(R.id.progress_level);
 
@@ -101,13 +101,13 @@ public class FragmentPersonalArea extends Fragment {
 
         challengesRecyclerView = rootView.findViewById(R.id.rv_active_challenges);
         tvNoChallenges = rootView.findViewById(R.id.tv_no_challenges);
-        btnAddChallenge = rootView.findViewById(R.id.btn_add_challenge);
+        MaterialButton btnAddChallenge = rootView.findViewById(R.id.btn_add_challenge);
         btnAddChallenge.setOnClickListener(v -> showChallengesDialog());
 
-        btnBackToMain = rootView.findViewById(R.id.btn_back_to_main);
+        Button btnBackToMain = rootView.findViewById(R.id.btn_back_to_main);
         btnBackToMain.setOnClickListener(v -> navigateToMainArea());
 
-        btnAddEquipment = rootView.findViewById(R.id.btn_add_equipment);
+        MaterialButton btnAddEquipment = rootView.findViewById(R.id.btn_add_equipment);
         btnAddEquipment.setOnClickListener(v -> showEquipmentSelectionDialog());
     }
 
@@ -137,19 +137,33 @@ public class FragmentPersonalArea extends Fragment {
                             Toast.LENGTH_SHORT).show();
                 });
     }
+
     private void loadUserChallenges() {
-        firebaseManager.getUserChallengeRecords()  // Change to use ChallengeRecord objects
+        firebaseManager.getUserChallengeRecords()
                 .addOnSuccessListener(records -> {
                     if (!isAdded()) return;
 
-                    if (records.isEmpty()) {
+                    List<ChallengeRecord> activeRecords = new ArrayList<>();
+                    for (ChallengeRecord record : records) {
+                        if (!record.isCompleted()) {
+                            activeRecords.add(record);
+                        }
+                    }
+
+                    if (activeRecords.isEmpty()) {
                         challengesRecyclerView.setVisibility(View.GONE);
                         tvNoChallenges.setVisibility(View.VISIBLE);
                     } else {
                         challengesRecyclerView.setVisibility(View.VISIBLE);
                         tvNoChallenges.setVisibility(View.GONE);
 
-                        UserChallengeRecordAdapter userChallengeAdapter = new UserChallengeRecordAdapter(records);
+                        UserChallengeRecordAdapter userChallengeAdapter = new UserChallengeRecordAdapter(activeRecords);
+
+                        userChallengeAdapter.setOnListEmptyListener(() -> {
+                            challengesRecyclerView.setVisibility(View.GONE);
+                            tvNoChallenges.setVisibility(View.VISIBLE);
+                        });
+
                         userChallengeAdapter.setOnChallengeActionListener(new UserChallengeRecordAdapter.OnChallengeActionListener() {
                             @Override
                             public void onChallengeRemove(ChallengeRecord record) {
@@ -157,8 +171,7 @@ public class FragmentPersonalArea extends Fragment {
                                         .addOnSuccessListener(aVoid -> {
                                             if (!isAdded()) return;
 
-                                            // Reload challenges to ensure UI is in sync with database
-                                            loadUserChallenges();
+                                            userChallengeAdapter.removeCompletedChallenge(record);
 
                                             Toast.makeText(requireContext(),
                                                     "Challenge removed successfully",
@@ -171,10 +184,112 @@ public class FragmentPersonalArea extends Fragment {
                                                     Toast.LENGTH_SHORT).show();
                                         });
                             }
+
                             @Override
                             public void onChallengeRenew(ChallengeRecord record) {
                                 ChallengeProgressManager.getInstance().renewChallenge(record);
                                 loadUserChallenges();
+                            }
+
+                            @Override
+                            public void onChallengeCompleted(ChallengeRecord record) {
+                                Log.d("ChallengeComplete", "onChallengeCompleted called for: " + record.getChallengeName());
+
+                                record.setCompleted(true);
+
+                                String userId = firebaseManager.getCurrentUserId();
+                                if (userId == null) {
+                                    Log.e("ChallengeComplete", "No user logged in");
+                                    return;
+                                }
+
+                                com.google.firebase.database.DatabaseReference userChallengesRef = com.google.firebase.database.FirebaseDatabase.getInstance().getReference()
+                                        .child("users").child(userId).child("userChallenges");
+
+                                userChallengesRef.get().addOnSuccessListener(dataSnapshot -> {
+                                    String recordKeyToUpdate = null;
+
+                                    for (com.google.firebase.database.DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                                        try {
+                                            java.util.Map<String, Object> data = (java.util.Map<String, Object>) childSnapshot.getValue();
+                                            if (data != null) {
+                                                java.util.Map<String, Object> challengeData = (java.util.Map<String, Object>) data.get("challenge");
+                                                if (challengeData != null) {
+                                                    String storedChallengeName = (String) challengeData.get("name");
+
+                                                    if (storedChallengeName != null &&
+                                                            storedChallengeName.equals(record.getChallenge().getName())) {
+                                                        recordKeyToUpdate = childSnapshot.getKey();
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        } catch (Exception e) {
+                                            Log.e("ChallengeComplete", "Error finding challenge: " + e.getMessage());
+                                        }
+                                    }
+
+                                    if (recordKeyToUpdate != null) {
+                                        Log.d("ChallengeComplete", "Found challenge key to update: " + recordKeyToUpdate);
+
+                                        java.util.Map<String, Object> updates = new java.util.HashMap<>();
+                                        updates.put("currentProgress", record.getCurrentProgress());
+                                        updates.put("isCompleted", true);
+                                        updates.put("challenge/completed", true);
+                                        updates.put("challenge/currentProgress", record.getCurrentProgress());
+
+                                        final String finalRecordKey = recordKeyToUpdate;
+                                        userChallengesRef.child(recordKeyToUpdate).updateChildren(updates)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Log.d("ChallengeComplete", "Challenge updated successfully");
+
+                                                    firebaseManager.getCurrentUserData()
+                                                            .addOnSuccessListener(user -> {
+                                                                if (user != null) {
+                                                                    int heartsReward = record.getChallenge().getHeartsReward();
+                                                                    user.addHearts(heartsReward);
+                                                                    firebaseManager.updateUserData(user)
+                                                                            .addOnSuccessListener(aVoid2 -> {
+                                                                                if (!isAdded())
+                                                                                    return;
+
+                                                                                Toast.makeText(requireContext(),
+                                                                                        "Challenge completed! You earned " + heartsReward + " hearts!",
+                                                                                        Toast.LENGTH_LONG).show();
+
+                                                                                userChallengeAdapter.removeCompletedChallenge(record);
+                                                                            })
+                                                                            .addOnFailureListener(e -> {
+                                                                                if (!isAdded())
+                                                                                    return;
+                                                                                Log.e("ChallengeComplete", "Failed to update user hearts: " + e.getMessage());
+                                                                            });
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(e -> {
+                                                                if (!isAdded()) return;
+                                                                Log.e("ChallengeComplete", "Failed to get user data: " + e.getMessage());
+                                                            });
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    if (!isAdded()) return;
+                                                    Log.e("ChallengeComplete", "Failed to update challenge: " + e.getMessage());
+                                                    Toast.makeText(requireContext(),
+                                                            "Failed to update challenge: " + e.getMessage(),
+                                                            Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else {
+                                        if (!isAdded()) return;
+                                        Log.e("ChallengeComplete", "Challenge not found for update");
+                                        Toast.makeText(requireContext(), "Challenge not found", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(e -> {
+                                    if (!isAdded()) return;
+                                    Log.e("ChallengeComplete", "Error getting challenges: " + e.getMessage());
+                                    Toast.makeText(requireContext(),
+                                            "Error getting challenges: " + e.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                });
                             }
                         });
 
@@ -189,6 +304,7 @@ public class FragmentPersonalArea extends Fragment {
                             Toast.LENGTH_SHORT).show();
                 });
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -247,10 +363,8 @@ public class FragmentPersonalArea extends Fragment {
         progressChart.getAxisRight().setEnabled(false);
         progressChart.getLegend().setEnabled(false);
 
-        // Add content description for the chart
         progressChart.setContentDescription("Workout progress chart showing history of completed workouts");
 
-        // Make chart accessible with custom announcements
         progressChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
@@ -303,7 +417,6 @@ public class FragmentPersonalArea extends Fragment {
                 });
 
 
-        // Load user equipment
         firebaseManager.getUserEquipmentIds(userId)
                 .addOnSuccessListener(equipmentNames -> {
                     if (!isAdded()) return;
@@ -356,13 +469,11 @@ public class FragmentPersonalArea extends Fragment {
                 (difficulty == DifficultyLevel.INTERMEDIATE) ? HEARTS_FOR_EXPERT : hearts;
         int progressPercent = (hearts * 100) / maxHearts;
 
-        // Update progress bar
         progressLevel.setProgress(progressPercent);
         progressLevel.setContentDescription(
                 "Heart progress: " + progressPercent + "% complete, " + heartsNeeded + " hearts remaining, " +
                         completedWorkouts + " of " + totalWorkouts + " workouts completed");
 
-        // Update workout history chart
         List<WorkoutRecord> workoutHistory = user.getWorkoutHistory();
         updateProgressChart(workoutHistory);
     }
@@ -424,5 +535,45 @@ public class FragmentPersonalArea extends Fragment {
         if (!isAdded()) return;
 
         saveAllEquipment();
+    }
+
+    private void showSimpleUpdateDialog(ChallengeRecord record) {
+        if (getContext() == null) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("progress update: " + record.getChallenge().getName());
+
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setText(String.valueOf(record.getCurrentProgress()));
+        builder.setView(input);
+
+        builder.setPositiveButton("update", (dialog, which) -> {
+            try {
+                int newProgress = Integer.parseInt(input.getText().toString());
+                if (newProgress >= 0) {
+                    record.updateProgress(newProgress);
+
+                    firebaseManager.updateChallengeRecord(record)
+                            .addOnSuccessListener(aVoid -> {
+                                loadUserChallenges();
+                                Toast.makeText(getContext(),
+                                        "The progress was updated successfully", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getContext(),
+                                        "Error updating progress: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                } else {
+                    Toast.makeText(getContext(), "Please enter a positive number", Toast.LENGTH_SHORT).show();
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
     }
 }
