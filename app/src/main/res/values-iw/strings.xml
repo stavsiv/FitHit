@@ -49,7 +49,7 @@
     <string name="add_equipment">הוסף ציוד</string>
     <string name="my_challenges">האתגרים שלי</string>
     <string name="no_active_challenges_add_some_to_track_your_progress">אין אתגרים פעילים. הוסף אתגרים כדי לעקוב אחרי ההתקדמות שלך!</string>
-    <string name="workout_progress">התקדמות באימון</string>
+    <string name="workout_progress">התקדמות באימונים</string>
     <string name="total_workouts_completed_since_joining">סה"כ אימונים שהושלמו מאז ההרשמה:</string>
     <string name="workout_progress_chart">תרשים התקדמות האימון</string>
     <string name="i_would_like_to_be_reminded_about_future_workouts">אני רוצה לקבל תזכורות על אימונים עתידיים</string>
@@ -79,7 +79,7 @@
     <string name="schedule_workouts">תכנן אימונים</string>
     <string name="personal_area_icon_desc">תיאור אייקון אזור אישי</string>
     <string name="alert_icon">אייקון התראה</string>
-    <string name="completed">הושלם </string>
+    <string name="completed">הושלם: </string>
     <string name="completed_v">הושלם ✓</string>
     <string name="expired">פג תוקף</string>
     <string name="progress">התקדמות: </string>
@@ -209,6 +209,10 @@
     <string name="intermediate">בינוני</string>
     <string name="expert">מתקדם</string>
     <string name="minutes">דקות </string>
-
+    <string name="no_workouts_history">אין היסטוריית אימונים</string>
+    <string name="workouts_per_month">אימונים בחודש</string>
+    <string name="total_workouts">סך אימונים</string>
+    <string name="workout_progress_over_time">התקדמות אימונים לאורך זמן</string>
+    <string name="workouts_in_month">אימונים בחודש</string>
 
 </resources>

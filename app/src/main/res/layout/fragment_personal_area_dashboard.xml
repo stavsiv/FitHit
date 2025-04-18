@@ -200,7 +200,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Progress Chart Card -->
+            <!-- Adjusted Chart Card Layout with much more space for the chart -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -212,28 +212,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="8dp"> <!-- Reduced padding -->
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/workout_progress"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:accessibilityHeading="true"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="4dp"
+                        android:textSize="12sp"
                         android:text="@string/total_workouts_completed_since_joining"/>
 
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/chart_progress"
+                    <!-- Significantly increased height and added large bottom padding -->
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:contentDescription="@string/workout_progress_chart"/>
+                        android:paddingBottom="50dp"> <!-- Extra padding container -->
+
+                        <com.github.mikephil.charting.charts.CombinedChart
+                            android:id="@+id/chart_progress"
+                            android:layout_width="match_parent"
+                            android:layout_height="450dp"
+                            android:paddingBottom="50dp" />
+                    </FrameLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

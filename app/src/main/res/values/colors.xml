@@ -2,4 +2,42 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Primary Pastel Colors -->
+    <color name="colorPrimary">@color/colorPrimaryLight</color>           <!-- Pastel Green -->
+    <color name="colorPrimaryLight">#E91E63</color>      <!-- Light Pastel Green -->
+    <color name="colorPrimaryDark">@color/error</color>       <!-- Dark Pastel Green -->
+
+    <!-- Accent Colors -->
+    <color name="colorAccent">#DB5B89</color>            <!-- Pastel Blue -->
+    <color name="colorAccentLight">#C3E0FB</color>       <!-- Light Pastel Blue -->
+    <color name="colorAccentDark">#5D99C6</color>        <!-- Dark Pastel Blue -->
+
+    <!-- Secondary Colors -->
+    <color name="colorSecondary">#FFCC80</color>         <!-- Pastel Orange -->
+    <color name="colorSecondaryLight">#FFE0B2</color>    <!-- Light Pastel Orange -->
+    <color name="colorSecondaryDark">#CB9B51</color>     <!-- Dark Pastel Orange -->
+
+    <!-- Additional Pastel Colors for Charts and UI Elements -->
+    <color name="pastelPink">#F8BBD0</color>             <!-- Pastel Pink -->
+    <color name="pastelLavender">#D1C4E9</color>         <!-- Pastel Lavender -->
+    <color name="pastelYellow">#FFF59D</color>           <!-- Pastel Yellow -->
+    <color name="pastelTeal">#80DEEA</color>             <!-- Pastel Teal -->
+    <color name="pastelMauve">#CE93D8</color>            <!-- Pastel Mauve -->
+
+    <!-- Text Colors -->
+    <color name="textPrimary">#424242</color>            <!-- Dark Gray for Primary Text -->
+    <color name="textSecondary">#757575</color>          <!-- Medium Gray for Secondary Text -->
+    <color name="textDisabled">#BDBDBD</color>           <!-- Light Gray for Disabled Text -->
+
+    <!-- Background Colors -->
+    <color name="background">#FAFAFA</color>             <!-- Off-White Background -->
+    <color name="surfaceColor">#FFFFFF</color>           <!-- White Surface -->
+    <color name="cardBackground">#F5F5F5</color>         <!-- Light Gray Card Background -->
+
+    <!-- Status Colors -->
+    <color name="success">#AED581</color>                <!-- Pastel Green for Success -->
+    <color name="warning">#FFD54F</color>                <!-- Pastel Yellow for Warning -->
+    <color name="error">#EF9A9A</color>                  <!-- Pastel Red for Error -->
+    <color name="info">#81D4FA</color>
 </resources>

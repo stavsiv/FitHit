@@ -210,6 +210,11 @@
     <string name="intermediate">intermediate</string>
     <string name="expert">expert</string>
     <string name="minutes">minutes\n</string>
+    <string name="no_workouts_history">No workouts history</string>
+    <string name="workouts_per_month">Workouts per month</string>
+    <string name="total_workouts">Total workouts</string>
+    <string name="workout_progress_over_time">Workout progress over time</string>
+    <string name="workouts_in_month">workouts in month</string>
 
 
 </resources>

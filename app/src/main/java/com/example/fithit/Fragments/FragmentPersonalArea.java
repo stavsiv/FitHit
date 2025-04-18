@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +21,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.fithit.Managers.WorkoutChartManager;
+import com.github.mikephil.charting.charts.CombinedChart;
 
 import com.example.fithit.Adapters.EquipmentAdapter;
 import com.example.fithit.Adapters.UserChallengeRecordAdapter;
@@ -32,19 +33,12 @@ import com.example.fithit.R;
 import com.example.fithit.Models.Equipment;
 import com.example.fithit.Models.User;
 import com.example.fithit.Managers.FirebaseManager;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.button.MaterialButton;
 import com.example.fithit.Managers.ChallengeProgressManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,16 +52,15 @@ public class FragmentPersonalArea extends Fragment {
     private FirebaseManager firebaseManager;
     private View rootView;
     private RecyclerView equipmentRecyclerView;
-    private LineChart progressChart;
+    private CombinedChart progressChart;
     private EquipmentAdapter equipmentAdapter;
     private TextView tvUserName;
     private TextView tvDifficultyLevel;
     private TextView tvHeartsProgress;
     private ProgressBar progressLevel;
-
     private RecyclerView challengesRecyclerView;
     private TextView tvNoChallenges;
-
+    private WorkoutChartManager chartManager;
     public static FragmentPersonalArea newInstance() {
         return new FragmentPersonalArea();
     }
@@ -85,7 +78,7 @@ public class FragmentPersonalArea extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_personal_area_dashboard, container, false);
         initializeViews();
         setupRecyclerViews();
-        setupChart();
+        //setupChart();
         return rootView;
     }
 
@@ -97,7 +90,9 @@ public class FragmentPersonalArea extends Fragment {
 
     private void initializeViews() {
         equipmentRecyclerView = rootView.findViewById(R.id.rv_equipment);
+        //progressChart = rootView.findViewById(R.id.chart_progress);
         progressChart = rootView.findViewById(R.id.chart_progress);
+        chartManager = new WorkoutChartManager(progressChart, requireContext());
         tvUserName = rootView.findViewById(R.id.tv_user_name);
         TextView tvUserLevel = rootView.findViewById(R.id.tv_user_level);
         tvHeartsProgress = rootView.findViewById(R.id.tv_hearts_progress);
@@ -116,8 +111,12 @@ public class FragmentPersonalArea extends Fragment {
 
         MaterialButton btnAddEquipment = rootView.findViewById(R.id.btn_add_equipment);
         btnAddEquipment.setOnClickListener(v -> showEquipmentSelectionDialog());
-    }
 
+        chartManager.setOnChartAnnouncementListener(announcement -> {
+            announceForAccessibility(announcement);
+        });
+
+    }
 
     private void showChallengesDialog() {
         String userId = firebaseManager.getCurrentUserId();
@@ -322,53 +321,6 @@ public class FragmentPersonalArea extends Fragment {
         equipmentRecyclerView.setAdapter(equipmentAdapter);
     }
 
-    private void updateProgressChart(List<WorkoutRecord> history) {
-        if (history.isEmpty()) return;
-
-        ArrayList<Entry> entries = new ArrayList<>();
-
-        int totalWorkouts = history.size();
-
-        for (int i = 0; i < history.size(); i++) {
-            entries.add(new Entry(i, i+1));
-        }
-
-        LineDataSet dataSet = new LineDataSet(entries, "Workout Progress");
-        dataSet.setDrawFilled(true);
-        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-
-        LineData lineData = new LineData(dataSet);
-        progressChart.setData(lineData);
-        progressChart.getDescription().setEnabled(false);
-        progressChart.getXAxis().setEnabled(false);
-        progressChart.invalidate();
-    }
-
-    private void setupChart() {
-        progressChart.setTouchEnabled(true);
-        progressChart.setDragEnabled(true);
-        progressChart.setScaleEnabled(true);
-        progressChart.setPinchZoom(false);
-        progressChart.getAxisLeft().setDrawGridLines(false);
-        progressChart.getAxisRight().setEnabled(false);
-        progressChart.getLegend().setEnabled(false);
-
-        progressChart.setContentDescription(getString(R.string.workout_progress_chart_showing_history_of_completed_workouts));
-
-        progressChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                String announcement = getString(R.string.workout) + ((int)e.getX() + 1) +
-                        getString(R.string.total) + (int)e.getY() + getString(R.string.workouts_completed);
-                announceForAccessibility(announcement);
-            }
-
-            @Override
-            public void onNothingSelected() {
-            }
-        });
-    }
-
     private void announceForAccessibility(String announcement) {
         if (getView() != null) {
             getView().announceForAccessibility(announcement);
@@ -404,7 +356,6 @@ public class FragmentPersonalArea extends Fragment {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-
 
         firebaseManager.getUserEquipmentIds(userId)
                 .addOnSuccessListener(equipmentNames -> {
@@ -462,8 +413,6 @@ public class FragmentPersonalArea extends Fragment {
             tvHeartsProgress.setText(progressText);
         }
 
-
-
         int maxHearts = (difficulty == DifficultyLevel.BEGINNER) ? HEARTS_FOR_INTERMEDIATE :
                 (difficulty == DifficultyLevel.INTERMEDIATE) ? HEARTS_FOR_EXPERT : hearts;
         int progressPercent = (hearts * 100) / maxHearts;
@@ -476,7 +425,7 @@ public class FragmentPersonalArea extends Fragment {
         progressLevel.setContentDescription(contentDescription);
 
         List<WorkoutRecord> workoutHistory = user.getWorkoutHistory();
-        updateProgressChart(workoutHistory);
+        chartManager.updateChart(workoutHistory);
     }
 
     private void updateEquipmentInFirebase(Equipment equipment, boolean isSelected) {
