@@ -1,9 +1,12 @@
 package com.example.fithit.Models;
 
+import android.content.Context;
+
 import com.example.fithit.Enums.DifficultyLevel;
 import com.example.fithit.Enums.EquipmentType;
 import com.example.fithit.Enums.ExerciseType;
 import com.example.fithit.Enums.MuscleGroup;
+import com.example.fithit.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,14 +98,29 @@ public class Exercise {
         }
         return availableEquipment.containsAll(this.requiredEquipmentTypes);
     }
-    @Override
-    public String toString() {
-        return "Exercise{" +
-                "name='" + exerciseName + '\'' +
-                ", type=" + exerciseType.name() +
-                ", difficulty=" + difficultyLevel +
-                ", duration=" + durationInMinutes + " minutes" +
-                ", reps=" + getRepetitionsForDifficulty(difficultyLevel) +
-                '}';
+
+    public String toString(Context context) {
+        return context.getString(R.string.exercise_to_string_format,
+                exerciseName,
+                context.getString(getLocalizedTypeStringRes()),
+                difficultyLevel.name(),
+                durationInMinutes,
+                getRepetitionsForDifficulty(difficultyLevel));
     }
+    private int getLocalizedTypeStringRes() {
+        switch (exerciseType) {
+            case STRENGTH:
+                return R.string.type_strength;
+            case CARDIO:
+                return R.string.type_cardio;
+            case STRETCHING:
+                return R.string.type_stretching;
+            case BALANCE:
+                return R.string.type_balance;
+            default:
+                return R.string.type_unknown;
+        }
+    }
+
+
 }

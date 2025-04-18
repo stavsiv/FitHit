@@ -89,6 +89,11 @@ public class CircularMetricDialogFragment extends DialogFragment {
                 case Metric.STEPS:
                     valueSeekBar.setMax(8000); // Max 8000 steps
                     break;
+                case Metric.CALORIES:
+                    valueSeekBar.setMax(1000); // Max 10000 calories
+                    break;
+                default:
+                    break;
             }
 
             if (currentMetrics.containsKey(metricType)) {
@@ -121,16 +126,12 @@ public class CircularMetricDialogFragment extends DialogFragment {
 
     private void saveMetrics() {
         if (!isAdded() || getContext() == null) {
-            Log.w("MetricsDialog", "Fragment not attached or context is null. Skipping save.");
             return;
         }
 
-        if (currentMetrics.isEmpty()) {
-            Toast.makeText(getContext(), "Please select at least one metric", Toast.LENGTH_SHORT).show();
+        if (currentMetrics.isEmpty()) { Toast.makeText(getContext(), R.string.please_select_at_least_one_metric, Toast.LENGTH_SHORT).show();
             return;
         }
-
-        Log.d("MetricsDialog", "Saving metrics: " + currentMetrics.toString());
 
         for (Map.Entry<String, Double> entry : currentMetrics.entrySet()) {
             workoutRecord.addMetric(entry.getKey(), entry.getValue());
@@ -138,16 +139,12 @@ public class CircularMetricDialogFragment extends DialogFragment {
 
         firebaseManager.addWorkoutRecord(workoutRecord)
                 .addOnSuccessListener(aVoid -> {
-                    if (isAdded() && getContext() != null) {
-                        Log.d("MetricsDialog", "Metrics saved successfully");
-                        Toast.makeText(getContext(), "Workout metrics saved successfully", Toast.LENGTH_SHORT).show();
-                    }
+                    if (isAdded() && getContext() != null) {Toast.makeText(getContext(), R.string.workout_metrics_saved_successfully, Toast.LENGTH_SHORT).show();}
                     navigateToMain();
                 })
                 .addOnFailureListener(e -> {
                     if (isAdded() && getContext() != null) {
-                        Log.e("MetricsDialog", "Failed to save metrics", e);
-                        Toast.makeText(getContext(), "Failed to save metrics: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.failed_to_save_metrics) + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                     navigateToMain();
                 });
@@ -167,19 +164,18 @@ public class CircularMetricDialogFragment extends DialogFragment {
                 dismiss();
             }
         } catch (Exception e) {
-            Log.e("Navigation", "Navigation error: " + e.getMessage());
 
             try {
                 dismiss();
             } catch (Exception ex) {
-                Log.e("Navigation", "Failed to dismiss dialog: " + ex.getMessage());
+                // Handle dismiss exception
             }
 
             if (getActivity() != null) {
                 try {
                     getActivity().recreate();
                 } catch (Exception recreateEx) {
-                    Log.e("Navigation", "Failed to recreate activity: " + recreateEx.getMessage());
+//
                 }
             }
         }
@@ -206,6 +202,8 @@ public class CircularMetricDialogFragment extends DialogFragment {
                 return " bpm";
             case Metric.STEPS:
                 return " steps";
+            case Metric.CALORIES:
+                return " kcal";
             default:
                 return "";
         }

@@ -52,11 +52,10 @@ public class MainActivity extends AppCompatActivity {
         return mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.login_successful, Toast.LENGTH_SHORT).show();
                         Navigation.findNavController(view).navigate(R.id.action_fragmentLogin_to_fragmentMain);
-                        Log.d("Login", "Navigating to Main Fragment");
                     } else {
-                        Toast.makeText(this, "Login failed: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.login_failed) + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -80,12 +79,12 @@ public class MainActivity extends AppCompatActivity {
                                 .setValue(newUser)
                                 .addOnCompleteListener(profileTask -> {
                                     if (profileTask.isSuccessful()) {
-                                        Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(this,getString(R.string.registration_successful), Toast.LENGTH_SHORT).show();
                                         Navigation.findNavController(view)
                                                 .navigate(R.id.action_fragmentRegister_to_fragmentLogin);
                                     } else {
                                         mAuth.getCurrentUser().delete();
-                                        String errorMessage = "Failed to create user profile";
+                                        String errorMessage = getString(R.string.failed_to_create_user_profile);
                                         if (profileTask.getException() != null) {
                                             errorMessage += ": " + profileTask.getException().getMessage();
                                         }
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
                     } else {
-                        String errorMessage = "Registration failed";
+                        String errorMessage = getString(R.string.registration_failed);
                         if (task.getException() != null) {
                             errorMessage += ": " + task.getException().getMessage();
                         }
@@ -105,40 +104,40 @@ public class MainActivity extends AppCompatActivity {
     private boolean validateInputs(String email, String password1, String password2,
                                    String username, String phone, int age) {
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (password1.isEmpty()) {
-            Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.password_cannot_be_empty), Toast.LENGTH_SHORT).show();
             return false;
         }
         if (!isValidPassword(password1)) {
-            Toast.makeText(this, "Password must have at least 8 characters, one uppercase letter, and one special character", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.password_must_have_at_least_8_characters_one_uppercase_letter_and_one_special_character), Toast.LENGTH_LONG).show();
             return false;
         }
 
         if (password2.isEmpty()) {
-            Toast.makeText(this, "Confirm password cannot be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.confirm_password), Toast.LENGTH_SHORT).show();
             return false;
         }
         if (!password1.equals(password2)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.passwords_do_not_match), Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (username.isEmpty()) {
-            Toast.makeText(this, "Username cannot be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.username_cannot_be_empty), Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (phone.isEmpty() || !phone.matches("^05\\d{8}$")) {
-            Toast.makeText(this, "Invalid phone number", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_phone_number), Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (age < 16 || age > 70) {
-            Toast.makeText(this, "Age must be between 16 and 70", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.age_must), Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -160,9 +159,9 @@ public class MainActivity extends AppCompatActivity {
         User user = new User();//(email, username, phone, age, weight, wantReminders);
         usersRef.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(user).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(this, "User data saved successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.user_data_saved_successfully), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.failed_to_save_user_data), Toast.LENGTH_SHORT).show();
             }
         });
     }

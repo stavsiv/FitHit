@@ -606,18 +606,4 @@ public class DatabaseExercises {
                 .filter(e -> e.canPerformWithEquipment(availableEquipment))
                 .collect(Collectors.toList());
     }
-/*    public static List<Exercise> getExercisesByTypeAndEquipment(
-            ExerciseType type,
-            List<EquipmentType> availableEquipment) {
-        return exercises.stream()
-                .filter(exercise -> exercise.getExerciseType() == type)
-                .filter(exercise -> exercise.canPerformWithEquipment(availableEquipment))
-                .collect(Collectors.toList());
-    }
-    public static Exercise getExerciseById(int id) {
-        return exercises.stream()
-                .filter(exercise -> exercise.getExerciseId() == id)
-                .findFirst()
-                .orElse(null);
-    }*/
 }

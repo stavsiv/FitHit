@@ -12,7 +12,6 @@ public class DatabaseWorkouts {
     private static final List<Workout> workouts = new ArrayList<>();
 
     static {
-        // Quick Stretch and Balance (15 minutes)
         List<Exercise> quickStretchExercises = new ArrayList<>();
         quickStretchExercises.add(DatabaseExercises.getExercisesByType(ExerciseType.STRETCHING)
                 .stream()
@@ -24,7 +23,6 @@ public class DatabaseWorkouts {
                 .filter(e -> e.getExerciseName().equals("Single Leg Stand"))
                 .findFirst()
                 .get());
-        // Add more exercises...
 
         workouts.add(new Workout(
                 "Quick Stretch & Balance",

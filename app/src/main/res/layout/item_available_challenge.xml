@@ -72,8 +72,9 @@
                 android:id="@+id/btnAddChallenge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="add challenge"
-                android:textSize="12sp"
+                android:text="@string/add_challenge"
+                android:textAllCaps="false"
+                android:textSize="15sp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
         </LinearLayout>
         <TextView

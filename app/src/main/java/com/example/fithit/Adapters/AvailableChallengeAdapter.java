@@ -45,14 +45,14 @@ public class AvailableChallengeAdapter extends RecyclerView.Adapter<AvailableCha
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Challenge challenge = availableChallenges.get(position);
 
-        // Set basic information
         holder.tvTitle.setText(challenge.getName());
         holder.tvDescription.setText(challenge.getDescription());
         holder.tvPoints.setText(challenge.getHeartsReward() + " ❤️");
 
-        // Set difficulty with visual indicator
         String difficulty = challenge.getDifficulty();
-        holder.tvDifficulty.setText("Difficulty: " + difficulty);
+        String difficultyText = holder.itemView.getContext().getString(R.string.difficulty_format, difficulty);
+        holder.tvDifficulty.setText(difficultyText);
+
 
         if (holder.cardView != null) {
             int cardColor;
@@ -72,14 +72,17 @@ public class AvailableChallengeAdapter extends RecyclerView.Adapter<AvailableCha
             }
 
             GradientDrawable drawable = new GradientDrawable();
-            drawable.setStroke(4, cardColor); // 4dp stroke width
-            drawable.setCornerRadius(8); // Optional: add corner radius
+            drawable.setStroke(4, cardColor);
+            drawable.setCornerRadius(8);
             holder.cardView.setBackground(drawable);
         }
 
-        holder.tvChallengeType.setText("Type: " + challenge.getType());
+        String typeText = holder.itemView.getContext().getString(R.string.type) + ": " + challenge.getType();
+        holder.tvChallengeType.setText(typeText);
 
-        holder.tvTarget.setText("Target: " + challenge.getTargetValue() + " " + getTargetUnit(challenge));
+        String targetText = holder.itemView.getContext().getString(R.string.target) + ": " +
+                challenge.getTargetValue() + " " + getTargetUnit(challenge);
+        holder.tvTarget.setText(targetText);
 
         // Set duration
         int days = 0;
@@ -95,7 +98,10 @@ public class AvailableChallengeAdapter extends RecyclerView.Adapter<AvailableCha
                 break;
         }
 
-        holder.tvDuration.setText("Duration: " + days + " day" + (days > 1 ? "s" : ""));
+        String durationLabel = holder.itemView.getContext().getString(R.string.Duration);
+        String durationText = durationLabel + ": " + days + " day" + (days != 1 ? "s" : "");
+        holder.tvDuration.setText(durationText);
+
 
         // Add button click listener
         holder.btnAdd.setOnClickListener(v -> {

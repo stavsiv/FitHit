@@ -3,6 +3,7 @@ package com.example.fithit.Models;
 import androidx.annotation.NonNull;
 
 import com.example.fithit.Enums.EquipmentType;
+import com.example.fithit.R;
 
 public class Equipment {
     private EquipmentType equipmentType;
@@ -28,9 +29,9 @@ public class Equipment {
     @NonNull
     @Override
     public String toString() {
-        return "Equipment{" +
-                "type=" + equipmentType.getDisplayName() +
-                ", selected=" + isSelected +
+        return (R.string.equipment) + '{' +
+                (R.string.type)+ "=" + equipmentType.getDisplayName() +
+                ',' + R.string.selected + '=' + isSelected +
                 '}';
     }
 

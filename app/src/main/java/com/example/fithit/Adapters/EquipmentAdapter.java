@@ -56,13 +56,6 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
         return equipmentList.size();
     }
 
-    // Updated method to handle List<Equipment>
-   /* public void updateEquipmentList(List<Equipment> newList) {
-        this.equipmentList = newList != null ? newList : new ArrayList<>();
-        notifyDataSetChanged();
-    }*/
-
-    // Method to update equipment based on selected status
     public void updateEquipmentSelection(List<String> selectedEquipmentNames) {
         for (Equipment equipment : equipmentList) {
             equipment.setSelected(selectedEquipmentNames.contains(equipment.getDisplayName()));
@@ -88,13 +81,10 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
 
             imageView.setImageBitmap(bitmap);
         } catch (Exception e) {
-            Log.e("EquipmentAdapter", "Error loading image: " + e.getMessage());
-            // Fallback to a small default image
             try {
                 imageView.setImageResource(R.drawable.default_image); // Replace with an actual small icon
             } catch (Exception ex) {
-                // Last resort, don't set any image
-                Log.e("EquipmentAdapter", "Could not set fallback image: " + ex.getMessage());
+                // Handle the exception here
             }
         }
     }

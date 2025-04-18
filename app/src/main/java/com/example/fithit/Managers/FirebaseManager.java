@@ -69,13 +69,11 @@ public class FirebaseManager {
                         throw new Exception("Failed to parse user data");
                     }
 
-                    // Ensure valid state even if data is incomplete
                     if (user.getLevel() <= 0) {
-                        Log.w("FirebaseManager", "Setting default level=1 for user");
+                        //
                     }
 
                     if (user.getCurrentDifficulty() == null) {
-                        Log.w("FirebaseManager", "Setting default difficulty BEGINNER for user");
                         user.setCurrentDifficulty(DifficultyLevel.BEGINNER);
                     }
 
@@ -138,7 +136,7 @@ public class FirebaseManager {
 
                         workoutHistory.add(record);
                     } catch (Exception e) {
-                        Log.e("FirebaseManager", "Error parsing workout record: " + e.getMessage());
+                        // Handle parsing errors
                     }
                 }
                 user.setWorkoutHistory(workoutHistory);
@@ -146,7 +144,6 @@ public class FirebaseManager {
 
             return user;
         } catch (Exception e) {
-            Log.e("FirebaseManager", "Error creating user from snapshot: " + e.getMessage());
             return null;
         }
     }
@@ -222,7 +219,6 @@ public class FirebaseManager {
     public Task<Void> addWorkoutRecord(WorkoutRecord workoutRecord) {
         String userId = getCurrentUserId();
         if (userId == null) {
-            Log.e("FirebaseManager", "No user logged in");
             return Tasks.forException(new Exception("No user is currently logged in"));
         }
 
@@ -238,7 +234,6 @@ public class FirebaseManager {
         recordData.put("metrics", workoutRecord.getMetrics());
         recordData.put("workoutDateTime", new Date().getTime());
 
-        Log.d("FirebaseManager", "Saving workout record: " + recordData);
 
         return recordRef.setValue(recordData)
                 .addOnSuccessListener(aVoid -> Log.d("FirebaseManager", "Workout record saved successfully"))
@@ -426,7 +421,7 @@ public class FirebaseManager {
                                 }
                             }
                         } catch (Exception e) {
-                            Log.e("ChallengeRecords", "Error parsing challenge record: " + e.getMessage(), e);
+                            //
                         }
                     }
 
@@ -505,9 +500,6 @@ public class FirebaseManager {
         if (userId == null) {
             return Tasks.forException(new Exception("No user is currently logged in"));
         }
-        Log.d("FirebaseUpdate", "Updating challenge record: " + record.getChallengeName() +
-                ", completed: " + record.isCompleted() +
-                ", progress: " + record.getCurrentProgress() + "/" + record.getChallenge().getTargetValue());
 
         return dbRef.child(USERS_NODE)
                 .child(userId)
@@ -574,7 +566,7 @@ public class FirebaseManager {
                                 }
                             }
                         } catch (Exception e) {
-                            Log.e("ChallengeRemoval", "Error parsing challenge: " + e.getMessage(), e);
+                            //
                         }
                     }
 
@@ -608,7 +600,6 @@ public class FirebaseManager {
                 .child(userId)
                 .updateChildren(updates);
     }
-
 
     public Task<Void> addWorkout(Workout workout) {
         String workoutId = dbRef.child(WORKOUTS_NODE).push().getKey();
@@ -654,7 +645,28 @@ public class FirebaseManager {
                     }
                 });
     }
+    public void removeUpcomingWorkoutsListener(ValueEventListener listener) {
+        String userId = getCurrentUserId();
+        if (userId != null && listener != null) {
+            dbRef.child(USERS_NODE)
+                    .child(userId)
+                    .child("workoutHistory")
+                    .orderByChild("date")
+                    .startAt(new Date().getTime())
+                    .removeEventListener(listener);
+        }
+    }
 
+    public void removeWorkoutsByDateListener(ValueEventListener listener) {
+        String userId = getCurrentUserId();
+        if (userId != null && listener != null) {
+            // We don't have the exact query here, so create a similar reference pattern
+            dbRef.child(USERS_NODE)
+                    .child(userId)
+                    .child("workoutHistory")
+                    .removeEventListener(listener);
+        }
+    }
     public interface OnMetricsLoadedListener {
         void onMetricsLoaded(List<Metric> metrics);
         void onError(String error);

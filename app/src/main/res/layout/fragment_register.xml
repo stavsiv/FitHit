@@ -11,7 +11,7 @@
         android:textSize="36sp"
         android:textColor="#120000"
         android:fontFamily="sans-serif-medium"
-        android:text="Registration"
+        android:text="@string/registration"
         android:paddingBottom="24dp" />
 
     <LinearLayout
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:autofillHints=""
-            android:hint="Email"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:padding="12dp"
             android:layout_marginBottom="8dp"/>
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:autofillHints=""
-            android:hint="password"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="12dp"
             android:layout_marginBottom="8dp"/>
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:autofillHints=""
-            android:hint="password"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="12dp"
             android:layout_marginBottom="8dp"/>
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:autofillHints=""
-            android:hint="User Name"
+            android:hint="@string/user_name"
             android:inputType="text"
             android:padding="12dp"
             android:layout_marginBottom="8dp"/>
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:autofillHints=""
-            android:hint="Phone Number"
+            android:hint="@string/phone_number"
             android:inputType="phone"
             android:maxLength="10"
             android:padding="12dp"
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:autofillHints=""
-            android:hint="Age"
+            android:hint="@string/age"
             android:inputType="number"
             android:padding="12dp"
             android:layout_marginBottom="8dp"/>
@@ -92,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:text="I would like to be reminded about future workouts"
+            android:text="@string/i_would_like_to_be_reminded_about_future_workouts"
             android:layout_marginBottom="16dp"/>
 
     </LinearLayout>
@@ -107,9 +107,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:text="Register"/>
-
-
+            android:text="@string/register"
+            android:textAllCaps="false" />
     </LinearLayout>
 
 

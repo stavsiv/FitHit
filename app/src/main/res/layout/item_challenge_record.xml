@@ -103,7 +103,7 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Remove Challenge"
+                android:text="@string/remove_challenge"
                 android:textColor="@android:color/holo_red_light"
                 android:textSize="12sp" />
 
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:text=""
                 android:layout_marginStart="16dp"
-                android:contentDescription="Mark challenge as completed" />
+                android:contentDescription="@string/mark_challenge_as_completed" />
         </LinearLayout>
 
 

@@ -7,6 +7,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,15 +85,19 @@ public class FragmentWorkoutDetails extends Fragment {
             FirebaseManager.getInstance()
                     .updateUserHearts(heartsEarned)
                     .addOnSuccessListener(aVoid -> {
-                        String message = "You earned " + heartsEarned + " hearts!";
+                        String message = getString(R.string.you_earned) + heartsEarned + getString(R.string.hearts);
                         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> Toast.makeText(getContext(),
-                            "Failed to update hearts: " + e.getMessage(),
+                            getString(R.string.failed_to_update_hearts) + e.getMessage(),
                             Toast.LENGTH_SHORT).show());
         }
     }
     private void setupExercisesList() {
+        if (workout == null || workout.getExercises() == null) {
+            Log.e("WorkoutDetails", "Workout or exercises list is null");
+            return;
+        }
         exercisesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ExercisesAdapter exercisesAdapter = new ExercisesAdapter(workout.getExercises());
         exercisesRecyclerView.setAdapter(exercisesAdapter);

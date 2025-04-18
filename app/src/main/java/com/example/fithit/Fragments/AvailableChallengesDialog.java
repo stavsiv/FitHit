@@ -1,5 +1,6 @@
 package com.example.fithit.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -62,9 +63,7 @@ public class AvailableChallengesDialog extends DialogFragment {
         adapter.setOnChallengeSelectedListener(challenge -> {
             if (listener != null) {
                 listener.onChallengeSelected(challenge);
-                Toast.makeText(getContext(),
-                        "new challenge added: " + challenge.getName(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.new_challenge_added) + challenge.getName(), Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         });
@@ -75,6 +74,7 @@ public class AvailableChallengesDialog extends DialogFragment {
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     private void loadAvailableChallenges() {
         progressLoading.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
@@ -114,7 +114,7 @@ public class AvailableChallengesDialog extends DialogFragment {
 
                     progressLoading.setVisibility(View.GONE);
                     tvNoAvailableChallenges.setVisibility(View.VISIBLE);
-                    tvNoAvailableChallenges.setText("Error loading challenges: " + e.getMessage());
+                    tvNoAvailableChallenges.setText(R.string.error_loading_challenges + e.getMessage());
                 });
     }
     private List<Challenge> filterOutExistingChallenges(List<Challenge> allChallenges,

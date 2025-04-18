@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update Post-Workout Metrics"
+        android:text="@string/update_post_workout_metrics"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -60,7 +60,8 @@
             android:id="@+id/skip_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Skip"
+            android:text="@string/skip"
+            android:textAllCaps="false"
             android:layout_marginEnd="16dp"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
@@ -68,7 +69,9 @@
             android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save"/>
+            android:text="@string/save"
+            android:textAllCaps="false"/>
+
     </LinearLayout>
 
 </LinearLayout>

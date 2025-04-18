@@ -74,18 +74,15 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
         holder.checkboxComplete.setEnabled(canMarkComplete);
 
         holder.checkboxComplete.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Log.d("ChallengeCheckbox", "Checkbox clicked: " + isChecked + " for challenge: " + challenge.getName());
             if (isChecked && canMarkComplete) {
                 if (record.getCurrentProgress() >= challenge.getTargetValue()) {
                     // Update progress to target value to mark challenge as completed
                     record.updateProgress(challenge.getTargetValue());
                     record.setCompleted(true);
-                    Log.d("ChallengeCheckbox", "Progress updated to: " + record.getCurrentProgress() + "/" + challenge.getTargetValue());
-
                     if (listener != null) {
                         listener.onChallengeCompleted(record);
                     } else {
-                        Log.e("ChallengeCheckbox", "Listener is null");
+                        // Handle the case where listener is null
                     }
                 } else {
                     buttonView.setChecked(false);
@@ -97,9 +94,9 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
         holder.progressBar.setProgress(currentProgress);
 
         if (record.isCompleted()) {
-            String progressText = "Completed! " + targetValue + "/" + targetValue;
+            String progressText = (R.string.completed) + targetValue + "/" + targetValue;
             holder.tvProgress.setText(progressText);
-            holder.tvStatus.setText("Completed ✓");
+            holder.tvStatus.setText(R.string.completed_v);
             holder.tvStatus.setVisibility(View.VISIBLE);
 
             holder.progressBar.setProgressTintList(holder.itemView.getContext().getResources().getColorStateList(android.R.color.holo_green_dark));
@@ -108,7 +105,7 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
                 holder.btnRenew.setVisibility(View.GONE);
             }
         } else if (record.isExpired()) {
-            holder.tvStatus.setText("Expired");
+            holder.tvStatus.setText(R.string.expired);
             holder.tvStatus.setVisibility(View.VISIBLE);
             holder.tvStatus.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.holo_red_dark));
 
@@ -122,9 +119,9 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
             }
         } else {
             int remaining = targetValue - currentProgress;
-            String progressText = "Progress: " + currentProgress + "/" + targetValue;
+            String progressText = (R.string.progress) + currentProgress + "/" + targetValue;
             if (remaining > 0) {
-                progressText += " (" + remaining + " " + getUnitLabel(challenge) + " left)";
+                progressText += " (" + remaining + " " + getUnitLabel(challenge) + (R.string.left);
             }
             holder.tvProgress.setText(progressText);
             holder.tvStatus.setVisibility(View.GONE);
@@ -136,7 +133,7 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
 
         if (record.getEndDate() > 0) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            String endDate = "Valid until: " + dateFormat.format(new Date(record.getEndDate()));
+            String endDate =(R.string.valid_until) + dateFormat.format(new Date(record.getEndDate()));
             holder.tvExpiration.setText(endDate);
 
             int daysRemaining = record.getDaysRemaining();
@@ -188,27 +185,27 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
 
         switch (challengeName) {
             case "Daily Workout Champion":
-                return "workout";
+                return "Workout";
             case "Workout Warrior":
             case "Fitness Journey":
-                return "workouts";
+                return "Workouts";
             case "Strength Builder":
-                return "strength workouts";
+                return "Strength Workouts";
             case "Cardio Master":
-                return "cardio workouts";
+                return "Cardio Workouts";
             case "Core Power":
-                return "core workouts";
+                return "Core Workouts";
             case "Expert Challenger":
-                return "expert workouts";
+                return "Expert Workouts";
             case "Exercise Variety":
-                return "muscle groups";
+                return "Muscle Groups";
             case "Full Body Focus":
-                return "full body workouts";
+                return "Full Body Workouts";
             case "Consistency King":
-                return "weekly goals";
+                return "Weekly Goals";
         }
 
-        return "items";
+        return "Items";
     }
 
     @Override

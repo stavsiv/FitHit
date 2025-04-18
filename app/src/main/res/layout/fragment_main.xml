@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="FitHit"
+        android:text="@string/fithit"
         android:textSize="28sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -46,7 +46,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@android:drawable/ic_popup_reminder"
-                    android:contentDescription="alert_icon_desc"
+                    android:contentDescription="@string/alert_icon"
                     app:tint="@color/design_default_color_primary" />
 
                 <TextView
@@ -76,7 +76,7 @@
                 android:layout_height="match_parent"
                 android:src="@android:drawable/ic_menu_myplaces"
                 android:padding="16dp"
-                android:contentDescription="personal_area_icon_desc"
+                android:contentDescription="@string/personal_area_icon_desc"
                 app:tint="@color/design_default_color_primary" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
@@ -97,7 +97,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="schedule workouts"
+                android:text="@string/schedule_workouts"
                 android:textColor="@color/design_default_color_on_surface"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -137,7 +137,7 @@
                     android:id="@+id/no_workouts_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="no workouts"
+                    android:text="@string/no_workouts"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:textSize="16sp"
@@ -150,7 +150,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                android:gravity="center">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_cancel_workout"
@@ -159,7 +160,7 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="4dp"
                     android:enabled="false"
-                    android:text="cancel workout"
+                    android:text="@string/cancel_workout"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     app:icon="@android:drawable/ic_menu_close_clear_cancel"
                     app:iconGravity="textStart" />
@@ -171,7 +172,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
                     android:enabled="false"
-                    android:text="add workout"
+                    android:text="@string/add_workout"
                     app:icon="@android:drawable/ic_input_add"
                     app:iconGravity="textStart" />
             </LinearLayout>

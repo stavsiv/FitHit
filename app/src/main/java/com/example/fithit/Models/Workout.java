@@ -1,10 +1,13 @@
 package com.example.fithit.Models;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.text.TextUtils;
 
 import com.example.fithit.Enums.DifficultyLevel;
 import com.example.fithit.Enums.EquipmentType;
 import com.example.fithit.Enums.ExerciseType;
+import com.example.fithit.R;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ public class Workout implements Serializable {
     private String name;
     private String description;
     private List<Exercise> exercises;
-    private int estimatedDuration; // in minutes
+    private int estimatedDuration;
     private DifficultyLevel difficultyLevel;
     private String category;
     public Workout() {
@@ -62,7 +65,6 @@ public class Workout implements Serializable {
 
         return baseHearts + durationHearts + varietyHearts;
     }
-    //getters and setters
     public int getWorkoutId() {
         return workoutId;
     }
@@ -121,6 +123,7 @@ public class Workout implements Serializable {
 
 
     public static Workout generateCustomWorkout(
+            Context context,
             int duration,
             int strengthPercentage,
             int cardioPercentage,
@@ -129,13 +132,12 @@ public class Workout implements Serializable {
             DifficultyLevel difficultyLevel,
             List<EquipmentType> availableEquipment) {
 
-        // Validate total percentage
         int totalPercentage = strengthPercentage + cardioPercentage + stretchingPercentage + balancePercentage;
         if (totalPercentage != 100) {
             throw new IllegalArgumentException("Total percentage must equal 100");
         }
 
-        // Calculate time for each exercise type (in minutes)
+        // חשב זמן לכל סוג תרגיל (בדקות)
         Map<ExerciseType, Integer> timeDistribution = new HashMap<>();
         timeDistribution.put(ExerciseType.STRENGTH, (duration * strengthPercentage) / 100);
         timeDistribution.put(ExerciseType.CARDIO, (duration * cardioPercentage) / 100);
@@ -145,7 +147,6 @@ public class Workout implements Serializable {
         List<Exercise> selectedExercises = new ArrayList<>();
         Random random = new Random();
 
-        // Select exercises for each type
         for (Map.Entry<ExerciseType, Integer> entry : timeDistribution.entrySet()) {
             ExerciseType type = entry.getKey();
             int typeMinutes = entry.getValue();
@@ -171,18 +172,19 @@ public class Workout implements Serializable {
             }
         }
 
-        // Sort exercises by type and muscle group
+        // מיין את התרגילים לפי סוג ולאחר מכן לפי שריר מטרה
         selectedExercises.sort((e1, e2) -> {
             int typeCompare = e1.getExerciseType().compareTo(e2.getExerciseType());
             if (typeCompare != 0) return typeCompare;
             return e1.getTargetMuscle().compareTo(e2.getTargetMuscle());
         });
 
-        String workoutName = generateWorkoutName(strengthPercentage, cardioPercentage,
+        // צור שם ותיאור לאימון
+        String workoutName = generateWorkoutName(context, strengthPercentage, cardioPercentage,
                 stretchingPercentage, balancePercentage);
-        String description = generateWorkoutDescription(duration, strengthPercentage, cardioPercentage,
-                stretchingPercentage, balancePercentage,
-                difficultyLevel, selectedExercises);
+
+        String description = generateWorkoutDescription(context, duration, strengthPercentage, cardioPercentage,
+                stretchingPercentage, balancePercentage, difficultyLevel, selectedExercises);
 
         return new Workout(
                 workoutName,
@@ -193,8 +195,28 @@ public class Workout implements Serializable {
                 "Custom"
         );
     }
-    private static String generateWorkoutName(int strength, int cardio,
-                                              int stretching, int balance) {
+
+//    private static String generateWorkoutName(int strength, int cardio,
+//                                              int stretching, int balance) {
+//        List<String> focusAreas = new ArrayList<>();
+//        if (strength >= 40) focusAreas.add("Strength");
+//        if (cardio >= 40) focusAreas.add("Cardio");
+//        if (stretching >= 40) focusAreas.add("Flexibility");
+//        if (balance >= 40) focusAreas.add("Balance");
+//
+//
+//        if (focusAreas.isEmpty()) {
+//            return "Balanced Custom Workout";
+//        } else if (focusAreas.size() == 1) {
+//            return focusAreas.get(0) + " Focused Workout";
+//        } else {
+//            return String.join("-", focusAreas) + " Combo Workout";
+//        }
+//    }
+
+    @SuppressLint("StringFormatInvalid")
+    public static String generateWorkoutName(Context context, int strength, int cardio,
+                                             int stretching, int balance) {
         List<String> focusAreas = new ArrayList<>();
         if (strength >= 40) focusAreas.add("Strength");
         if (cardio >= 40) focusAreas.add("Cardio");
@@ -202,43 +224,94 @@ public class Workout implements Serializable {
         if (balance >= 40) focusAreas.add("Balance");
 
         if (focusAreas.isEmpty()) {
-            return "Balanced Custom Workout";
-        } else if (focusAreas.size() == 1) {
-            return focusAreas.get(0) + " Focused Workout";
-        } else {
-            return String.join("-", focusAreas) + " Combo Workout";
+            return context.getString(R.string.balanced_custom_workout);
+            } else if (focusAreas.size() == 1) {
+                return context.getString(R.string.focused_workout, focusAreas.get(0));
+            } else {
+                String joined = TextUtils.join("-", focusAreas);
+                return context.getString(R.string.combo_workout, joined);
+            }
+
         }
-    }
+
 
     @SuppressLint("DefaultLocale")
-    private static String generateWorkoutDescription(int duration, int strength, int cardio,
-                                                     int stretching, int balance,
-                                                     DifficultyLevel level,
-                                                     List<Exercise> exercises) {
+//    private static String generateWorkoutDescription(int duration, int strength, int cardio,
+//                                                     int stretching, int balance,
+//                                                     DifficultyLevel level,
+//                                                     List<Exercise> exercises) {
+//        StringBuilder desc = new StringBuilder();
+//        desc.append(String.format("%d minute %s workout focusing on: ", duration, level.toString().toLowerCase()));
+//
+//        List<String> components = new ArrayList<>();
+//        if (strength > 0) components.add(strength + "% strength training");
+//        if (cardio > 0) components.add(cardio + "% cardio");
+//        if (stretching > 0) components.add(stretching + "% stretching");
+//        if (balance > 0) components.add(balance + "% balance");
+//
+//        desc.append(String.join(", ", components));
+//
+//        // Add exercise count
+//        desc.append(String.format("\nTotal exercises: %d", exercises.size()));
+//
+//        // Add targeted muscle groups
+//        Set<String> targetedMuscles = exercises.stream()
+//                .map(exercise -> exercise.getTargetMuscle().name()) // Convert enum to string using .name()
+//                .collect(Collectors.toSet());
+//
+//        if (!targetedMuscles.isEmpty()) {
+//            desc.append("\nTargeted muscle groups: ")
+//                    .append(String.join(", ", targetedMuscles));
+//        }
+//
+//        return desc.toString();
+//    }
+    public static String generateWorkoutDescription(Context context, int duration, int strength, int cardio,
+                                                    int stretching, int balance,
+                                                    DifficultyLevel level,
+                                                    List<Exercise> exercises) {
+
         StringBuilder desc = new StringBuilder();
-        desc.append(String.format("%d minute %s workout focusing on: ", duration, level.toString().toLowerCase()));
+
+        String difficultyString;
+        switch (level) {
+            case BEGINNER:
+                difficultyString = context.getString(R.string.beginner);
+                break;
+            case INTERMEDIATE:
+                difficultyString = context.getString(R.string.intermediate);
+                break;
+            case EXPERT:
+                difficultyString = context.getString(R.string.expert);
+                break;
+            default:
+                difficultyString = level.toString().toLowerCase();
+        }
+
+        desc.append(context.getString(R.string.description_intro, duration, difficultyString));
 
         List<String> components = new ArrayList<>();
-        if (strength > 0) components.add(strength + "% strength training");
-        if (cardio > 0) components.add(cardio + "% cardio");
-        if (stretching > 0) components.add(stretching + "% stretching");
-        if (balance > 0) components.add(balance + "% balance");
+        if (strength > 0) components.add(context.getString(R.string.component_strength, strength));
+        if (cardio > 0) components.add(context.getString(R.string.component_cardio, cardio));
+        if (stretching > 0) components.add(context.getString(R.string.component_stretching, stretching));
+        if (balance > 0) components.add(context.getString(R.string.component_balance, balance));
 
-        desc.append(String.join(", ", components));
+        desc.append(TextUtils.join(", ", components));
 
-        // Add exercise count
-        desc.append(String.format("\nTotal exercises: %d", exercises.size()));
+        desc.append("\n").append(context.getString(R.string.total_exercises, exercises.size()));
 
-        // Add targeted muscle groups
         Set<String> targetedMuscles = exercises.stream()
-                .map(exercise -> exercise.getTargetMuscle().name()) // Convert enum to string using .name()
+                .map(exercise -> {
+                    return exercise.getTargetMuscle().name();
+                })
                 .collect(Collectors.toSet());
 
         if (!targetedMuscles.isEmpty()) {
-            desc.append("\nTargeted muscle groups: ")
-                    .append(String.join(", ", targetedMuscles));
+            desc.append("\n").append(context.getString(R.string.targeted_muscles,
+                    TextUtils.join(", ", targetedMuscles)));
         }
 
         return desc.toString();
     }
+
 }

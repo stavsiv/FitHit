@@ -68,7 +68,6 @@ public class ChallengeProgressManager {
                 .addOnFailureListener(e -> Log.e(TAG, "Error getting challenge records: " + e.getMessage()));
     }
 
-
     public void updateAllChallengesProgress() {
         firebaseManager.getUserChallengeRecords()
                 .addOnSuccessListener(records -> {
@@ -111,7 +110,6 @@ public class ChallengeProgressManager {
         String challengeName = challenge.getName();
         int progress = 0;
 
-        // Calculate current progress based on challenge type
         List<WorkoutRecord> workoutHistory = user.getWorkoutHistory();
         if (workoutHistory == null || workoutHistory.isEmpty()) {
             return false;
@@ -135,7 +133,6 @@ public class ChallengeProgressManager {
 
         switch (challengeName) {
             case "Daily Workout Champion":
-                // Count workouts completed today
                 for (WorkoutRecord workout : workoutHistory) {
                     if (workout.isCompleted() && workout.getDate() >= timeWindow) {
                         progress++;
@@ -144,7 +141,6 @@ public class ChallengeProgressManager {
                 break;
 
             case "Workout Warrior":
-                // Count workouts completed this week
                 for (WorkoutRecord workout : workoutHistory) {
                     if (workout.isCompleted() && workout.getDate() >= timeWindow) {
                         progress++;
@@ -153,7 +149,6 @@ public class ChallengeProgressManager {
                 break;
 
             case "Strength Builder":
-                // Count strength workouts this week
                 for (WorkoutRecord workout : workoutHistory) {
                     if (workout.isCompleted() &&
                             workout.getDate() >= timeWindow &&
@@ -165,7 +160,6 @@ public class ChallengeProgressManager {
                 break;
 
             case "Cardio Master":
-                // Count cardio workouts this week
                 for (WorkoutRecord workout : workoutHistory) {
                     if (workout.isCompleted() &&
                             workout.getDate() >= timeWindow &&
@@ -177,7 +171,6 @@ public class ChallengeProgressManager {
                 break;
 
             case "Core Power":
-                // Count core workouts this week
                 for (WorkoutRecord workout : workoutHistory) {
                     if (workout.isCompleted() &&
                             workout.getDate() >= timeWindow &&
@@ -189,7 +182,6 @@ public class ChallengeProgressManager {
                 break;
 
             case "Expert Challenger":
-                // Count expert level workouts this week
                 for (WorkoutRecord workout : workoutHistory) {
                     if (workout.isCompleted() &&
                             workout.getDate() >= timeWindow &&
@@ -201,7 +193,6 @@ public class ChallengeProgressManager {
                 break;
 
             case "Fitness Journey":
-                // Count workouts completed this month
                 for (WorkoutRecord workout : workoutHistory) {
                     if (workout.isCompleted() && workout.getDate() >= timeWindow) {
                         progress++;
@@ -210,7 +201,6 @@ public class ChallengeProgressManager {
                 break;
 
             case "Exercise Variety":
-                // Count unique muscle groups targeted today
                 Set<String> muscleGroups = new HashSet<>();
                 for (WorkoutRecord workout : workoutHistory) {
                     if (workout.isCompleted() &&
@@ -227,7 +217,6 @@ public class ChallengeProgressManager {
                 break;
 
             case "Full Body Focus":
-                // Count specific workout completions this week
                 for (WorkoutRecord workout : workoutHistory) {
                     if (workout.isCompleted() &&
                             workout.getDate() >= timeWindow &&
@@ -239,7 +228,6 @@ public class ChallengeProgressManager {
                 break;
 
             case "Consistency King":
-                // Check weekly consistency (3+ workouts per week for 4 weeks)
                 progress = checkConsistencyChallenge(workoutHistory);
                 break;
         }
@@ -261,11 +249,9 @@ public class ChallengeProgressManager {
     }
 
     private int checkConsistencyChallenge(List<WorkoutRecord> workoutHistory) {
-        // We need to check the past 4 weeks
         long currentTime = System.currentTimeMillis();
         int weeksWithEnoughWorkouts = 0;
 
-        // Check each of the past 4 weeks
         for (int weekOffset = 0; weekOffset < 4; weekOffset++) {
             long weekEndTime = currentTime - (weekOffset * 7 * 24 * 60 * 60 * 1000L);
             long weekStartTime = weekEndTime - (7 * 24 * 60 * 60 * 1000L);
@@ -279,7 +265,6 @@ public class ChallengeProgressManager {
                 }
             }
 
-            // If this week had at least 3 workouts, count it
             if (weeklyCount >= 3) {
                 weeksWithEnoughWorkouts++;
             }

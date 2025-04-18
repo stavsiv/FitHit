@@ -19,14 +19,14 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:text="workout name" />
+            android:text="@string/workout_name" />
 
         <TextView
             android:id="@+id/workout_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="workout description" />
+            android:text="@string/workout_description" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,13 +39,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="workout duration" />
+                android:text="@string/workout_duration" />
 
             <TextView
                 android:id="@+id/workout_difficulty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="workout difficulty" />
+                android:text="@string/workout_difficulty" />
 
         </LinearLayout>
 

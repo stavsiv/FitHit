@@ -30,17 +30,19 @@
                     android:id="@+id/btn_back_to_main"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Back"
-                    android:contentDescription="Return to main area"
+                    android:text="@string/back"
+                    android:contentDescription="@string/return_to_main_area"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     app:icon="@android:drawable/ic_menu_revert"
+                    android:textAllCaps="false"
+
                     app:iconGravity="start"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="Personal Area"
+                    android:text="@string/personal_area"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:accessibilityHeading="true"/>
@@ -121,7 +123,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="My Equipment"
+                        android:text="@string/my_equipment"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:accessibilityHeading="true"/>
@@ -139,7 +141,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_marginTop="8dp"
-                        android:text="Add Equipment"/>
+                        android:text="@string/add_equipment"
+                        android:textAllCaps="false" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -165,7 +168,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="My Challenges"
+                            android:text="@string/my_challenges"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:accessibilityHeading="true"/>
@@ -174,7 +177,8 @@
                             android:id="@+id/btn_add_challenge"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Add Challenge"
+                            android:text="@string/add_challenge"
+                            android:textAllCaps="false"
                             style="@style/Widget.MaterialComponents.Button.TextButton"/>
                     </LinearLayout>
 
@@ -189,7 +193,7 @@
                         android:id="@+id/tv_no_challenges"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="No active challenges. Add some to track your progress!"
+                        android:text="@string/no_active_challenges_add_some_to_track_your_progress"
                         android:textAlignment="center"
                         android:padding="16dp"
                         android:visibility="gone"/>
@@ -213,7 +217,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Workout Progress"
+                        android:text="@string/workout_progress"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:accessibilityHeading="true"/>
@@ -222,14 +226,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Total workouts completed since joining:"/>
+                        android:text="@string/total_workouts_completed_since_joining"/>
 
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/chart_progress"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
                         android:layout_marginTop="8dp"
-                        android:contentDescription="Workout progress chart"/>
+                        android:contentDescription="@string/workout_progress_chart"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

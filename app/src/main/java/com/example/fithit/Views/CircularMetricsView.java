@@ -33,7 +33,8 @@ public class CircularMetricsView extends View {
     private final String[] metricTypes = new String[]{
             Metric.WEIGHT,
             Metric.HEART_RATE,
-            Metric.STEPS
+            Metric.STEPS,
+            Metric.CALORIES
     };
 
     public CircularMetricsView(Context context) {
@@ -115,6 +116,8 @@ public class CircularMetricsView extends View {
                 return ContextCompat.getDrawable(getContext(), R.drawable.ic_heart);
             case Metric.STEPS:
                 return ContextCompat.getDrawable(getContext(), R.drawable.ic_steps);
+            case Metric.CALORIES:
+                return ContextCompat.getDrawable(getContext(), R.drawable.ic_kcal);
             default:
                 return ContextCompat.getDrawable(getContext(), R.drawable.ic_metric_default);
         }
@@ -128,6 +131,8 @@ public class CircularMetricsView extends View {
                 return Color.parseColor("#F44336"); // Red
             case Metric.STEPS:
                 return Color.parseColor("#FFC107"); // Yellow
+            case Metric.CALORIES:
+                return Color.parseColor("#4CAF50"); // Green
             default:
                 return Color.parseColor("#9E9E9E"); // Gray
         }
@@ -174,11 +179,13 @@ public class CircularMetricsView extends View {
     private String getUnitForMetric(String type) {
         switch (type) {
             case Metric.WEIGHT:
-                return "kg";
+                return " kg";
             case Metric.HEART_RATE:
-                return "bpm";
+                return " bpm";
             case Metric.STEPS:
-                return "steps";
+                return " steps";
+            case Metric.CALORIES:
+                return " kcal";
             default:
                 return "";
         }
