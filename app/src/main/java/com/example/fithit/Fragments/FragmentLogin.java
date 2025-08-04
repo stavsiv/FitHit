@@ -34,8 +34,7 @@ public class FragmentLogin extends Fragment {
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(requireContext(), "Email and password cannot be empty", Toast.LENGTH_SHORT).show();
+            if (email.isEmpty() || password.isEmpty()) {Toast.makeText(requireContext(), R.string.email_and_password_cannot_be_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -45,13 +44,11 @@ public class FragmentLogin extends Fragment {
                         .addOnSuccessListener(authResult -> navigateToMainFragment())
                         .addOnFailureListener(e -> {
                             Toast.makeText(requireContext(),
-                                    "Login failed: " + e.getMessage(),
+                                    R.string.login_failed + e.getMessage(),
                                     Toast.LENGTH_SHORT).show();
-                            Log.e("Login", "Login failed", e);
                         });
             } else {
-                Log.e("FragmentLogin", "MainActivity is null");
-                Toast.makeText(requireContext(), "Error: Activity not found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.error_activity_not_found, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -59,7 +56,6 @@ public class FragmentLogin extends Fragment {
             if (rootView != null) {
                 Navigation.findNavController(rootView).navigate(R.id.action_fragmentLogin_to_fragmentRegister);
             } else {
-                Log.e("Navigation", "rootView is null, cannot navigate to register fragment");
             }
         });
 
@@ -73,7 +69,6 @@ public class FragmentLogin extends Fragment {
                 navController.navigate(R.id.action_fragmentLogin_to_fragmentMain);
             }
         } catch (Exception e) {
-            Log.e("Navigation", "Navigation error: " + e.getMessage());
             requireActivity().recreate();
         }
     }

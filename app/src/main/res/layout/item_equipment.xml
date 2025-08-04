@@ -12,14 +12,14 @@
         android:layout_height="48dp"
         android:layout_marginEnd="16dp"
         android:scaleType="centerCrop"
-        android:contentDescription="Equipment Image" />
+        android:contentDescription="@string/equipment_image" />
 
     <TextView
         android:id="@+id/tv_equipment_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Equipment Name"
+        android:text="@string/equipment_name"
         android:textSize="16sp" />
 
     <CheckBox

@@ -74,7 +74,9 @@
     <fragment
         android:id="@+id/addMetricDialogFragment"
         android:name="com.example.fithit.Fragments.CircularMetricDialogFragment"
-        android:label="AddMetricDialogFragment" >
+        android:label="AddMetricDialogFragment"
+        tools:layout="@layout/dialog_circular_metric">
+
         <argument
             android:name="workoutId"
             app:argType="integer" />
@@ -82,7 +84,8 @@
             android:id="@+id/action_postWorkoutMetricsDialog_to_fragmentMain"
             app:destination="@id/fragmentMain"
             app:popUpTo="@id/fragmentMain"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true" />
     </fragment>
 
     <fragment

@@ -1,5 +1,6 @@
 package com.example.fithit.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -50,24 +51,19 @@ public class AvailableChallengesDialog extends DialogFragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_available_challenges, container, false);
 
-        // Initialize views
         recyclerView = view.findViewById(R.id.recyclerViewAvailableChallenges);
         progressLoading = view.findViewById(R.id.progressLoadingChallenges);
         tvNoAvailableChallenges = view.findViewById(R.id.tvNoAvailableChallenges);
 
-        // Set up close button
         ImageButton btnClose = view.findViewById(R.id.btnCloseAvailableChallengesDialog);
         btnClose.setOnClickListener(v -> dismiss());
 
-        // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new AvailableChallengeAdapter(new ArrayList<>());
         adapter.setOnChallengeSelectedListener(challenge -> {
             if (listener != null) {
                 listener.onChallengeSelected(challenge);
-                Toast.makeText(getContext(),
-                        "new challenge added: " + challenge.getName(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.new_challenge_added) + challenge.getName(), Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         });
@@ -78,15 +74,14 @@ public class AvailableChallengesDialog extends DialogFragment {
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     private void loadAvailableChallenges() {
         progressLoading.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         tvNoAvailableChallenges.setVisibility(View.GONE);
 
-        // Use getUserChallengeRecords() which is already implemented
         firebaseManager.getUserChallengeRecords()
                 .addOnSuccessListener(userChallengeRecords -> {
-                    // Extract Challenge objects from ChallengeRecord objects
                     List<Challenge> userChallenges = new ArrayList<>();
                     for (ChallengeRecord record : userChallengeRecords) {
                         if (record.getChallenge() != null) {
@@ -94,7 +89,6 @@ public class AvailableChallengesDialog extends DialogFragment {
                         }
                     }
 
-                    // Get all available challenges from Challenge class
                     List<Challenge> allChallenges = Challenge.ALL_CHALLENGES;
                     if (allChallenges == null) {
                         allChallenges = new ArrayList<>();
@@ -103,7 +97,6 @@ public class AvailableChallengesDialog extends DialogFragment {
                     if (!isAdded()) return;
                     progressLoading.setVisibility(View.GONE);
 
-                    // Filter out challenges the user already has
                     List<Challenge> availableChallenges = filterOutExistingChallenges(
                             allChallenges, userChallenges);
 
@@ -121,7 +114,7 @@ public class AvailableChallengesDialog extends DialogFragment {
 
                     progressLoading.setVisibility(View.GONE);
                     tvNoAvailableChallenges.setVisibility(View.VISIBLE);
-                    tvNoAvailableChallenges.setText("Error loading challenges: " + e.getMessage());
+                    tvNoAvailableChallenges.setText(R.string.error_loading_challenges + e.getMessage());
                 });
     }
     private List<Challenge> filterOutExistingChallenges(List<Challenge> allChallenges,
@@ -156,7 +149,6 @@ public class AvailableChallengesDialog extends DialogFragment {
             dialog.getWindow().setLayout(width, height);
         }
     }
-
     public void setOnChallengeSelectedListener(OnChallengeSelectedListener listener) {
         this.listener = listener;
     }

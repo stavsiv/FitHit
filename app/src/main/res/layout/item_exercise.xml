@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="exercise_name_placeholder" />
+            android:text="@string/exercise_name_placeholder" />
 
         <TextView
             android:id="@+id/exercise_type"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="?android:textColorSecondary"
-            android:text="exercise_type_placeholder" />
+            android:text="@string/exercise_type_placeholder" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,13 +40,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="exercise_reps_placeholder" />
+                android:text="@string/exercise_reps_placeholder" />
 
             <TextView
                 android:id="@+id/exercise_equipment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="exercise_equipment_placeholder" />
+                android:text="@string/exercise_equipment_placeholder" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create Custom Workout"
+        android:text="@string/create_custom_workout"
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -32,12 +32,12 @@
         android:valueFrom="15"
         android:valueTo="60"
         app:labelBehavior="floating"
-        android:contentDescription="Workout duration in minutes"/>
+        android:contentDescription="@string/workout_duration_in_minutes"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="workout distribution"
+        android:text="@string/workout_distribution"
         android:textSize="16sp"
         android:gravity="center"
         android:layout_marginBottom="16dp"/>
@@ -67,7 +67,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Strength Training"
+                android:text="@string/strength_training"
                 android:gravity="center"/>
 
             <TextView
@@ -110,7 +110,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="cardio"
+                android:text="@string/cardio"
                 android:gravity="center"/>
 
             <TextView
@@ -153,7 +153,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="stretching"
+                android:text="@string/stretching"
                 android:gravity="center"/>
 
             <TextView
@@ -196,7 +196,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="balance"
+                android:text="@string/balance"
                 android:gravity="center"/>
 
             <TextView
@@ -229,7 +229,8 @@
         android:id="@+id/generateWorkoutButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="GENERATE WORKOUT"
+        android:text="@string/generate_workout"
+        android:textAllCaps="false"
         android:textColor="@android:color/black"/>
 
 </LinearLayout>

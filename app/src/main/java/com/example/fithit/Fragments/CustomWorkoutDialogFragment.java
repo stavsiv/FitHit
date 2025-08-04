@@ -16,6 +16,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.fithit.Enums.DifficultyLevel;
+import com.example.fithit.Enums.EquipmentType;
 import com.example.fithit.Managers.FirebaseManager;
 import com.example.fithit.Models.Workout;
 import com.example.fithit.Models.WorkoutRecord;
@@ -46,34 +47,29 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Make sure the layout reference is correct
         View view = inflater.inflate(R.layout.fragment_custom_workout_dialog, container, false);
 
-        Log.d("CustomWorkout", "Fragment created with view: " + view);
 
         try {
             initializeViews(view);
             if (getArguments() != null) {
-                long dateInMillis = getArguments().getLong("selectedDate");
+                long dateInMillis = getArguments().getLong(getString(R.string.selectedDate));
                 selectedDate = new Date(dateInMillis);
-                Log.d("CustomWorkout", "Got selected date: " + selectedDate);
             } else {
-                Log.e("CustomWorkout", "No arguments found, using current date");
-                selectedDate = new Date(); // Use current date as fallback
+                selectedDate = new Date();
             }
 
             setupDurationSlider();
             setupPercentageButtons();
             setupGenerateButton();
         } catch (Exception e) {
-            Log.e("CustomWorkout", "Error setting up fragment", e);
+            //
         }
 
         return view;
     }
 
     private void initializeViews(View view) {
-        Log.d("CustomWorkout", "Initializing views");//delete later
 
         durationText = view.findViewById(R.id.durationText);
         durationSlider = view.findViewById(R.id.durationSlider);
@@ -86,10 +82,8 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
         totalPercentage = view.findViewById(R.id.totalPercentage);
 
         strengthDecreaseBtn = view.findViewById(R.id.strengthDecreaseBtn);
-        Log.d("CustomWorkout", "strengthDecreaseBtn: " + (strengthDecreaseBtn != null));
 
         strengthIncreaseBtn = view.findViewById(R.id.strengthIncreaseBtn);
-        Log.d("CustomWorkout", "strengthIncreaseBtn: " + (strengthIncreaseBtn != null));
         cardioDecreaseBtn = view.findViewById(R.id.cardioDecreaseBtn);
         cardioIncreaseBtn = view.findViewById(R.id.cardioIncreaseBtn);
         stretchingDecreaseBtn = view.findViewById(R.id.stretchingDecreaseBtn);
@@ -111,13 +105,12 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
     }
 
     private void setupPercentageButtons() {
-        // Add null checks for all buttons
         if (strengthIncreaseBtn != null && strengthDecreaseBtn != null) {
             // Strength buttons
             strengthIncreaseBtn.setOnClickListener(v -> adjustPercentage(strengthPercentage, PERCENTAGE_STEP));
             strengthDecreaseBtn.setOnClickListener(v -> adjustPercentage(strengthPercentage, -PERCENTAGE_STEP));
         } else {
-            Log.e("CustomWorkout", "Strength buttons are null");
+            // Handle the case where the buttons are null
         }
 
         if (cardioIncreaseBtn != null && cardioDecreaseBtn != null) {
@@ -125,23 +118,21 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
             cardioIncreaseBtn.setOnClickListener(v -> adjustPercentage(cardioPercentage, PERCENTAGE_STEP));
             cardioDecreaseBtn.setOnClickListener(v -> adjustPercentage(cardioPercentage, -PERCENTAGE_STEP));
         } else {
-            Log.e("CustomWorkout", "Cardio buttons are null");
+            //
         }
 
         if (stretchingIncreaseBtn != null && stretchingDecreaseBtn != null) {
-            // Stretching buttons
             stretchingIncreaseBtn.setOnClickListener(v -> adjustPercentage(stretchingPercentage, PERCENTAGE_STEP));
             stretchingDecreaseBtn.setOnClickListener(v -> adjustPercentage(stretchingPercentage, -PERCENTAGE_STEP));
         } else {
-            Log.e("CustomWorkout", "Stretching buttons are null");
+            //
         }
 
         if (balanceIncreaseBtn != null && balanceDecreaseBtn != null) {
-            // Balance buttons
             balanceIncreaseBtn.setOnClickListener(v -> adjustPercentage(balancePercentage, PERCENTAGE_STEP));
             balanceDecreaseBtn.setOnClickListener(v -> adjustPercentage(balancePercentage, -PERCENTAGE_STEP));
         } else {
-            Log.e("CustomWorkout", "Balance buttons are null");
+            //
         }
     }
 
@@ -149,12 +140,10 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
         int currentValue = getCurrentPercentage(percentageView);
         int newValue = currentValue + change;
 
-        // Validate new value
         if (newValue < 0 || newValue > 100) {
             return;
         }
 
-        // Check if total would exceed 100%
         int totalWithoutCurrent = calculateTotalPercentage() - currentValue;
         if (totalWithoutCurrent + newValue > 100) {
             return;
@@ -178,7 +167,7 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
 
     private void updateTotalPercentage() {
         int total = calculateTotalPercentage();
-        totalPercentage.setText("Total: " + total + "%");
+        totalPercentage.setText(getString(R.string.total) + " " + total + "%");
     }
 
     private void setupGenerateButton() {
@@ -189,22 +178,25 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
         int duration = (int) durationSlider.getValue();
         int total = calculateTotalPercentage();
 
-        if (total != 100) {
-            Toast.makeText(requireContext(),
-                    "Total percentage must be 100% (currently: " + total + "%)",
-                    Toast.LENGTH_SHORT).show();
+        if (total != 100) {Toast.makeText(requireContext(), getString(R.string.total_percentage_must_be_100_currently) + total + "%)", Toast.LENGTH_SHORT).show();
             return;
         }
 
         Workout workout = Workout.generateCustomWorkout(
+                requireContext(),
                 duration,
                 getCurrentPercentage(strengthPercentage),
                 getCurrentPercentage(cardioPercentage),
                 getCurrentPercentage(stretchingPercentage),
                 getCurrentPercentage(balancePercentage),
                 DifficultyLevel.BEGINNER,
-                new ArrayList<>()
+                new ArrayList<EquipmentType>()
         );
+
+        if (workout == null) {
+            Toast.makeText(requireContext(), "Failed to generate workout", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(selectedDate);
@@ -218,18 +210,18 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
 
         FirebaseManager.getInstance()
                 .addWorkoutRecord(workoutRecord)
-                .addOnSuccessListener(aVoid -> {
+                .addOnSuccessListener(aVoid -> {   Log.d("CustomWorkout", "Record saved successfully");
                     Bundle args = new Bundle();
                     args.putSerializable("workout", workout);
                     args.putLong("date", normalizedDate.getTime());
+
 
                     NavController navController = Navigation.findNavController(requireView());
                     navController.navigate(R.id.action_CustomWorkoutDialogFragment_to_fragmentWorkoutDetails, args);
 
                     dismiss();
                 })
-                .addOnFailureListener(e -> Toast.makeText(requireContext(),
-                        "Failed to save workout: " + e.getMessage(),
+                .addOnFailureListener(e -> Toast.makeText(requireContext(),R.string.failed_to_save_workout + e.getMessage(),
                         Toast.LENGTH_SHORT).show());
     }
 

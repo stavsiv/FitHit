@@ -52,36 +52,6 @@ public class FirebaseManager {
         return instance;
     }
 
-    /*public Task<User> getCurrentUserData() {
-        String userId = getCurrentUserId();
-        if (userId == null) {
-            return Tasks.forException(new Exception("No user is currently logged in"));
-        }
-
-        return dbRef.child(USERS_NODE).child(userId).get()
-                .continueWith(task -> {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    DataSnapshot dataSnapshot = task.getResult();
-                    User user = createUserFromSnapshot(dataSnapshot);
-                    if (user == null) {
-                        throw new Exception("Failed to parse user data");
-                    }
-                    Log.d("FirebaseManager", "User created, level=" + user.getLevel() +
-                            ", difficulty=" + user.getCurrentDifficulty());
-
-                    if (user.getLevel() <= 0 ) {
-                        Log.e("FirebaseManager", "User level check failed: " + user.getLevel());
-                        throw new Exception("Invalid user data state");
-                    }
-                    if (user.getCurrentDifficulty() == null) {
-                        Log.e("FirebaseManager", "User difficulty check failed: null");
-                        throw new Exception("Invalid user data state: difficulty is null");
-                    }
-                    return user;
-                });
-    }*/
     public Task<User> getCurrentUserData() {
         String userId = getCurrentUserId();
         if (userId == null) {
@@ -99,17 +69,12 @@ public class FirebaseManager {
                         throw new Exception("Failed to parse user data");
                     }
 
-                    // Ensure valid state even if data is incomplete
                     if (user.getLevel() <= 0) {
-                        Log.w("FirebaseManager", "Setting default level=1 for user");
-                        // Add code to fix missing level
-                        // This is a temporary fix in memory
+                        //
                     }
 
                     if (user.getCurrentDifficulty() == null) {
-                        Log.w("FirebaseManager", "Setting default difficulty BEGINNER for user");
                         user.setCurrentDifficulty(DifficultyLevel.BEGINNER);
-                        // This is a temporary fix in memory
                     }
 
                     return user;
@@ -131,28 +96,22 @@ public class FirebaseManager {
 
             User user = new User(username, phone, age, wantReminders);
 
-            // Set total hearts
             if (totalHearts != null) {
                 user.addHearts(totalHearts);
             }
 
-            // Load workout history
             DataSnapshot workoutHistorySnapshot = snapshot.child("workoutHistory");
             if (workoutHistorySnapshot.exists()) {
                 List<WorkoutRecord> workoutHistory = new ArrayList<>();
                 for (DataSnapshot workoutSnapshot : workoutHistorySnapshot.getChildren()) {
                     try {
-                        // Get completed status
                         Boolean completed = workoutSnapshot.child("completed").getValue(Boolean.class);
 
-                        // Get date
                         Long dateTimestamp = workoutSnapshot.child("date").getValue(Long.class);
 
-                        // Get workout data
                         DataSnapshot workoutDataSnapshot = workoutSnapshot.child("workout");
                         Workout workout = workoutDataSnapshot.getValue(Workout.class);
 
-                        // Create workout record
                         WorkoutRecord record = new WorkoutRecord();
                         if (dateTimestamp != null) {
                             record.setDate(dateTimestamp);
@@ -164,7 +123,6 @@ public class FirebaseManager {
                             record.setCompleted(completed);
                         }
 
-                        // Get metrics
                         DataSnapshot metricsSnapshot = workoutSnapshot.child("metrics");
                         if (metricsSnapshot.exists()) {
                             for (DataSnapshot metricSnapshot : metricsSnapshot.getChildren()) {
@@ -178,7 +136,7 @@ public class FirebaseManager {
 
                         workoutHistory.add(record);
                     } catch (Exception e) {
-                        Log.e("FirebaseManager", "Error parsing workout record: " + e.getMessage());
+                        // Handle parsing errors
                     }
                 }
                 user.setWorkoutHistory(workoutHistory);
@@ -186,7 +144,6 @@ public class FirebaseManager {
 
             return user;
         } catch (Exception e) {
-            Log.e("FirebaseManager", "Error creating user from snapshot: " + e.getMessage());
             return null;
         }
     }
@@ -262,7 +219,6 @@ public class FirebaseManager {
     public Task<Void> addWorkoutRecord(WorkoutRecord workoutRecord) {
         String userId = getCurrentUserId();
         if (userId == null) {
-            Log.e("FirebaseManager", "No user logged in");
             return Tasks.forException(new Exception("No user is currently logged in"));
         }
 
@@ -278,7 +234,6 @@ public class FirebaseManager {
         recordData.put("metrics", workoutRecord.getMetrics());
         recordData.put("workoutDateTime", new Date().getTime());
 
-        Log.d("FirebaseManager", "Saving workout record: " + recordData);
 
         return recordRef.setValue(recordData)
                 .addOnSuccessListener(aVoid -> Log.d("FirebaseManager", "Workout record saved successfully"))
@@ -383,7 +338,7 @@ public class FirebaseManager {
         }
     }
 
-    //אתגרים
+
     public Task<Void> removeUserChallenge(String challengeId) {
         String userId = getCurrentUserId();
         if (userId == null) {
@@ -414,7 +369,6 @@ public class FirebaseManager {
                             .removeValue();
                 });
     }
-// Add these methods to FirebaseManager
 
     public Task<List<ChallengeRecord>> getUserChallengeRecords() {
         String userId = getCurrentUserId();
@@ -436,15 +390,12 @@ public class FirebaseManager {
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         try {
-                            // Manually extract challenge data
                             Map<String, Object> data = (Map<String, Object>) snapshot.getValue();
                             if (data != null) {
-                                // Extract challenge data
                                 Map<String, Object> challengeData = (Map<String, Object>) data.get("challenge");
                                 if (challengeData != null) {
                                     Challenge challenge = new Challenge();
 
-                                    // Manually set Challenge fields
                                     challenge.setChallengeId(getIntValue(challengeData, "challengeId"));
                                     challenge.setName(getStringValue(challengeData, "name"));
                                     challenge.setDescription(getStringValue(challengeData, "description"));
@@ -457,11 +408,9 @@ public class FirebaseManager {
                                     challenge.setCompleted(getBooleanValue(challengeData, "completed"));
                                     challenge.setCurrentProgress(getIntValue(challengeData, "currentProgress"));
 
-                                    // Create ChallengeRecord
                                     ChallengeRecord record = new ChallengeRecord();
                                     record.setChallenge(challenge);
 
-                                    // Set other ChallengeRecord fields
                                     record.setDateAdded(getLongValue(data, "dateAdded"));
                                     record.setStartDate(getLongValue(data, "startDate"));
                                     record.setEndDate(getLongValue(data, "endDate"));
@@ -472,7 +421,7 @@ public class FirebaseManager {
                                 }
                             }
                         } catch (Exception e) {
-                            Log.e("ChallengeRecords", "Error parsing challenge record: " + e.getMessage(), e);
+                            //
                         }
                     }
 
@@ -480,7 +429,6 @@ public class FirebaseManager {
                 });
     }
 
-    // Helper methods for safe type conversion
     private int getIntValue(Map<String, Object> data, String key) {
         Object value = data.get(key);
         if (value instanceof Number) {
@@ -520,7 +468,6 @@ public class FirebaseManager {
                 .child(USER_CHALLENGES_NODE)
                 .push();
 
-        // Convert to a map to ensure proper serialization
         Map<String, Object> recordData = new HashMap<>();
         recordData.put("dateAdded", record.getDateAdded());
         recordData.put("startDate", record.getStartDate());
@@ -528,7 +475,6 @@ public class FirebaseManager {
         recordData.put("currentProgress", record.getCurrentProgress());
         recordData.put("isCompleted", record.isCompleted());
 
-        // Manually convert Challenge to a map
         if (record.getChallenge() != null) {
             Map<String, Object> challengeData = new HashMap<>();
             Challenge challenge = record.getChallenge();
@@ -555,7 +501,6 @@ public class FirebaseManager {
             return Tasks.forException(new Exception("No user is currently logged in"));
         }
 
-        // Find the challenge record by challenge ID
         return dbRef.child(USERS_NODE)
                 .child(userId)
                 .child(USER_CHALLENGES_NODE)
@@ -591,10 +536,8 @@ public class FirebaseManager {
             return Tasks.forException(new Exception("Invalid challenge record"));
         }
 
-        // השם של האתגר שאנחנו רוצים למחוק
         final String challengeNameToRemove = record.getChallenge().getName();
 
-        // קבלת כל האתגרים של המשתמש
         return dbRef.child(USERS_NODE)
                 .child(userId)
                 .child(USER_CHALLENGES_NODE)
@@ -607,7 +550,6 @@ public class FirebaseManager {
                     DataSnapshot dataSnapshot = task.getResult();
                     String recordKeyToRemove = null;
 
-                    // מעבר על כל האתגרים ומציאת האתגר לפי שם
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                         try {
                             Map<String, Object> data = (Map<String, Object>) childSnapshot.getValue();
@@ -616,7 +558,6 @@ public class FirebaseManager {
                                 if (challengeData != null) {
                                     String storedChallengeName = (String) challengeData.get("name");
 
-                                    // השוואה לפי שם האתגר במקום לפי מזהה
                                     if (storedChallengeName != null &&
                                             challengeNameToRemove.equals(storedChallengeName)) {
                                         recordKeyToRemove = childSnapshot.getKey();
@@ -625,7 +566,7 @@ public class FirebaseManager {
                                 }
                             }
                         } catch (Exception e) {
-                            Log.e("ChallengeRemoval", "Error parsing challenge: " + e.getMessage(), e);
+                            //
                         }
                     }
 
@@ -654,13 +595,11 @@ public class FirebaseManager {
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("totalHearts", user.getTotalHearts());
-        // Add other fields that need updating
 
         return dbRef.child(USERS_NODE)
                 .child(userId)
                 .updateChildren(updates);
     }
-
 
     public Task<Void> addWorkout(Workout workout) {
         String workoutId = dbRef.child(WORKOUTS_NODE).push().getKey();
@@ -706,7 +645,28 @@ public class FirebaseManager {
                     }
                 });
     }
+    public void removeUpcomingWorkoutsListener(ValueEventListener listener) {
+        String userId = getCurrentUserId();
+        if (userId != null && listener != null) {
+            dbRef.child(USERS_NODE)
+                    .child(userId)
+                    .child("workoutHistory")
+                    .orderByChild("date")
+                    .startAt(new Date().getTime())
+                    .removeEventListener(listener);
+        }
+    }
 
+    public void removeWorkoutsByDateListener(ValueEventListener listener) {
+        String userId = getCurrentUserId();
+        if (userId != null && listener != null) {
+            // We don't have the exact query here, so create a similar reference pattern
+            dbRef.child(USERS_NODE)
+                    .child(userId)
+                    .child("workoutHistory")
+                    .removeEventListener(listener);
+        }
+    }
     public interface OnMetricsLoadedListener {
         void onMetricsLoaded(List<Metric> metrics);
         void onError(String error);

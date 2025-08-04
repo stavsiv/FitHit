@@ -1,5 +1,8 @@
 package com.example.fithit.Fragments;
 
+import static com.example.fithit.R.*;
+import static com.example.fithit.R.string.please_fill_all_fields;
+
 import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 
@@ -47,7 +50,7 @@ public class FragmentRegister extends Fragment {
             String ageStr = editTextAge.getText().toString().trim();
 
             if (ageStr.isEmpty()) {
-                Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), please_fill_all_fields, Toast.LENGTH_SHORT).show();
                 return;
             }
             try {
@@ -59,10 +62,10 @@ public class FragmentRegister extends Fragment {
                     mainActivity.register(email, password1, password2, username, phone,
                             age, wantReminders, view);
                 } else {
-                    Toast.makeText(getContext(), "Error: Activity not found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.error_activity_not_found, Toast.LENGTH_SHORT).show();
                 }
             } catch (NumberFormatException e) {
-                Toast.makeText(getContext(), "Please enter valid numbers for age and weight", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.please_enter_valid_numbers_for_age_and_weight, Toast.LENGTH_SHORT).show();
             }
         });
         return view;

@@ -91,22 +91,31 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Action buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="8dp"
-            android:gravity="end">
+            android:gravity="center_vertical|end">
 
             <Button
                 android:id="@+id/btnRemoveUserChallenge"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="remove challenge "
-                android:textSize="12sp"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:textColor="@android:color/holo_red_light" />
+                android:text="@string/remove_challenge"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/checkboxChallengeComplete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_marginStart="16dp"
+                android:contentDescription="@string/mark_challenge_as_completed" />
         </LinearLayout>
+
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

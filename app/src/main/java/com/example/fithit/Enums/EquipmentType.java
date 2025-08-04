@@ -30,10 +30,6 @@ public enum EquipmentType {
         return displayName;
     }
 
-    public String getImageFileName() {
-        return imageFileName;
-    }
-
     public int getResourceId() {
         return resourceId;
     }

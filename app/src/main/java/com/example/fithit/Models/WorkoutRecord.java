@@ -10,7 +10,7 @@ public class WorkoutRecord {
     private long date;
     private Workout workout;
     private  Map<String, Double> metrics;
-    private boolean isCompleted; // Added to track if workout was completed
+    private boolean isCompleted;
 
     public WorkoutRecord() {
         this.metrics = new HashMap<>();
@@ -48,26 +48,10 @@ public class WorkoutRecord {
         isCompleted = completed;
     }
 
-    public void setMetric(String type, Double value) {
-        if (Metric.isValidType(type)) {
-            metrics.put(type, value);
-        } else {
-            throw new IllegalArgumentException("Invalid metric type: " + type);
-        }
-    }
-/*
-    public void setCompleted(boolean completed) {
-        isCompleted = completed;
-        if (completed && date == null) {
-            date = new Date(); // Set completion time when workout is marked as done
-        }
-    }*/
-
     public void addMetric(String type, double value) {
         if (metrics == null) {
             metrics = new HashMap<>();
         }
-        Log.d("WorkoutRecord", "Adding metric: " + type + " = " + value);
         metrics.put(type, value);
     }
 
