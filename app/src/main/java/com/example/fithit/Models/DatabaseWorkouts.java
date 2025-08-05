@@ -106,28 +106,6 @@ public class DatabaseWorkouts {
         return new ArrayList<>(workouts);
     }
 
-    // Get workouts by difficulty
-    public static List<Workout> getWorkoutsByDifficulty(DifficultyLevel difficulty) {
-        return workouts.stream()
-                .filter(workout -> workout.getDifficultyLevel() == difficulty)
-                .collect(Collectors.toList());
-    }
-
-    // Get workouts by category
-    public static List<Workout> getWorkoutsByCategory(String category) {
-        return workouts.stream()
-                .filter(workout -> workout.getCategory().equalsIgnoreCase(category))
-                .collect(Collectors.toList());
-    }
-
-    // Get workouts by duration range
-    public static List<Workout> getWorkoutsByDuration(int minMinutes, int maxMinutes) {
-        return workouts.stream()
-                .filter(workout -> workout.getEstimatedDuration() >= minMinutes
-                        && workout.getEstimatedDuration() <= maxMinutes)
-                .collect(Collectors.toList());
-    }
-
     // Get workout by ID
     public static Workout getWorkoutById(int id) {
         return workouts.stream()

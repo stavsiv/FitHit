@@ -53,10 +53,6 @@ public class Exercise {
     }
 
     // Getters
-    public int getExerciseId() {
-        return exerciseId;
-    }
-
     public String getExerciseName() {
         return exerciseName;
     }
@@ -121,6 +117,5 @@ public class Exercise {
                 return R.string.type_unknown;
         }
     }
-
 
 }

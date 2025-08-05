@@ -19,11 +19,6 @@ import com.example.fithit.Adapters.ExercisesAdapter;
 import com.example.fithit.Managers.FirebaseManager;
 import com.example.fithit.Models.Workout;
 import com.example.fithit.R;
-import com.example.fithit.Managers.ChallengeProgressManager;
-import com.example.fithit.Models.WorkoutRecord;
-import com.example.fithit.R;
-import java.util.Date;
-
 
 public class FragmentWorkoutDetails extends Fragment {
 

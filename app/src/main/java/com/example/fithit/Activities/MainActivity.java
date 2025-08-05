@@ -1,7 +1,6 @@
 package com.example.fithit.Activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -18,7 +17,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
@@ -42,10 +40,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mAuth = FirebaseAuth.getInstance();
-    }
-
-    public FirebaseAuth getFirebaseAuth() {
-        return mAuth;
     }
 
     public Task<AuthResult> login(String email, String password, View view) {
@@ -152,17 +146,4 @@ public class MainActivity extends AppCompatActivity {
         return password.matches(".*[^a-zA-Z0-9].*");
     }
 
-    public void addDataToDatabase(String email, String username, String phone,
-                                  int age, boolean wantReminders) {
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-
-        User user = new User();//(email, username, phone, age, weight, wantReminders);
-        usersRef.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(user).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(this, getString(R.string.user_data_saved_successfully), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, getString(R.string.failed_to_save_user_data), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 }

@@ -41,14 +41,6 @@ public class WorkoutChartManager {
         void onAnnouncement(String announcement);
     }
 
-    public WorkoutChartManager(LineChart chart, Context context) {
-        this.lineChart = chart;
-        this.combinedChart = null;
-        this.context = context;
-        this.isLineChart = true;
-        setupLineChart();
-    }
-
     public WorkoutChartManager(CombinedChart chart, Context context) {
         this.lineChart = null;
         this.combinedChart = chart;
@@ -215,14 +207,12 @@ public class WorkoutChartManager {
         }
 
         BarDataSet barDataSet = new BarDataSet(monthlyEntries, context.getString(R.string.workouts_per_month));
-// שינוי צבע העמודות לשחור/כהה יותר
-        barDataSet.setColor(context.getResources().getColor(android.R.color.black)); // שינוי לשחור
+        barDataSet.setColor(context.getResources().getColor(android.R.color.black));
         barDataSet.setValueTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
         barDataSet.setValueTextSize(12f);
         barDataSet.setHighLightAlpha(255);
         barDataSet.setDrawValues(true);
-// הוספת מסגרת לעמודות
-        barDataSet.setBarBorderWidth(1.0f); // מסגרת עבה יותר
+        barDataSet.setBarBorderWidth(1.0f);
         barDataSet.setBarBorderColor(context.getResources().getColor(R.color.colorPrimaryDark));
         barDataSet.setValueFormatter(new ValueFormatter() {
             @Override
@@ -233,7 +223,7 @@ public class WorkoutChartManager {
 
         LineDataSet lineDataSet = new LineDataSet(cumulativeEntries, context.getString(R.string.total_workouts));
         lineDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        lineDataSet.setColor(context.getResources().getColor(R.color.colorPrimary)); // שינוי הצבע לניגודיות עם העמודות
+        lineDataSet.setColor(context.getResources().getColor(R.color.colorPrimary));
         lineDataSet.setCircleColor(context.getResources().getColor(R.color.colorPrimaryDark));
         lineDataSet.setLineWidth(2.5f);
         lineDataSet.setCircleRadius(4f);
@@ -316,7 +306,7 @@ public class WorkoutChartManager {
         barDataSet.setLabel("Workouts Per Month");
         lineDataSet.setLabel("Total Workouts");
 
-// Update colors
+        // Update colors
         barDataSet.setColor(context.getResources().getColor(android.R.color.black));
         lineDataSet.setColor(context.getResources().getColor(R.color.colorAccent));
 

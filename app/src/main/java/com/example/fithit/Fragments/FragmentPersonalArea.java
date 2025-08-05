@@ -1,17 +1,12 @@
 package com.example.fithit.Fragments;
 
-import static com.example.fithit.R.string.challenge_not_found;
-
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,7 +47,7 @@ public class FragmentPersonalArea extends Fragment {
     private FirebaseManager firebaseManager;
     private View rootView;
     private RecyclerView equipmentRecyclerView;
-    private CombinedChart progressChart;
+    public CombinedChart progressChart;
     private EquipmentAdapter equipmentAdapter;
     private TextView tvUserName;
     private TextView tvDifficultyLevel;
@@ -61,9 +56,6 @@ public class FragmentPersonalArea extends Fragment {
     private RecyclerView challengesRecyclerView;
     private TextView tvNoChallenges;
     private WorkoutChartManager chartManager;
-    public static FragmentPersonalArea newInstance() {
-        return new FragmentPersonalArea();
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,11 +78,11 @@ public class FragmentPersonalArea extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loadUserData();
-        loadUserChallenges();    }
+        loadUserChallenges();
+    }
 
     private void initializeViews() {
         equipmentRecyclerView = rootView.findViewById(R.id.rv_equipment);
-        //progressChart = rootView.findViewById(R.id.chart_progress);
         progressChart = rootView.findViewById(R.id.chart_progress);
         chartManager = new WorkoutChartManager(progressChart, requireContext());
         tvUserName = rootView.findViewById(R.id.tv_user_name);
@@ -112,9 +104,7 @@ public class FragmentPersonalArea extends Fragment {
         MaterialButton btnAddEquipment = rootView.findViewById(R.id.btn_add_equipment);
         btnAddEquipment.setOnClickListener(v -> showEquipmentSelectionDialog());
 
-        chartManager.setOnChartAnnouncementListener(announcement -> {
-            announceForAccessibility(announcement);
-        });
+        chartManager.setOnChartAnnouncementListener(this::announceForAccessibility);
 
     }
 
@@ -237,7 +227,6 @@ public class FragmentPersonalArea extends Fragment {
                                         updates.put("challenge/completed", true);
                                         updates.put("challenge/currentProgress", record.getCurrentProgress());
 
-                                        final String finalRecordKey = recordKeyToUpdate;
                                         userChallengesRef.child(recordKeyToUpdate).updateChildren(updates)
                                                 .addOnSuccessListener(aVoid -> {
 
@@ -257,13 +246,10 @@ public class FragmentPersonalArea extends Fragment {
                                                                                 userChallengeAdapter.removeCompletedChallenge(record);
                                                                             })
                                                                             .addOnFailureListener(e -> {
-                                                                                if (!isAdded())
-                                                                                    return;
                                                                             });
                                                                 }
                                                             })
                                                             .addOnFailureListener(e -> {
-                                                                if (!isAdded()) return;
                                                             });
                                                 })
                                                 .addOnFailureListener(e -> {
@@ -273,7 +259,7 @@ public class FragmentPersonalArea extends Fragment {
                                                 });
                                     } else {
                                         if (!isAdded()) return;
-                                        Toast.makeText(requireContext(), challenge_not_found, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(requireContext(), getString(R.string.challenge_not_found), Toast.LENGTH_SHORT).show();
                                     }
                                 }).addOnFailureListener(e -> {
                                     if (!isAdded()) return;
@@ -300,6 +286,7 @@ public class FragmentPersonalArea extends Fragment {
         ChallengeProgressManager.getInstance().updateAllChallengesProgress();
         loadUserChallenges();
     }
+
     private void navigateToMainArea() {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().popBackStack();
@@ -374,6 +361,7 @@ public class FragmentPersonalArea extends Fragment {
         startActivity(intent);
         requireActivity().finish();
     }
+
     @SuppressLint({"RestrictedApi", "SetTextI18n"})
     private void updateUserProfileUI(User user) {
         if (user == null || !isAdded()) return;
@@ -403,15 +391,15 @@ public class FragmentPersonalArea extends Fragment {
         String workoutsLabel = getString(R.string.workouts);
         String maxLevel = getString(R.string.max_level_reached);
 
+        String progressText;
         if (heartsNeeded > 0) {
-            String progressText = heartsLabel + ": " + hearts + " (" + heartsNeeded + moreForNextLevel + ")\n" +
+            progressText = heartsLabel + ": " + hearts + " (" + heartsNeeded + moreForNextLevel + ")\n" +
                     completedLabel + " " + completedWorkouts + " / " + totalWorkouts + " " + workoutsLabel;
-            tvHeartsProgress.setText(progressText);
         } else {
-            String progressText = heartsLabel + ": " + hearts + " (" + maxLevel + ")\n" +
+            progressText = heartsLabel + ": " + hearts + " (" + maxLevel + ")\n" +
                     completedLabel + " " + completedWorkouts + " / " + totalWorkouts + " " + workoutsLabel;
-            tvHeartsProgress.setText(progressText);
         }
+        tvHeartsProgress.setText(progressText);
 
         int maxHearts = (difficulty == DifficultyLevel.BEGINNER) ? HEARTS_FOR_INTERMEDIATE :
                 (difficulty == DifficultyLevel.INTERMEDIATE) ? HEARTS_FOR_EXPERT : hearts;
@@ -435,7 +423,6 @@ public class FragmentPersonalArea extends Fragment {
         if (isSelected) {
             firebaseManager.addOrUpdateUserEquipment(userId, equipment)
                     .addOnSuccessListener(aVoid -> {
-                        if (!isAdded()) return;
                     })
                     .addOnFailureListener(e -> {
                         if (!isAdded()) return;
@@ -445,7 +432,6 @@ public class FragmentPersonalArea extends Fragment {
         } else {
             firebaseManager.removeEquipmentFromUser(userId, equipment.getDisplayName())
                     .addOnSuccessListener(aVoid -> {
-                        if (!isAdded()) return;
                     })
                     .addOnFailureListener(e -> {
                         if (!isAdded()) return;
@@ -481,41 +467,5 @@ public class FragmentPersonalArea extends Fragment {
         if (!isAdded()) return;
 
         saveAllEquipment();
-    }
-
-    private void showSimpleUpdateDialog(ChallengeRecord record) {
-        if (getContext() == null) return;
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(getString(R.string.progress_update) + record.getChallenge().getName());
-
-        final EditText input = new EditText(getContext());
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        input.setText(String.valueOf(record.getCurrentProgress()));
-        builder.setView(input);
-
-        builder.setPositiveButton(R.string.update, (dialog, which) -> {
-            try {
-                int newProgress = Integer.parseInt(input.getText().toString());
-                if (newProgress >= 0) {
-                    record.updateProgress(newProgress);
-
-                    firebaseManager.updateChallengeRecord(record)
-                            .addOnSuccessListener(aVoid -> {
-                                loadUserChallenges();
-                                Toast.makeText(getContext(), R.string.the_progress_was_updated_successfully, Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(getContext(), getString(R.string.error_updating_progress) + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            });
-                } else {Toast.makeText(getContext(), R.string.please_enter_a_positive_number, Toast.LENGTH_SHORT).show();
-                }
-            } catch (NumberFormatException e) {Toast.makeText(getContext(), R.string.please_enter_a_valid_number, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
-
-        builder.show();
     }
 }

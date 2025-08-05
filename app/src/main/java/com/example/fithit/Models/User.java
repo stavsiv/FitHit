@@ -38,75 +38,6 @@ public class User {
         this.totalHearts = 0;
     }
 
-    public void addWorkoutRecord(WorkoutRecord workoutRecord) {
-        if (workoutRecord != null) {
-            if (this.workoutHistory == null) {
-                this.workoutHistory = new ArrayList<>();
-            }
-            this.workoutHistory.add(workoutRecord);
-        }
-    }
-
-    public List<ChallengeRecord> getChallengeRecords() {
-        if (challengeRecords == null) {
-            challengeRecords = new ArrayList<>();
-        }
-        return challengeRecords;
-    }
-
-    public void setChallengeRecords(List<ChallengeRecord> challengeRecords) {
-        this.challengeRecords = challengeRecords;
-    }
-
-    public void addChallengeRecord(ChallengeRecord record) {
-        if (challengeRecords == null) {
-            challengeRecords = new ArrayList<>();
-        }
-        challengeRecords.add(record);
-    }
-
-    public void removeChallengeRecord(ChallengeRecord record) {
-        if (challengeRecords != null) {
-            challengeRecords.remove(record);
-        }
-    }
-
-    public int getActiveChallengesCount() {
-        if (challengeRecords == null) return 0;
-
-        int count = 0;
-        for (ChallengeRecord record : challengeRecords) {
-            if (record.isActive()) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public List<ChallengeRecord> getActiveChallengeRecords() {
-        List<ChallengeRecord> active = new ArrayList<>();
-        if (challengeRecords != null) {
-            for (ChallengeRecord record : challengeRecords) {
-                if (record.isActive()) {
-                    active.add(record);
-                }
-            }
-        }
-        return active;
-    }
-
-    public List<ChallengeRecord> getCompletedChallengeRecords() {
-        List<ChallengeRecord> completed = new ArrayList<>();
-        if (challengeRecords != null) {
-            for (ChallengeRecord record : challengeRecords) {
-                if (record.isCompleted()) {
-                    completed.add(record);
-                }
-            }
-        }
-        return completed;
-    }
-
     public void addHearts(int heartsEarned) {
         this.totalHearts += heartsEarned;
         checkAndUpdateDifficultyLevel();
@@ -155,40 +86,8 @@ public class User {
         return totalHearts;
     }
 
-    public void setTotalHearts(int totalHearts) {
-        this.totalHearts = totalHearts;
-    }
-
     public String getUserName() {
         return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public boolean isWantReminders() {
-        return wantReminders;
-    }
-
-    public void setWantReminders(boolean wantReminders) {
-        this.wantReminders = wantReminders;
     }
 
     public DifficultyLevel getCurrentDifficulty() {
@@ -198,15 +97,6 @@ public class User {
     public void setCurrentDifficulty(DifficultyLevel currentDifficulty) {
         this.currentDifficulty = currentDifficulty;
     }
-
-    public List<Equipment> getUserEquipment() {
-        return userEquipment;
-    }
-
-    public void setUserEquipment(List<Equipment> userEquipment) {
-        this.userEquipment = userEquipment;
-    }
-
     public int getTotalWorkouts() {
         return workoutHistory != null ? workoutHistory.size() : 0;
     }
