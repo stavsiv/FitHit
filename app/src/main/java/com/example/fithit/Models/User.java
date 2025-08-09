@@ -12,6 +12,7 @@ public class User {
     private String userId;
     private String userName;
     private String phone;
+    private String email;
     private int age;
     private boolean wantReminders;
     private DifficultyLevel currentDifficulty;
@@ -23,12 +24,13 @@ public class User {
     public User() {
     }
 
-    public User(String userName, String phone, int age, boolean wantReminders) {
+    public User(String userName, String phone, int age, boolean wantReminders, String email) {
         this.userId = String.valueOf(nextUserId++);
         this.userName = userName;
         this.phone = phone;
         this.age = age;
         this.wantReminders = wantReminders;
+        this.email = email;
 
         this.currentDifficulty = DifficultyLevel.BEGINNER;
         this.userEquipment = new ArrayList<>();
@@ -80,6 +82,14 @@ public class User {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getEmail(){
+        return email;
+    }
+
+    public void setEmail(String email){
+        this.email = email;
     }
 
     public int getTotalHearts() {

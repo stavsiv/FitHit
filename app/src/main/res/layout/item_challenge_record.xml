@@ -100,12 +100,14 @@
 
             <Button
                 android:id="@+id/btnRemoveUserChallenge"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/remove_challenge"
+                android:textSize="12sp"
+                android:textAllCaps="false"
                 android:textColor="@android:color/holo_red_light"
-                android:textSize="12sp" />
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
 
             <CheckBox
                 android:id="@+id/checkboxChallengeComplete"

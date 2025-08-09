@@ -12,6 +12,7 @@ import com.example.fithit.Models.WorkoutRecord;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -46,32 +47,59 @@ public class FirebaseManager {
 
     public Task<User> getCurrentUserData() {
         String userId = getCurrentUserId();
+        Log.d("FirebaseManager", "getCurrentUserData called for userId: " + userId);
+
         if (userId == null) {
+            Log.e("FirebaseManager", "No user is currently logged in");
             return Tasks.forException(new Exception("No user is currently logged in"));
         }
 
         return dbRef.child(USERS_NODE).child(userId).get()
                 .continueWith(task -> {
+                    Log.d("FirebaseManager", "Database query completed. Success: " + task.isSuccessful());
+
                     if (!task.isSuccessful()) {
-                        throw Objects.requireNonNull(task.getException());
-                    }
-                    DataSnapshot dataSnapshot = task.getResult();
-                    User user = createUserFromSnapshot(dataSnapshot);
-                    if (user == null) {
-                        throw new Exception("Failed to parse user data");
+                        Exception exception = task.getException();
+                        Log.e("FirebaseManager", "Database query failed: " + exception.getMessage());
+                        throw Objects.requireNonNull(exception);
                     }
 
+                    DataSnapshot dataSnapshot = task.getResult();
+
+                    // Add null check for dataSnapshot
+                    if (dataSnapshot == null || !dataSnapshot.exists()) {
+                        throw new Exception("User data not found for user ID: " + userId);
+                    }
+
+                    User user = createUserFromSnapshot(dataSnapshot);
+                    if (user == null) {
+                        throw new Exception("Failed to parse user data for user ID: " + userId);
+                    }
+
+                    // Set default values if missing and update Firebase
+                    boolean needsUpdate = false;
+
                     if (user.getLevel() <= 0) {
-                        //
+                        user.getLevel();
+                        needsUpdate = true;
                     }
 
                     if (user.getCurrentDifficulty() == null) {
                         user.setCurrentDifficulty(DifficultyLevel.BEGINNER);
+                        needsUpdate = true;
+                    }
+
+                    // If we updated default values, save them back to Firebase
+                    if (needsUpdate) {
+                        updateUserData(user).addOnFailureListener(e -> {
+                            Log.e("FirebaseManager", "Failed to update default user values", e);
+                        });
                     }
 
                     return user;
                 });
     }
+
     public User createUserFromSnapshot(DataSnapshot snapshot) {
         try {
             String email = snapshot.child("email").getValue(String.class);
@@ -81,15 +109,42 @@ public class FirebaseManager {
             Boolean wantReminders = snapshot.child("wantReminders").getValue(Boolean.class);
             Integer totalHearts = snapshot.child("totalHearts").getValue(Integer.class);
 
-            if (email == null || username == null || phone == null ||
-                    age == null ||  wantReminders == null) {
+            if (email == null) {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    email = currentUser.getEmail();
+                }
+            }
+
+            // Check only required fields (excluding email since it might not be stored in the database)
+            if (username == null || phone == null || age == null || wantReminders == null || email == null) {
+                Log.e("FirebaseManager", "Missing required fields - username: " + username +
+                        ", phone: " + phone + ", age: " + age + ", wantReminders: " + wantReminders);
                 return null;
             }
 
-            User user = new User(username, phone, age, wantReminders);
+            User user = new User(username, phone, age, wantReminders, email);
+            if (email != null) {
+                user.setEmail(email);
+            }
 
             if (totalHearts != null) {
                 user.addHearts(totalHearts);
+            }
+
+            Integer level = snapshot.child("level").getValue(Integer.class);
+            if (level != null) {
+                user.getLevel();
+            }
+
+            String difficultyStr = snapshot.child("currentDifficulty").getValue(String.class);
+            if (difficultyStr != null) {
+                try {
+                    DifficultyLevel difficulty = DifficultyLevel.valueOf(difficultyStr);
+                    user.setCurrentDifficulty(difficulty);
+                } catch (IllegalArgumentException e) {
+                    user.setCurrentDifficulty(DifficultyLevel.BEGINNER);
+                }
             }
 
             DataSnapshot workoutHistorySnapshot = snapshot.child("workoutHistory");
@@ -128,14 +183,14 @@ public class FirebaseManager {
 
                         workoutHistory.add(record);
                     } catch (Exception e) {
-                        // Handle parsing errors
+                        Log.w("FirebaseManager", "Failed to parse workout record", e);
                     }
                 }
                 user.setWorkoutHistory(workoutHistory);
             }
-
             return user;
         } catch (Exception e) {
+            Log.e("FirebaseManager", "Exception in createUserFromSnapshot", e);
             return null;
         }
     }

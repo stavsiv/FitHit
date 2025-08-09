@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/fithit"
+        android:text="@string/app_name"
         android:textSize="28sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -47,7 +47,7 @@
                     android:layout_height="24dp"
                     android:src="@android:drawable/ic_popup_reminder"
                     android:contentDescription="@string/alert_icon"
-                    app:tint="@color/design_default_color_primary" />
+                    app:tint="@android:color/holo_red_light" />
 
                 <TextView
                     android:id="@+id/alert_text"
@@ -75,9 +75,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@android:drawable/ic_menu_myplaces"
-                android:padding="16dp"
+                android:padding="12dp"
                 android:contentDescription="@string/personal_area_icon_desc"
-                app:tint="@color/design_default_color_primary" />
+                app:tint="@android:color/holo_red_light" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
@@ -107,30 +107,37 @@
             <CalendarView
                 android:id="@+id/calendar_view"
                 android:layout_width="match_parent"
-                android:layout_height="317dp"
-                android:layout_marginBottom="4dp"
+                android:layout_height="250dp"
+                android:layout_marginBottom="8dp"
                 style="@style/CustomCalendarView" />
 
+            <!-- תצוגת אימונים מוגדלת -->
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp">
 
                 <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="match_parent"
                     android:overScrollMode="never"
-                    android:scrollbars="vertical">
+                    android:scrollbars="vertical"
+                    android:fillViewport="true">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/selected_date_workouts"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
                         android:visibility="gone"
-                        tools:visibility="visible"
-                        tools:itemCount="1"
-                        tools:listitem="@layout/item_workout" />
+                        tools:ignore="SpeakableTextPresentCheck"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_workout"
+                        tools:visibility="visible" />
                 </androidx.core.widget.NestedScrollView>
 
                 <TextView
@@ -140,12 +147,13 @@
                     android:text="@string/no_workouts"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textColor="@color/design_default_color_on_surface"
                     android:visibility="gone"
                     tools:visibility="visible" />
             </FrameLayout>
 
+            <!-- כפתורים -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -161,9 +169,11 @@
                     android:layout_marginEnd="4dp"
                     android:enabled="false"
                     android:text="@string/cancel_workout"
+                    android:textSize="14sp"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     app:icon="@android:drawable/ic_menu_close_clear_cancel"
-                    app:iconGravity="textStart" />
+                    app:iconGravity="textStart"
+                    app:iconSize="18dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_add_workout"
@@ -173,8 +183,10 @@
                     android:layout_marginStart="4dp"
                     android:enabled="false"
                     android:text="@string/add_workout"
+                    android:textSize="14sp"
                     app:icon="@android:drawable/ic_input_add"
-                    app:iconGravity="textStart" />
+                    app:iconGravity="textStart"
+                    app:iconSize="18dp" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                     if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
                         String userId = mAuth.getCurrentUser().getUid();
 
-                        User newUser = new User(username, phone, age, wantReminders);
+                        User newUser = new User(username, phone, age, wantReminders, email);
                         newUser.setUserId(userId);
 
                         FirebaseDatabase.getInstance().getReference("users")
