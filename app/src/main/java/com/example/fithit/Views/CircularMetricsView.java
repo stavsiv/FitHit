@@ -9,6 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.example.fithit.Models.Metric;
@@ -67,10 +69,10 @@ public class CircularMetricsView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawCircle(centerX, centerY, radius * 0.6f, centerCirclePaint);  // הגדלת הרדיוס מ-0.5f ל-0.6f
+        canvas.drawCircle(centerX, centerY, radius * 0.6f, centerCirclePaint);
 
         String valueText = selectedMetric != null ?
                 String.format("%.0f%s", currentValue, getUnitForMetric(selectedMetric)) : "0";
@@ -96,10 +98,10 @@ public class CircularMetricsView extends View {
             if (icon != null) {
                 int iconSize = (int) (iconRadius * 1.2f);
                 icon.setBounds(
-                        (int) (x - iconSize / 2),
-                        (int) (y - iconSize / 2),
-                        (int) (x + iconSize / 2),
-                        (int) (y + iconSize / 2)
+                        (int) (x - (float) iconSize / 2),
+                        (int) (y - (float) iconSize / 2),
+                        (int) (x + (float) iconSize / 2),
+                        (int) (y + (float) iconSize / 2)
                 );
                 icon.setTint(getColorForMetric(type));
                 icon.draw(canvas);

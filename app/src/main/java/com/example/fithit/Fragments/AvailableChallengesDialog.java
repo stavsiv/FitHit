@@ -90,9 +90,6 @@ public class AvailableChallengesDialog extends DialogFragment {
                     }
 
                     List<Challenge> allChallenges = Challenge.ALL_CHALLENGES;
-                    if (allChallenges == null) {
-                        allChallenges = new ArrayList<>();
-                    }
 
                     if (!isAdded()) return;
                     progressLoading.setVisibility(View.GONE);
@@ -146,7 +143,7 @@ public class AvailableChallengesDialog extends DialogFragment {
         if (dialog != null) {
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            dialog.getWindow().setLayout(width, height);
+            Objects.requireNonNull(dialog.getWindow()).setLayout(width, height);
         }
     }
     public void setOnChallengeSelectedListener(OnChallengeSelectedListener listener) {

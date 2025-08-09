@@ -214,5 +214,13 @@
     <string name="total_workouts">סך אימונים</string>
     <string name="workout_progress_over_time">התקדמות אימונים לאורך זמן</string>
     <string name="workouts_in_month">אימונים בחודש</string>
+    <string name="level_up">עליית רמה</string>
+    <string name="failed_to_update_user_hearts">שגיאה בעדכון לבבות המשתמש: </string>
+    <string name="failed_to_load_user_for_hearts_update">שגיאה בטעינת נתוני משתמש לעדכון לבבות: </string>
+    <string name="Logout">התנתק</string>
+    <string name="logout_confirmation_title">התנתקות</string>
+    <string name="logout_confirmation_message">האם אתה בטוח שברצונך להתנתק?</string>
+    <string name="logout_successful">התנתקת בהצלחה</string>
+    <string name="logout_error">שגיאה בהתנתקות</string>
 
 </resources>

@@ -590,12 +590,6 @@ public class DatabaseExercises {
                 .collect(Collectors.toList());
     }
 
-    public static List<Exercise> getExercisesByDifficulty(DifficultyLevel difficulty) {
-        return exercises.stream()
-                .filter(exercise -> exercise.getDifficultyLevel() == difficulty)
-                .collect(Collectors.toList());
-    }
-
     public static List<Exercise> getExercisesByTypeAndDifficulty(
             ExerciseType type,
             DifficultyLevel difficulty,

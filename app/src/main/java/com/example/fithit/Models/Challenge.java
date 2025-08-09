@@ -1,7 +1,6 @@
 package com.example.fithit.Models;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -131,7 +130,6 @@ public class Challenge {
     private boolean isCompleted;
     private int currentProgress;
 
-
     public Challenge() {
     }
 
@@ -156,32 +154,6 @@ public class Challenge {
 
     public void setCurrentProgress(int currentProgress) {
         this.currentProgress = currentProgress;
-    }
-
-    public boolean checkCompletion(User user, int actualValue) {
-        currentProgress = actualValue;
-        isCompleted = actualValue >= targetValue;
-        if (isCompleted) {
-            user.addHearts(heartsReward);
-        }
-        return isCompleted;
-    }
-
-    public static List<Challenge> getChallengesByType(String type) {
-        List<Challenge> typedChallenges = new ArrayList<>();
-        for (Challenge challenge : ALL_CHALLENGES) {
-            if (challenge.getType().equals(type)) {
-                typedChallenges.add(challenge);
-            }
-        }
-        return typedChallenges;
-    }
-
-    public void reset() {
-        this.startDate = System.currentTimeMillis();
-        int durationDays = type.equals("DAILY") ? 1 : 7;
-        this.endDate = this.startDate + (durationDays * 24 * 60 * 60 * 1000L);
-        this.isCompleted = false;
     }
 
     // Getters and Setters
@@ -265,21 +237,4 @@ public class Challenge {
         isCompleted = completed;
     }
 
-    public boolean isExpired() {
-        return System.currentTimeMillis() > endDate;
-    }
-
-    public int getDaysRemaining() {
-        long diff = endDate - System.currentTimeMillis();
-        if (diff <= 0) return 0;
-        return (int) (diff / (24 * 60 * 60 * 1000L));
-    }
-
-    public String getFormattedEndDate() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(endDate);
-        return (cal.get(Calendar.DAY_OF_MONTH) + "/" +
-                (cal.get(Calendar.MONTH) + 1) + "/" +
-                cal.get(Calendar.YEAR));
-    }
 }

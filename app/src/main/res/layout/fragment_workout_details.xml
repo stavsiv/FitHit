@@ -87,15 +87,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:textAllCaps="false"
-                android:text="@string/back_to_main" />
+                android:text="@string/back_to_main"
+                android:textColor="@android:color/holo_red_light"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
             <Button
                 android:id="@+id/finish_workout_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAllCaps="false"
-
-                android:text="@string/finished_workout" />
+                android:text="@string/finished_workout"
+                android:textColor="@android:color/holo_red_light"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
         </LinearLayout>
 
     </LinearLayout>

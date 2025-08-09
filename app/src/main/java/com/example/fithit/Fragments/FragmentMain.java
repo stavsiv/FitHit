@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+
 public class FragmentMain extends Fragment {
     private MaterialCardView btnToPersonalArea;
     private MaterialCardView upcomingWorkoutAlert;
@@ -51,7 +52,6 @@ public class FragmentMain extends Fragment {
     private TextView noWorkoutsText;
     private UserWorkoutsAdapter workoutsAdapter;
 
-    private ValueEventListener upcomingWorkoutsListener;
     private ValueEventListener selectedDateWorkoutsListener;
 
 
@@ -326,60 +326,6 @@ public class FragmentMain extends Fragment {
         }
     }
 
-
-
-
-//    private void loadWorkoutsForSelectedDate() {
-//        if (selectedDate == null) {
-//            selectedDateWorkouts.setVisibility(View.GONE);
-//            noWorkoutsText.setVisibility(View.VISIBLE);
-//            return;
-//        }
-//
-//        FirebaseManager.getInstance().getWorkoutsByDate(selectedDate, new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                List<WorkoutRecord> workouts = new ArrayList<>();
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    try {
-//                        WorkoutRecord record = snapshot.getValue(WorkoutRecord.class);
-//                        if (record != null) {
-//                            if (record.getWorkout() != null) {
-//                                workouts.add(record);
-//                                try {
-//                                   //
-//                                } catch (Exception e) {
-//                                 //
-//                                }
-//                            } else {
-//                                // Handle the case where the workout is null
-//                            }
-//                        }
-//                    } catch (Exception e) {
-//
-//                    }
-//                }
-//
-//                if (workouts.isEmpty()) {
-//                    selectedDateWorkouts.setVisibility(View.GONE);
-//                    noWorkoutsText.setVisibility(View.VISIBLE);
-//                } else {
-//                    workoutsAdapter.setWorkouts(workouts);
-//                    selectedDateWorkouts.setVisibility(View.VISIBLE);
-//                    noWorkoutsText.setVisibility(View.GONE);
-//                }
-//
-//                updateWorkoutButtons();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                selectedDateWorkouts.setVisibility(View.GONE);
-//                noWorkoutsText.setVisibility(View.VISIBLE);
-//            }
-//        });
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -387,52 +333,6 @@ public class FragmentMain extends Fragment {
             loadWorkoutsForSelectedDate();
         }
     }
-//    private void loadUserData() {
-//        upcomingWorkoutAlert.setVisibility(View.GONE);
-//        TextView alertText = upcomingWorkoutAlert.findViewById(R.id.alert_text);
-//
-//        try {
-//            FirebaseManager.getInstance().getUpcomingWorkouts(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    boolean hasUpcomingWorkout = false;
-//                    WorkoutRecord nextWorkout = null;
-//                    long earliestTime = Long.MAX_VALUE;
-//
-//                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                        try {
-//                            WorkoutRecord record = snapshot.getValue(WorkoutRecord.class);
-//                            if (record != null && record.getWorkout() != null && record.getDate() > System.currentTimeMillis()) {
-//                                if (record.getDate() < earliestTime) {
-//                                    earliestTime = record.getDate();
-//                                    nextWorkout = record;
-//                                    hasUpcomingWorkout = true;
-//                                }
-//                            }
-//                        } catch (Exception e) {
-//                            //
-//                        }
-//                    }
-//
-//                    if (hasUpcomingWorkout && nextWorkout != null) {
-//                        showUpcomingWorkoutAlert(nextWorkout.getWorkout(), new Date(nextWorkout.getDate()));
-//                    } else {
-//                        if (alertText != null) {
-//                            alertText.setText(R.string.no_upcoming_workouts_scheduled);
-//                            upcomingWorkoutAlert.setVisibility(View.VISIBLE);
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError error) {
-//                    upcomingWorkoutAlert.setVisibility(View.GONE);
-//                }
-//            });
-//        } catch (Exception e) {
-//            upcomingWorkoutAlert.setVisibility(View.GONE);
-//        }
-//    }
 
     private void loadUserData() {
         upcomingWorkoutAlert.setVisibility(View.GONE);
@@ -440,7 +340,9 @@ public class FragmentMain extends Fragment {
 
         try {
             // Create and store the listener
-            upcomingWorkoutsListener = new ValueEventListener() {
+            // Check if fragment is still attached
+            //
+            ValueEventListener upcomingWorkoutsListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     // Check if fragment is still attached
@@ -465,7 +367,7 @@ public class FragmentMain extends Fragment {
                         }
                     }
 
-                    if (hasUpcomingWorkout && nextWorkout != null && isAdded()) {
+                    if (hasUpcomingWorkout && isAdded()) {
                         showUpcomingWorkoutAlert(nextWorkout.getWorkout(), new Date(nextWorkout.getDate()));
                     } else {
                         if (alertText != null && isAdded()) {
@@ -476,7 +378,7 @@ public class FragmentMain extends Fragment {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError error) {
+                public void onCancelled(@NonNull DatabaseError error) {
                     if (isAdded() && upcomingWorkoutAlert != null) {
                         upcomingWorkoutAlert.setVisibility(View.GONE);
                     }
@@ -507,7 +409,6 @@ public class FragmentMain extends Fragment {
             if (alertText != null) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd", Locale.getDefault());
                 String formattedDate = dateFormat.format(workoutDate);
-                // We know the fragment is attached here, so it's safe to call getString
                 String alertMessage = String.format(getString(R.string.upcoming_workout), workout.getName(), formattedDate);
                 alertText.setText(alertMessage);
             }
@@ -555,7 +456,7 @@ public class FragmentMain extends Fragment {
 
     private void navigateToPersonalArea() {
         try {
-            Navigation.findNavController(getView()).navigate(R.id.action_fragmentMain_to_fragmentPersonalArea);
+            Navigation.findNavController(requireView()).navigate(R.id.action_fragmentMain_to_fragmentPersonalArea);
         } catch (Exception e) {
             Context context = getContext();
             if (context != null) {
@@ -573,29 +474,18 @@ public class FragmentMain extends Fragment {
                     .setMessage(R.string.choose_workout_type).setPositiveButton(R.string.choose_from_existing_workouts, (dialog, which) -> {
                         Bundle args = new Bundle();
                         args.putLong(getString(R.string.selectedDate), selectedDate.getTime()); // Pass the selected date
-                        Navigation.findNavController(getView())
+                        Navigation.findNavController(requireView())
                                 .navigate(R.id.action_fragmentMain_to_fragmentWorkouts, args);
                     }).setNegativeButton(R.string.create_custom_workout, (dialog, which) -> showCustomWorkoutDialog())
                     .show();
         }
     }
-
-//    private void showCustomWorkoutDialog() {
-//        try {
-//            Bundle args = new Bundle();
-//            args.putLong(String.valueOf(R.string.selectedDate), selectedDate.getTime());
-//            Navigation.findNavController(getView())
-//                    .navigate(R.id.action_fragmentMain_to_customWorkoutDialogFragment, args);
-//        } catch (Exception e) {
-//            Toast.makeText(getContext(), getString(R.string.error_opening_custom_workout) + e.getMessage(), Toast.LENGTH_SHORT).show();}
-//    }
-
     private void showCustomWorkoutDialog() {
         try {
             Bundle args = new Bundle();
             // Don't use String.valueOf - it converts resource ID to a string like "2131951720"
             args.putLong(getString(R.string.selectedDate), selectedDate.getTime());
-            Navigation.findNavController(getView())
+            Navigation.findNavController(requireView())
                     .navigate(R.id.action_fragmentMain_to_customWorkoutDialogFragment, args);
         } catch (Exception e) {
             if (isAdded() && getContext() != null) {
@@ -619,7 +509,7 @@ public class FragmentMain extends Fragment {
         if (selectedDate != null) {
             FirebaseManager.getInstance().getWorkoutsByDate(selectedDate, new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         snapshot.getRef().removeValue()
                                 .addOnSuccessListener(aVoid -> {Toast.makeText(getContext(), R.string.cancel_workout, Toast.LENGTH_SHORT).show();})
@@ -631,7 +521,7 @@ public class FragmentMain extends Fragment {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError error) {
+                public void onCancelled(@NonNull DatabaseError error) {
                     Toast.makeText(getContext(), getString(R.string.error) + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -640,7 +530,7 @@ public class FragmentMain extends Fragment {
     private void checkIfDateHasWorkout(Date date, OnWorkoutCheckListener listener) {
         FirebaseManager.getInstance().getWorkoutsByDate(date, new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<WorkoutRecord> workouts = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     WorkoutRecord record = snapshot.getValue(WorkoutRecord.class);
@@ -662,7 +552,7 @@ public class FragmentMain extends Fragment {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 selectedDateWorkouts.setVisibility(View.GONE);
                 noWorkoutsText.setVisibility(View.GONE);
                 listener.onResult(false);

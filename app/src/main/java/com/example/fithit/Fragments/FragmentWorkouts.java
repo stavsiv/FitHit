@@ -94,7 +94,6 @@ import com.example.fithit.Managers.FirebaseManager;
 import com.example.fithit.Models.DatabaseWorkouts;
 import com.example.fithit.Models.Workout;
 import com.example.fithit.Models.WorkoutRecord;
-import com.example.fithit.R;
 
 import java.util.Calendar;
 import java.util.Date;

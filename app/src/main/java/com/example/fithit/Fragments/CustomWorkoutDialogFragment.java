@@ -1,5 +1,6 @@
 package com.example.fithit.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -136,6 +137,7 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void adjustPercentage(TextView percentageView, int change) {
         int currentValue = getCurrentPercentage(percentageView);
         int newValue = currentValue + change;
@@ -190,13 +192,8 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
                 getCurrentPercentage(stretchingPercentage),
                 getCurrentPercentage(balancePercentage),
                 DifficultyLevel.BEGINNER,
-                new ArrayList<EquipmentType>()
+                new ArrayList<>()
         );
-
-        if (workout == null) {
-            Toast.makeText(requireContext(), "Failed to generate workout", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(selectedDate);
@@ -225,7 +222,4 @@ public class CustomWorkoutDialogFragment extends DialogFragment {
                         Toast.LENGTH_SHORT).show());
     }
 
-    public interface OnWorkoutGeneratedListener {
-        void onWorkoutGenerated(Workout workout);
-    }
 }

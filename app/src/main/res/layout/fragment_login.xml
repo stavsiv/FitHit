@@ -61,14 +61,15 @@
             android:id="@+id/buttonLoginMain"
             android:text="@string/login"
             android:textAllCaps="false"
-            tools:ignore="HardcodedText,VisualLintButtonSize" />
+            android:textColor="@android:color/holo_red_light"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/buttonLoginToRegister"
             android:text="@string/register"
             android:textAllCaps="false"
-            tools:ignore="HardcodedText,VisualLintButtonSize" />
-
+            android:textColor="@android:color/holo_red_light"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
     </LinearLayout>
 </LinearLayout>

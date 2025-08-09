@@ -1,11 +1,6 @@
 package com.example.fithit.Fragments;
-
-import static com.example.fithit.R.*;
-import static com.example.fithit.R.string.please_fill_all_fields;
-
 import androidx.fragment.app.Fragment;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +45,7 @@ public class FragmentRegister extends Fragment {
             String ageStr = editTextAge.getText().toString().trim();
 
             if (ageStr.isEmpty()) {
-                Toast.makeText(getContext(), please_fill_all_fields, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.please_fill_all_fields, Toast.LENGTH_SHORT).show();
                 return;
             }
             try {

@@ -153,16 +153,6 @@ public class AvailableChallengeAdapter extends RecyclerView.Adapter<AvailableCha
         notifyDataSetChanged();
     }
 
-    public void filterByType(String type) {
-        if (type == null || type.isEmpty() || type.equals("ALL")) {
-            notifyDataSetChanged();
-            return;
-        }
-
-        this.availableChallenges = Challenge.getChallengesByType(type);
-        notifyDataSetChanged();
-    }
-
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
         TextView tvDescription;

@@ -30,44 +30,6 @@ public class ChallengeProgressManager {
         return instance;
     }
 
-
-    public void processWorkoutCompletion(WorkoutRecord workoutRecord) {
-        if (workoutRecord == null || !workoutRecord.isCompleted()) {
-            return;
-        }
-
-        firebaseManager.getUserChallengeRecords()
-                .addOnSuccessListener(records -> {
-                    if (records == null || records.isEmpty()) return;
-
-                    firebaseManager.getCurrentUserData()
-                            .addOnSuccessListener(user -> {
-                                if (user == null) return;
-
-                                boolean recordsUpdated = false;
-
-                                for (ChallengeRecord record : records) {
-                                    if (record != null && record.isActive()) {
-                                        boolean wasUpdated = record.trackWorkoutCompletion(workoutRecord);
-                                        if (wasUpdated) {
-                                            firebaseManager.updateChallengeRecord(record)
-                                                    .addOnFailureListener(e -> Log.e(TAG, "Error updating challenge record: " + e.getMessage()));
-                                            recordsUpdated = true;
-                                        }
-                                    }
-                                }
-
-                                // If any records were updated, update user data (hearts may have changed)
-                                if (recordsUpdated) {
-                                    firebaseManager.updateUserData(user)
-                                            .addOnFailureListener(e -> Log.e(TAG, "Error updating user data: " + e.getMessage()));
-                                }
-                            })
-                            .addOnFailureListener(e -> Log.e(TAG, "Error getting user data: " + e.getMessage()));
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "Error getting challenge records: " + e.getMessage()));
-    }
-
     public void updateAllChallengesProgress() {
         firebaseManager.getUserChallengeRecords()
                 .addOnSuccessListener(records -> {
@@ -281,11 +243,6 @@ public class ChallengeProgressManager {
                 .addOnFailureListener(e -> Log.e(TAG, "Error adding challenge: " + e.getMessage()));
     }
 
-    public void removeChallengeForUser(ChallengeRecord record) {
-        firebaseManager.removeChallengeRecord(record)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Challenge removed successfully"))
-                .addOnFailureListener(e -> Log.e(TAG, "Error removing challenge: " + e.getMessage()));
-    }
 
 
     public void renewChallenge(ChallengeRecord record) {
@@ -293,7 +250,7 @@ public class ChallengeProgressManager {
 
         record.renew();
         firebaseManager.updateChallengeRecord(record)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Challenge renewed successfully: " + record.getChallengeName()))
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Challenge renewed successfully: " + record.getChallenge()))
                 .addOnFailureListener(e -> Log.e(TAG, "Error renewing challenge: " + e.getMessage()));
     }
 

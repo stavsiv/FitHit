@@ -1,6 +1,5 @@
 package com.example.fithit.Adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +24,13 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
     private List<ChallengeRecord> challengeRecords;
     private OnChallengeActionListener listener;
     private OnListEmptyListener emptyListener;
+
     public interface OnChallengeActionListener {
         void onChallengeRemove(ChallengeRecord record);
         void onChallengeRenew(ChallengeRecord record);
         void onChallengeCompleted(ChallengeRecord record);
     }
+
     public interface OnListEmptyListener {
         void onListEmpty();
     }
@@ -70,44 +71,42 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
 
         boolean canMarkComplete = currentProgress >= targetValue && !record.isCompleted() && !record.isExpired();
 
+        holder.checkboxComplete.setOnCheckedChangeListener(null);
         holder.checkboxComplete.setChecked(record.isCompleted());
-        holder.checkboxComplete.setEnabled(canMarkComplete);
+        holder.checkboxComplete.setEnabled(canMarkComplete || record.isCompleted());
 
         holder.checkboxComplete.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked && canMarkComplete) {
-                if (record.getCurrentProgress() >= challenge.getTargetValue()) {
-                    // Update progress to target value to mark challenge as completed
-                    record.updateProgress(challenge.getTargetValue());
-                    record.setCompleted(true);
-                    if (listener != null) {
-                        listener.onChallengeCompleted(record);
-                    } else {
-                        // Handle the case where listener is null
-                    }
-                } else {
-                    buttonView.setChecked(false);
+            if (isChecked && canMarkComplete && !record.isCompleted()) {
+
+                if (listener != null) {
+                    listener.onChallengeCompleted(record);
                 }
+            } else if (!isChecked && record.isCompleted()) {
+                buttonView.setChecked(true);
+            } else if (!canMarkComplete && isChecked) {
+                buttonView.setChecked(false);
             }
         });
 
         holder.progressBar.setMax(targetValue);
-        holder.progressBar.setProgress(currentProgress);
+        holder.progressBar.setProgress(Math.min(currentProgress, targetValue));
 
         if (record.isCompleted()) {
-            String progressText = (R.string.completed) + targetValue + "/" + targetValue;
+            String progressText = holder.itemView.getContext().getString(R.string.completed) + " " + targetValue + "/" + targetValue;
             holder.tvProgress.setText(progressText);
-            holder.tvStatus.setText(R.string.completed_v);
+            holder.tvStatus.setText(holder.itemView.getContext().getString(R.string.completed_v));
             holder.tvStatus.setVisibility(View.VISIBLE);
-
-            holder.progressBar.setProgressTintList(holder.itemView.getContext().getResources().getColorStateList(android.R.color.holo_green_dark));
+            holder.progressBar.setProgressTintList(
+                    holder.itemView.getContext().getResources().getColorStateList(android.R.color.holo_green_dark));
 
             if (holder.btnRenew != null) {
                 holder.btnRenew.setVisibility(View.GONE);
             }
         } else if (record.isExpired()) {
-            holder.tvStatus.setText(R.string.expired);
+            holder.tvStatus.setText(holder.itemView.getContext().getString(R.string.expired));
             holder.tvStatus.setVisibility(View.VISIBLE);
-            holder.tvStatus.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.holo_red_dark));
+            holder.tvStatus.setTextColor(
+                    holder.itemView.getContext().getResources().getColor(android.R.color.holo_red_dark));
 
             if (holder.btnRenew != null) {
                 holder.btnRenew.setVisibility(View.VISIBLE);
@@ -118,10 +117,12 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
                 });
             }
         } else {
-            int remaining = targetValue - currentProgress;
-            String progressText = (R.string.progress) + currentProgress + "/" + targetValue;
+            int remaining = Math.max(0, targetValue - currentProgress);
+            String progressText = holder.itemView.getContext().getString(R.string.progress) + " " +
+                    Math.min(currentProgress, targetValue) + "/" + targetValue;
             if (remaining > 0) {
-                progressText += " (" + remaining + " " + getUnitLabel(challenge) + (R.string.left);
+                progressText += " (" + remaining + " " + getUnitLabel(challenge) + " " +
+                        holder.itemView.getContext().getString(R.string.left) + ")";
             }
             holder.tvProgress.setText(progressText);
             holder.tvStatus.setVisibility(View.GONE);
@@ -133,7 +134,8 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
 
         if (record.getEndDate() > 0) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            String endDate =(R.string.valid_until) + dateFormat.format(new Date(record.getEndDate()));
+            String endDate = holder.itemView.getContext().getString(R.string.valid_until) + " " +
+                    dateFormat.format(new Date(record.getEndDate()));
             holder.tvExpiration.setText(endDate);
 
             int daysRemaining = record.getDaysRemaining();
@@ -158,6 +160,7 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
             }
         });
     }
+
     public void removeCompletedChallenge(ChallengeRecord record) {
         int position = -1;
         for (int i = 0; i < challengeRecords.size(); i++) {
@@ -173,6 +176,7 @@ public class UserChallengeRecordAdapter extends RecyclerView.Adapter<UserChallen
         if (position != -1) {
             challengeRecords.remove(position);
             notifyItemRemoved(position);
+            notifyItemRangeChanged(position, challengeRecords.size());
 
             if (challengeRecords.isEmpty() && emptyListener != null) {
                 emptyListener.onListEmpty();

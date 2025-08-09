@@ -6,6 +6,12 @@
     android:layout_height="match_parent">
 
     <!-- Header with Back Button -->
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="                android:textColor=&quot;@android:color/holo_red_light&quot;&#xA;" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +41,7 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     app:icon="@android:drawable/ic_menu_revert"
                     android:textAllCaps="false"
-
+                    android:textColor="@android:color/holo_red_light"
                     app:iconGravity="start"/>
 
                 <TextView
@@ -46,6 +52,20 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:accessibilityHeading="true"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_logout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/Logout"
+                    android:textColor="@android:color/holo_red_light"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    app:icon="@android:drawable/ic_lock_power_off"
+                    app:iconGravity="textStart"
+                    android:textAllCaps="false" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </com.google.android.material.appbar.AppBarLayout>
@@ -142,7 +162,9 @@
                         android:layout_gravity="end"
                         android:layout_marginTop="8dp"
                         android:text="@string/add_equipment"
-                        android:textAllCaps="false" />
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/holo_red_light"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -179,7 +201,8 @@
                             android:layout_height="wrap_content"
                             android:text="@string/add_challenge"
                             android:textAllCaps="false"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+                            android:textColor="@android:color/holo_red_light"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView

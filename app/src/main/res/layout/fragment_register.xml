@@ -108,7 +108,9 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:text="@string/register"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textColor="@android:color/holo_red_light"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
     </LinearLayout>
 
 

@@ -1,7 +1,6 @@
 package com.example.fithit.Fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +37,6 @@ public class CircularMetricDialogFragment extends DialogFragment {
     private Workout currentWorkout;
 
     private Map<String, Double> currentMetrics = new HashMap<>();
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

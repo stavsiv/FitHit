@@ -10,20 +10,4 @@ public enum DifficultyLevel {
         this.value = value;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public static DifficultyLevel fromValue(int value) {
-        switch (value) {
-            case 1:
-                return BEGINNER;
-            case 2:
-                return INTERMEDIATE;
-            case 3:
-                return EXPERT;
-            default:
-                return BEGINNER;
-        }
-    }
 }

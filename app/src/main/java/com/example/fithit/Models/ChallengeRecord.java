@@ -45,33 +45,6 @@ public class ChallengeRecord {
 
         return false;
     }
-    public boolean incrementProgress(User user, int amount) {
-        this.currentProgress += amount;
-
-        if (currentProgress >= getTargetValue() && !isCompleted) {
-            this.isCompleted = true;
-            if (challenge != null) {
-                user.addHearts(challenge.getHeartsReward());
-            }
-            return true;
-        }
-
-        return false;
-    }
-
-    public int getProgressPercentage() {
-        if (challenge != null && challenge.getTargetValue() > 0) {
-            return (currentProgress * 100) / challenge.getTargetValue();
-        }
-        return 0;
-    }
-
-    public int getRemainingValue() {
-        if (challenge != null) {
-            return Math.max(0, challenge.getTargetValue() - currentProgress);
-        }
-        return 0;
-    }
 
     public boolean isExpired() {
         return System.currentTimeMillis() > endDate;
@@ -101,92 +74,6 @@ public class ChallengeRecord {
         this.endDate = this.startDate + (durationDays * 24 * 60 * 60 * 1000L);
         this.currentProgress = 0;
         this.isCompleted = false;
-    }
-
-    public boolean trackWorkoutCompletion(WorkoutRecord workoutRecord) {
-        if (challenge == null || isCompleted || !workoutRecord.isCompleted()) {
-            return false;
-        }
-
-        boolean wasUpdated = false;
-        Workout workout = workoutRecord.getWorkout();
-        if (workout == null) {
-            return false;
-        }
-
-        String challengeName = challenge.getName();
-
-        switch (challengeName) {
-            case "Daily Workout Champion":
-            case "Workout Warrior":
-            case "Fitness Journey":
-                currentProgress++;
-                wasUpdated = true;
-                break;
-
-            case "Strength Builder":
-                if (workout.getCategory().equalsIgnoreCase("Strength")) {
-                    currentProgress++;
-                    wasUpdated = true;
-                }
-                break;
-
-            case "Cardio Master":
-                if (workout.getCategory().equalsIgnoreCase("Cardio")) {
-                    currentProgress++;
-                    wasUpdated = true;
-                }
-                break;
-
-            case "Core Power":
-                if (workout.getCategory().equalsIgnoreCase("Core")) {
-                    currentProgress++;
-                    wasUpdated = true;
-                }
-                break;
-
-            case "Expert Challenger":
-                if (workout.getDifficultyLevel().toString().equals("EXPERT")) {
-                    currentProgress++;
-                    wasUpdated = true;
-                }
-                break;
-
-            case "Full Body Focus":
-                if (workout.getName().equals("Complete Fitness Journey")) {
-                    currentProgress++;
-                    wasUpdated = true;
-                }
-                break;
-
-            case "Exercise Variety":
-                if (workout.getExercises() != null) {
-                    int uniqueMuscleGroups = (int) workout.getExercises().stream()
-                            .map(Exercise::getTargetMuscle)
-                            .distinct()
-                            .count();
-
-                    currentProgress = Math.max(currentProgress, uniqueMuscleGroups);
-                    wasUpdated = true;
-                }
-                break;
-        }
-
-        if (currentProgress >= challenge.getTargetValue() && !isCompleted) {
-            isCompleted = true;
-        }
-
-        return wasUpdated;
-    }    public String getChallengeName() {
-        return challenge != null ? challenge.getName() : "";
-    }
-
-    public String getChallengeDescription() {
-        return challenge != null ? challenge.getDescription() : "";
-    }
-
-    public int getPointReward() {
-        return challenge != null ? challenge.getHeartsReward() : 0;
     }
 
     public String getChallengeType() {
@@ -221,20 +108,12 @@ public class ChallengeRecord {
         return startDate;
     }
 
-    public Date getStartDateAsDate() {
-        return new Date(startDate);
-    }
-
     public void setStartDate(long startDate) {
         this.startDate = startDate;
     }
 
     public long getEndDate() {
         return endDate;
-    }
-
-    public Date getEndDateAsDate() {
-        return new Date(endDate);
     }
 
     public void setEndDate(long endDate) {
