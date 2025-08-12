@@ -33,10 +33,12 @@ Stav Sivilya & Noy Eliezer
 📄 **License:**
 This project is licensed under the MIT License.
 
-<img width="663" height="362" alt="image" src="https://github.com/user-attachments/assets/a794e676-4c7c-4f3a-ae08-3a39605b9d09" />
+<img width="650" height="367" alt="image" src="https://github.com/user-attachments/assets/8ef6a624-fd2e-4aa3-8f62-7e155ec26dda" />
+
 
 ## 🚀 Getting Started
 
 Clone the repository:
    ```bash
    git clone https://github.com/stavsiv/FitHit.git
+
