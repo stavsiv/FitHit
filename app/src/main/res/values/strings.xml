@@ -83,12 +83,12 @@
     <string name="completed_v">Completed ✓</string>
     <string name="expired">Expired</string>
     <string name="progress">"Progress: "</string>
-    <string name="left">" left"</string>
+    <string name="left">"left"</string>
     <string name="valid_until">"Valid until: "</string>
     <string name="the_workout_was_successfully_added_to_the_calendar">The workout was successfully added to the calendar</string>
     <string name="failed_to_save_workout">"Failed to save workout: "</string>
     <string name="you_earned">"You earned "</string>
-    <string name="hearts">" hearts"</string>
+    <string name="hearts">"Hearts ️"</string>
     <string name="failed_to_update_hearts">"Failed to update hearts: "</string>
     <string name="please_fill_all_fields">Please fill all fields</string>
     <string name="error_activity_not_found">Error: Activity not found</string>
@@ -222,6 +222,9 @@
     <string name="logout_confirmation_message">Are you sure you want to logout?</string>
     <string name="logout_successful">Logout successful</string>
     <string name="logout_error">Logout error</string>
+    <string name="welcome_to">Welcome To</string>
+    <string name="save_equipment">Save Equipment</string>
+    <string name="workout_duration_minutes">Workout Duration (Minutes):</string>
 
 
 </resources>

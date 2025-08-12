@@ -14,13 +14,31 @@
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginTop="16dp"/>
-    <TextView
-        android:id="@+id/durationText"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="50"
+        android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="18dp"/>
+        android:layout_marginTop="18dp"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/workout_duration_minutes"
+            android:textSize="14sp"
+            android:gravity="center_vertical"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/durationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50"
+            android:gravity="center_vertical" />
+    </LinearLayout>
+
 
     <com.google.android.material.slider.Slider
         android:id="@+id/durationSlider"

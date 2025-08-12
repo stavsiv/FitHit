@@ -32,39 +32,36 @@
 
                 <Button
                     android:id="@+id/btn_back_to_main"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/back"
-                    android:contentDescription="@string/return_to_main_area"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
-                    app:icon="@android:drawable/ic_menu_revert"
+                    android:layout_width="44dp"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/return_to_main_area"
                     android:textAllCaps="false"
                     android:textColor="@android:color/holo_red_light"
-                    app:iconGravity="start"/>
+                    app:icon="@android:drawable/ic_menu_revert"
+                    app:iconGravity="start" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
                     android:text="@string/personal_area"
-                    android:textSize="20sp"
+                    android:textSize="26sp"
                     android:textStyle="bold"
                     android:accessibilityHeading="true"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_logout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/Logout"
-                    android:textColor="@android:color/holo_red_light"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="44dp"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/holo_red_light"
                     app:icon="@android:drawable/ic_lock_power_off"
-                    app:iconGravity="textStart"
-                    android:textAllCaps="false" />
-
+                    app:iconGravity="start" />
             </LinearLayout>
+
         </com.google.android.material.card.MaterialCardView>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -114,13 +111,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"/>
 
-                    <ProgressBar
-                        android:id="@+id/progress_level"
-                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:contentDescription="Hearts progress indicator"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -159,7 +149,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_marginTop="8dp"
-                        android:text="@string/add_equipment"
+                        android:text="@string/save_equipment"
                         android:textAllCaps="false"
                         android:textColor="@android:color/holo_red_light"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
@@ -239,7 +229,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/workout_progress"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:accessibilityHeading="true"/>
 

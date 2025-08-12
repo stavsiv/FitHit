@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">FitHit</string>
-    <string name="fithit">FitHit</string>
     <string name="hello_blank_fragment" translatable="false">שלום פרגמנט ריק</string>
     <string name="level_format">רמה: %d</string>
     <string name="difficulty_format">קושי: %s</string>
@@ -222,5 +221,8 @@
     <string name="logout_confirmation_message">האם אתה בטוח שברצונך להתנתק?</string>
     <string name="logout_successful">התנתקת בהצלחה</string>
     <string name="logout_error">שגיאה בהתנתקות</string>
+    <string name="welcome_to">Welcome To</string>
+    <string name="save_equipment">שמור ציוד</string>
+    <string name="workout_duration_minutes">זמן אימון (דקות):</string>
 
 </resources>

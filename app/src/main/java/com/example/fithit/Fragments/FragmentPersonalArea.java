@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.AlertDialog;
@@ -54,7 +54,7 @@ public class FragmentPersonalArea extends Fragment {
     private TextView tvUserName;
     private TextView tvDifficultyLevel;
     private TextView tvHeartsProgress;
-    private ProgressBar progressLevel;
+    //private ProgressBar progressLevel;
     private RecyclerView challengesRecyclerView;
     private TextView tvNoChallenges;
     private WorkoutChartManager chartManager;
@@ -89,7 +89,6 @@ public class FragmentPersonalArea extends Fragment {
         tvUserName = rootView.findViewById(R.id.tv_user_name);
         TextView tvUserLevel = rootView.findViewById(R.id.tv_user_level);
         tvHeartsProgress = rootView.findViewById(R.id.tv_hearts_progress);
-        progressLevel = rootView.findViewById(R.id.progress_level);
 
         tvDifficultyLevel = tvUserLevel;
 
@@ -427,7 +426,7 @@ public class FragmentPersonalArea extends Fragment {
                 progressPercent, heartsNeeded, completedWorkouts, totalWorkouts
         );
 
-        progressLevel.setContentDescription(contentDescription);
+        //progressLevel.setContentDescription(contentDescription);
 
         List<WorkoutRecord> workoutHistory = user.getWorkoutHistory();
         chartManager.updateChart(workoutHistory);

@@ -7,14 +7,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="12dp" />
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:src="@drawable/logo_fithit"
+        android:contentDescription="@string/app_name"
+        android:elevation="6dp" />
 
     <!-- Top Bar: Upcoming Workout Alert + Personal Area Icon -->
     <LinearLayout
@@ -55,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:textSize="14sp"
-                    android:maxLines="2"
+                    android:maxLines="3"
                     android:ellipsize="end"
                     android:textColor="@color/design_default_color_on_surface"
                     tools:text="Upcoming workout: Running" />
@@ -95,23 +94,23 @@
             android:padding="8dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/schedule_workouts"
                 android:textColor="@color/design_default_color_on_surface"
-                android:textSize="18sp"
+                android:textSize="26sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="4dp"
-                android:layout_marginStart="8dp" />
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="12dp" />
 
             <CalendarView
                 android:id="@+id/calendar_view"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginEnd="18dp"
                 style="@style/CustomCalendarView" />
 
-            <!-- תצוגת אימונים מוגדלת -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -147,13 +146,12 @@
                     android:text="@string/no_workouts"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textColor="@color/design_default_color_on_surface"
                     android:visibility="gone"
                     tools:visibility="visible" />
             </FrameLayout>
 
-            <!-- כפתורים -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
